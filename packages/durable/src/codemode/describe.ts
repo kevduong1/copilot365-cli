@@ -5,8 +5,8 @@
  * `searchTools()`. The section renders from the conversation's callable tools, so it changes with them; the tool's
  * description never does.
  */
-import type { CodemodeJsonSchema } from "@garmin-code-mini/codemode";
-import { renderToolSample, toCodemodeIdentifier } from "@garmin-code-mini/codemode/declarations";
+import type { CodemodeJsonSchema } from "@gcode/codemode";
+import { renderToolSample, toCodemodeIdentifier } from "@gcode/codemode/declarations";
 import type { ToolRegistration } from "../harness/types.ts";
 import { MODELS_DESCRIPTION } from "./models.ts";
 

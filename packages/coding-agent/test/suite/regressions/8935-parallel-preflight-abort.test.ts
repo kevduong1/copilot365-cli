@@ -1,5 +1,5 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import { fauxAssistantMessage, fauxToolCall } from "@garmin-code-mini/ai";
+import type { AgentTool } from "@gcode/agent-core";
+import { fauxAssistantMessage, fauxToolCall } from "@gcode/ai";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, getMessageText, type Harness } from "../harness.ts";
@@ -32,13 +32,13 @@ describe("#8935 parallel preflight abort", () => {
 		const harness = await createHarness({
 			tools: [externalWrite],
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("tool_call", async (event, ctx) => {
+				(gcode) => {
+					gcode.on("tool_call", async (event, ctx) => {
 						const value = "value" in event.input ? String(event.input.value) : "";
 						preflights.push(value);
 						if (value === "second") ctx.abort();
 					});
-					garminCodeMini.on("tool_result", async (event) => {
+					gcode.on("tool_result", async (event) => {
 						resultHooks.push(event.toolCallId);
 					});
 				},

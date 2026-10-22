@@ -1,4 +1,4 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
+import type { AgentTool } from "@gcode/agent-core";
 import { mkdir as fsMkdir, writeFile as fsWriteFile } from "fs/promises";
 import { dirname } from "path";
 import { type Static, Type } from "typebox";

@@ -55,8 +55,8 @@ import {
 	type ProviderRequestOptions,
 	type SimpleStreamOptions,
 	type StreamOptions,
-} from "@garmin-code-mini/ai";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
+} from "@gcode/ai";
+import { localProvider } from "@gcode/ai/providers/local";
 import {
 	assertChatModel,
 	assertClassifierInputSupported,
@@ -64,7 +64,7 @@ import {
 	assertImageModel,
 	classifierErrorResult,
 	imageErrorResult,
-} from "@garmin-code-mini/ai/utils/model-operations";
+} from "@gcode/ai/utils/model-operations";
 import { getAgentDir } from "../config.ts";
 import { operationSignal, raceWithAbortSignal } from "../utils/abort.ts";
 import { AuthStorage as DefaultAuthStorage } from "./auth-storage.ts";
@@ -167,7 +167,7 @@ function mergeHeaders(
 	return merged;
 }
 
-/** Configured garmin-code-mini-ai Models collection used by coding-agent and SDK consumers. */
+/** Configured gcode-ai Models collection used by coding-agent and SDK consumers. */
 export class ModelRuntime implements Models {
 	private readonly models: MutableModels;
 	private readonly credentials: RuntimeCredentials;
@@ -799,7 +799,7 @@ export class ModelRuntime implements Models {
 			...options,
 			allowNetwork: false,
 		};
-		// Published garmin-code-mini-ai builds before ModelsStore returned void and accepted a provider ID.
+		// Published gcode-ai builds before ModelsStore returned void and accepted a provider ID.
 		// The fallback keeps source-mode CLI tests working without rebuilding workspace dependencies.
 		const result = ((await this.models.refresh(refreshOptions)) as ModelsRefreshResult | undefined) ?? {
 			aborted: refreshOptions.signal?.aborted ?? false,

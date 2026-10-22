@@ -6,7 +6,7 @@
  * tool definition, so the tool's public shape is unchanged.
  */
 
-import { Container, Spacer, Text } from "@garmin-code-mini/tui";
+import { Container, Spacer, Text } from "@gcode/tui";
 import { keyHint } from "../../../modes/interactive/components/keybinding-hints.ts";
 import { VisualLinePreview } from "../../../modes/interactive/components/visual-truncate.ts";
 import { theme } from "../../../modes/interactive/theme/theme.ts";

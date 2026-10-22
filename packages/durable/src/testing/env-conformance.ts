@@ -1,5 +1,5 @@
-import type { Context } from "@garmin-code-mini/chord";
-import { BACKGROUND_CONTEXT, withAbortSignal } from "@garmin-code-mini/chord/context";
+import type { Context } from "@gcode/chord";
+import { BACKGROUND_CONTEXT, withAbortSignal } from "@gcode/chord/context";
 import {
 	type ExecutionEnv,
 	type FileInfo,
@@ -319,16 +319,16 @@ export function createEnvConformance(options: EnvConformanceOptions): readonly E
 		}),
 
 		watchCase("watch keeps watching a path whose parent is renamed and recreated", async (env) => {
-			getOrThrow(await env.writeFile("proj/.garmin-code-mini/skills/x.md", "x", context));
-			await watching(env, [{ path: "proj/.garmin-code-mini/skills", recursive: true }], async ({ expectChange }) => {
-				await expectChange("proj/.garmin-code-mini/skills", async () => {
-					getOrThrow(await env.renameFile("proj/.garmin-code-mini", "proj/old", context));
+			getOrThrow(await env.writeFile("proj/.gcode/skills/x.md", "x", context));
+			await watching(env, [{ path: "proj/.gcode/skills", recursive: true }], async ({ expectChange }) => {
+				await expectChange("proj/.gcode/skills", async () => {
+					getOrThrow(await env.renameFile("proj/.gcode", "proj/old", context));
 				});
-				await expectChange("proj/.garmin-code-mini/skills/y.md", async () => {
-					getOrThrow(await env.writeFile("proj/.garmin-code-mini/skills/y.md", "y", context));
+				await expectChange("proj/.gcode/skills/y.md", async () => {
+					getOrThrow(await env.writeFile("proj/.gcode/skills/y.md", "y", context));
 				});
-				await expectChange("proj/.garmin-code-mini/skills/y.md", async () => {
-					getOrThrow(await env.writeFile("proj/.garmin-code-mini/skills/y.md", "yy", context));
+				await expectChange("proj/.gcode/skills/y.md", async () => {
+					getOrThrow(await env.writeFile("proj/.gcode/skills/y.md", "yy", context));
 				});
 			});
 		}),
@@ -429,7 +429,7 @@ export function createEnvConformance(options: EnvConformanceOptions): readonly E
 
 		createCase("argv exec reports missing programs and empty argv as spawn errors", async (env) => {
 			assert.strictEqual(
-				errorCode(await env.exec(["garmin-code-mini-durable-conformance-missing-program"], undefined, context)),
+				errorCode(await env.exec(["gcode-durable-conformance-missing-program"], undefined, context)),
 				"spawn_error",
 			);
 			assert.strictEqual(errorCode(await env.exec([], undefined, context)), "spawn_error");

@@ -5,8 +5,8 @@
  * Height is calculated from width to maintain DOOM's aspect ratio.
  */
 
-import type { Component } from "@garmin-code-mini/tui";
-import { isKeyRelease, type TUI } from "@garmin-code-mini/tui";
+import type { Component } from "@gcode/tui";
+import { isKeyRelease, type TUI } from "@gcode/tui";
 import type { DoomEngine } from "./doom-engine.ts";
 import { DoomKeys, mapKeyToDoom } from "./doom-keys.ts";
 

@@ -2,7 +2,7 @@
 import { spawn } from "node:child_process";
 import { existsSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 
-export const REPO = "earendil-works/garmin-code-mini";
+export const REPO = "earendil-works/gcode";
 const MAX_BODY = 16_000;
 
 export interface Issue {
@@ -136,7 +136,7 @@ export function issueStatus(issue: Issue): string {
 }
 
 const STOPWORDS = new Set(
-	"the and for with that this from when not are was but can does doesn have into after before about garmin-code-mini's garmin-code-mini issue bug feature request support add allow should".split(
+	"the and for with that this from when not are was but can does doesn have into after before about gcode's gcode issue bug feature request support add allow should".split(
 		" ",
 	),
 );

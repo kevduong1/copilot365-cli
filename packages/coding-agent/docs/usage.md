@@ -1,12 +1,12 @@
-# Use garmin-code-mini in the terminal
+# Use gcode in the terminal
 
-Run `garmin-code-mini` from the folder you want to work in. garmin-code-mini uses that folder to discover files, instructions, and configuration, and to group saved sessions. If you have not installed garmin-code-mini or chosen a model yet, follow the [Quickstart](quickstart.md).
+Run `gcode` from the folder you want to work in. gcode uses that folder to discover files, instructions, and configuration, and to group saved sessions. If you have not installed gcode or chosen a model yet, follow the [Quickstart](quickstart.md).
 
-garmin-code-mini may ask whether you trust the working folder before loading its project resources. See [Project trust](security.md#understand-project-trust).
+gcode may ask whether you trust the working folder before loading its project resources. See [Project trust](security.md#understand-project-trust).
 
-<p align="center"><img src="images/interactive-mode.png" alt="garmin-code-mini interactive mode showing a conversation, editor, and status information" width="750"></p>
+<p align="center"><img src="images/interactive-mode.png" alt="gcode interactive mode showing a conversation, editor, and status information" width="750"></p>
 
-The transcript shows your prompts, garmin-code-mini's responses, tool calls, results, and errors. You write prompts and commands in the editor. The footer shows the current folder, session, model, context usage, and accumulated usage and cost.
+The transcript shows your prompts, gcode's responses, tool calls, results, and errors. You write prompts and commands in the editor. The footer shows the current folder, session, model, context usage, and accumulated usage and cost.
 
 ## Enter a prompt
 
@@ -18,17 +18,17 @@ To include files or images:
 - Press `Tab` to complete a path.
 - Paste an image or drag it into a compatible terminal.
 
-## Follow garmin-code-mini's work
+## Follow gcode's work
 
-garmin-code-mini shows each tool call and result while it works. Press `Ctrl+O` to expand or collapse tool output. Press `Ctrl+T` to show or hide thinking blocks.
+gcode shows each tool call and result while it works. Press `Ctrl+O` to expand or collapse tool output. Press `Ctrl+T` to show or hide thinking blocks.
 
-The startup header lists the instructions and resources garmin-code-mini loaded. The editor border indicates the current thinking level. The footer updates as the model uses context and reports usage.
+The startup header lists the instructions and resources gcode loaded. The editor border indicates the current thinking level. The footer updates as the model uses context and reports usage.
 
-garmin-code-mini does not ask before every tool call. Review commands and changed files, and use a sandbox for untrusted or unattended work. See [Security](security.md).
+gcode does not ask before every tool call. Review commands and changed files, and use a sandbox for untrusted or unattended work. See [Security](security.md).
 
 ## Change direction
 
-You can send more input while garmin-code-mini is working:
+You can send more input while gcode is working:
 
 | What you want | Action |
 |---|---|
@@ -37,7 +37,7 @@ You can send more input while garmin-code-mini is working:
 | Return queued messages to the editor | Press `Alt+Up` |
 | Stop the current task | Press `Escape` |
 
-A message sent with `Enter` waits until the current response and its tool calls finish, then guides the next response. A follow-up sent with `Alt+Enter` waits until garmin-code-mini finishes the current task. Aborting returns queued messages to the editor.
+A message sent with `Enter` waits until the current response and its tool calls finish, then guides the next response. A follow-up sent with `Alt+Enter` waits until gcode finishes the current task. Aborting returns queued messages to the editor.
 
 Windows Terminal reserves some Alt shortcuts. See [Terminal Setup](terminal-setup.md) for the Windows alternatives.
 
@@ -54,7 +54,7 @@ Prompt templates, skills, and extensions can add more commands to the same menu.
 
 ## Continue or start over
 
-garmin-code-mini saves sessions automatically unless session persistence is disabled.
+gcode saves sessions automatically unless session persistence is disabled.
 
 - `/new` starts a new session.
 - `/resume` opens another saved session.
@@ -63,7 +63,7 @@ garmin-code-mini saves sessions automatically unless session persistence is disa
 
 Use `/tree`, `/fork`, or `/clone` when you want to explore another approach without losing existing work. Use `/compact` to reduce the conversation history sent to the model. See [Sessions and Context](sessions.md) for these workflows.
 
-After leaving garmin-code-mini, run `garmin-code-mini --continue` from the same folder to resume its most recent session.
+After leaving gcode, run `gcode --continue` from the same folder to resume its most recent session.
 
 ## Run a terminal command
 
@@ -79,7 +79,7 @@ Use `!!` when you want to run a command without sending its output to the model.
 
 Press `Ctrl+X` or run `/copy` to copy the last assistant response. Use `/export` to save the session as HTML or JSONL.
 
-Use `/share` to upload the session and get a viewer link. By default, Radius authentication makes the artifact visible to your Radius organization; otherwise, garmin-code-mini creates a private GitHub gist through the GitHub CLI. The [`sessionShareDestination`](settings.md#sessions-and-context) setting can force either destination. Review the session first because it can contain prompts, tool output, file contents, and credentials exposed during the conversation.
+Use `/share` to upload the session and get a viewer link. By default, Radius authentication makes the artifact visible to your Radius organization; otherwise, gcode creates a private GitHub gist through the GitHub CLI. The [`sessionShareDestination`](settings.md#sessions-and-context) setting can force either destination. Review the session first because it can contain prompts, tool output, file contents, and credentials exposed during the conversation.
 
 ## Adjust the terminal
 
@@ -89,6 +89,6 @@ Terminal support for mouse input, keyboard shortcuts, and inline images varies. 
 
 ## Collect diagnostic information
 
-When troubleshooting terminal rendering or conversation state, run `/debug`. garmin-code-mini writes the rendered terminal lines and current session messages to `garmin-code-mini-debug.log` in your [agent directory](configuration.md#agent-directory).
+When troubleshooting terminal rendering or conversation state, run `/debug`. gcode writes the rendered terminal lines and current session messages to `gcode-debug.log` in your [agent directory](configuration.md#agent-directory).
 
 Review this file before sharing it. It can contain prompts, model responses, tool output, file contents, and terminal data.

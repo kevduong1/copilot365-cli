@@ -14,7 +14,7 @@ afterEach(() => {
 
 describe("findNodePackageDir", () => {
 	test("skips binary metadata copied into dist", () => {
-		tempDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-package-dir-"));
+		tempDir = mkdtempSync(join(tmpdir(), "gcode-package-dir-"));
 		const distDir = join(tempDir, "dist");
 		const bundleDir = join(distDir, "bundle");
 		mkdirSync(bundleDir, { recursive: true });
@@ -28,7 +28,7 @@ describe("findNodePackageDir", () => {
 describe("detectInstallChange", () => {
 	// Regression test for #10439: a deleted pnpm install must not fall back to a package.json further up.
 	test("reports a removed install instead of reading a package.json further up", () => {
-		tempDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-install-change-"));
+		tempDir = mkdtempSync(join(tmpdir(), "gcode-install-change-"));
 		const installDir = join(tempDir, "global", "hash");
 		mkdirSync(installDir, { recursive: true });
 		writeFileSync(join(tempDir, "package.json"), JSON.stringify({ version: "0.0.1" }));

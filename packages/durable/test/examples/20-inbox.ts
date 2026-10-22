@@ -2,10 +2,10 @@
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/20-inbox.ts
 
-import type { FauxResponseStep } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import type { FauxResponseStep } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { createRegistry, Harness, InboxDoc, MemoryStorage, type Submission } from "../../src/index.ts";
 
 const context = BACKGROUND_CONTEXT;

@@ -3,8 +3,8 @@
  * Validates that the faux provider and session factory work correctly.
  */
 
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import type { AssistantMessage } from "@garmin-code-mini/ai";
+import type { AgentTool } from "@gcode/agent-core";
+import type { AssistantMessage } from "@gcode/ai";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, createHarnessWithExtensions, type Harness } from "./test-harness.ts";
@@ -278,8 +278,8 @@ describe("test harness", () => {
 			extensionFactories: [
 				{
 					path: "<alpha>",
-					factory: (garminCodeMini) => {
-						garminCodeMini.registerCommand("shared-cmd", {
+					factory: (gcode) => {
+						gcode.registerCommand("shared-cmd", {
 							description: "Alpha command",
 							handler: async (args) => {
 								calls.push(`alpha:${args}`);
@@ -289,8 +289,8 @@ describe("test harness", () => {
 				},
 				{
 					path: "<beta>",
-					factory: (garminCodeMini) => {
-						garminCodeMini.registerCommand("shared-cmd", {
+					factory: (gcode) => {
+						gcode.registerCommand("shared-cmd", {
 							description: "Beta command",
 							handler: async (args) => {
 								calls.push(`beta:${args}`);

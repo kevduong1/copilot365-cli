@@ -1,4 +1,4 @@
-import type { AgentTool, ThinkingLevel } from "@garmin-code-mini/agent-core";
+import type { AgentTool, ThinkingLevel } from "@gcode/agent-core";
 import {
 	fauxAssistantMessage,
 	fauxToolCall,
@@ -6,7 +6,7 @@ import {
 	type JsonObject,
 	type Model,
 	type Usage,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import type { BuildSystemPromptOptions, ExtensionAPI } from "../../src/index.ts";
@@ -29,8 +29,8 @@ describe("AgentSession model and extension characterization", () => {
 				{ id: "faux-2", name: "Two", reasoning: true },
 			],
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("model_select", async (event) => {
+				(gcode) => {
+					gcode.on("model_select", async (event) => {
 						modelEvents.push(`${event.previousModel?.id ?? "none"}->${event.model.id}:${event.source}`);
 					});
 				},
@@ -254,8 +254,8 @@ describe("AgentSession model and extension characterization", () => {
 		const harness = await createHarness({
 			tools: [echoTool],
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("tool_call", async () => ({ block: true, reason: "Blocked by test" }));
+				(gcode) => {
+					gcode.on("tool_call", async () => ({ block: true, reason: "Blocked by test" }));
 				},
 			],
 		});
@@ -314,8 +314,8 @@ describe("AgentSession model and extension characterization", () => {
 		const harness = await createHarness({
 			tools: [echoTool],
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("tool_result", async (event) => {
+				(gcode) => {
+					gcode.on("tool_result", async (event) => {
 						observedToolUsage = event.usage;
 						return {
 							content: [{ type: "text", text: "patched result" }],
@@ -361,8 +361,8 @@ describe("AgentSession model and extension characterization", () => {
 	it("allows extension context handlers to modify messages before the LLM call", async () => {
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("context", async (event) => ({
+				(gcode) => {
+					gcode.on("context", async (event) => ({
 						messages: event.messages.map((message) =>
 							message.role === "user"
 								? { ...message, content: [{ type: "text", text: "rewritten" }], timestamp: message.timestamp }
@@ -402,9 +402,9 @@ describe("AgentSession model and extension characterization", () => {
 		let extensionApi: ExtensionAPI | undefined;
 		const transformedHarness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					extensionApi = garminCodeMini;
-					garminCodeMini.on("input", async (event) => {
+				(gcode) => {
+					extensionApi = gcode;
+					gcode.on("input", async (event) => {
 						if (event.text === "ping") {
 							return { action: "handled" };
 						}
@@ -441,8 +441,8 @@ describe("AgentSession model and extension characterization", () => {
 		const seenOptions: BuildSystemPromptOptions[] = [];
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.registerCommand("inspect-options", {
+				(gcode) => {
+					gcode.registerCommand("inspect-options", {
 						description: "Inspect system prompt options",
 						handler: async (_args, ctx) => {
 							const options = ctx.getSystemPromptOptions();
@@ -468,8 +468,8 @@ describe("AgentSession model and extension characterization", () => {
 	it("allows before_agent_start handlers to inject custom messages and modify the system prompt", async () => {
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("before_agent_start", async (event) => ({
+				(gcode) => {
+					gcode.on("before_agent_start", async (event) => ({
 						message: {
 							customType: "before-start",
 							content: "injected",
@@ -510,11 +510,11 @@ describe("AgentSession model and extension characterization", () => {
 		const lifecycleEvents: string[] = [];
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_start", async (event) => {
+				(gcode) => {
+					gcode.on("session_start", async (event) => {
 						lifecycleEvents.push(`start:${event.reason}`);
 					});
-					garminCodeMini.on("session_shutdown", async (event) => {
+					gcode.on("session_shutdown", async (event) => {
 						lifecycleEvents.push(`shutdown:${event.reason}`);
 					});
 				},

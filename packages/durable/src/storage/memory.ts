@@ -1,5 +1,5 @@
-import type { Context, JsonValue } from "@garmin-code-mini/chord";
-import { applyImmutableBatches, type Op } from "@garmin-code-mini/chord/delta";
+import type { Context, JsonValue } from "@gcode/chord";
+import { applyImmutableBatches, type Op } from "@gcode/chord/delta";
 import { StorageRequestError } from "../errors.ts";
 import { idFromNumber, seqFromNumber } from "../ids.ts";
 import type {

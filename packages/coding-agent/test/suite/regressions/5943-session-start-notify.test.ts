@@ -1,5 +1,5 @@
-import { fauxAssistantMessage } from "@garmin-code-mini/ai";
-import { Container, Text } from "@garmin-code-mini/tui";
+import { fauxAssistantMessage } from "@gcode/ai";
+import { Container, Text } from "@gcode/tui";
 import { describe, expect, it, vi } from "vitest";
 import type { AgentSessionEvent } from "../../../src/core/agent-session.ts";
 import { InteractiveMode } from "../../../src/modes/interactive/interactive-mode.ts";
@@ -242,8 +242,8 @@ describe("regression #5943: session_start transient UI", () => {
 		const events: string[] = [];
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_start", (_event, ctx) => {
+				(gcode) => {
+					gcode.on("session_start", (_event, ctx) => {
 						ctx.ui.notify("Hello Error", "error");
 					});
 				},
@@ -280,9 +280,9 @@ describe("regression #5943: session_start transient UI", () => {
 		const events: string[] = [];
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_start", () => {
-						garminCodeMini.sendMessage({
+				(gcode) => {
+					gcode.on("session_start", () => {
+						gcode.sendMessage({
 							customType: "session-start",
 							content: "custom from start",
 							display: true,
@@ -336,9 +336,9 @@ describe("regression #5943: session_start transient UI", () => {
 		const events: string[] = [];
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_start", () => {
-						garminCodeMini.sendUserMessage("user from start");
+				(gcode) => {
+					gcode.on("session_start", () => {
+						gcode.sendUserMessage("user from start");
 					});
 				},
 			],
@@ -390,8 +390,8 @@ describe("regression #5943: session_start transient UI", () => {
 		});
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_start", (event, ctx) => {
+				(gcode) => {
+					gcode.on("session_start", (event, ctx) => {
 						events.push(`start:${event.reason}`);
 						ctx.ui.notify(`notify:${event.reason}`, "error");
 					});

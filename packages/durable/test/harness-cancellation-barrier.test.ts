@@ -1,5 +1,5 @@
-import type { Context } from "@garmin-code-mini/chord";
-import { createSession, defineTask, MemoryStorage, type StorageWrite, type TaskId } from "@garmin-code-mini/durable";
+import type { Context } from "@gcode/chord";
+import { createSession, defineTask, MemoryStorage, type StorageWrite, type TaskId } from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { context, flush } from "./session-support.ts";
 import { aborted, deferred, eventually, openTasks } from "./task-support.ts";

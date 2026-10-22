@@ -30,9 +30,9 @@ export function validateLocalBaseUrl(baseUrl: string): string {
 
 /** A static declaration: startup never requests a model catalog. */
 export function localModel(options: LocalProviderOptions = {}): Model<"openai-completions"> {
-	const id = options.modelId ?? getProviderEnvValue("GARMIN_CODE_MINI_MODEL") ?? DEFAULT_LOCAL_MODEL;
+	const id = options.modelId ?? getProviderEnvValue("GCODE_MODEL") ?? DEFAULT_LOCAL_MODEL;
 	const baseUrl = validateLocalBaseUrl(
-		options.baseUrl ?? getProviderEnvValue("GARMIN_CODE_MINI_BASE_URL") ?? DEFAULT_LOCAL_BASE_URL,
+		options.baseUrl ?? getProviderEnvValue("GCODE_BASE_URL") ?? DEFAULT_LOCAL_BASE_URL,
 	);
 	return {
 		id,
@@ -62,7 +62,7 @@ export function localProvider(options: LocalProviderOptions = {}): Provider<"ope
 				name: "Local server",
 				resolve: async ({ ctx, credential, signal }) => {
 					signal.throwIfAborted();
-					const apiKey = credential?.key ?? (await ctx.env("GARMIN_CODE_MINI_API_KEY"));
+					const apiKey = credential?.key ?? (await ctx.env("GCODE_API_KEY"));
 					return { auth: { ...(apiKey ? { apiKey } : {}) }, source: "local endpoint" };
 				},
 			},

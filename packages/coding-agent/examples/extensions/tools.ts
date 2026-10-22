@@ -5,39 +5,39 @@
  * Tool selection persists across session reloads and respects branch navigation.
  *
  * Usage:
- * 1. Copy this file to ~/.garmin-code-mini/agent/extensions/ or your project's .garmin-code-mini/extensions/
+ * 1. Copy this file to ~/.gcode/agent/extensions/ or your project's .gcode/extensions/
  * 2. Use /tools to open the tool selector
  */
 
-import { Container, type SettingItem, SettingsList } from "@garmin-code-mini/tui";
-import type { ExtensionAPI, ExtensionContext, ToolInfo } from "garmin-code-mini";
-import { getSettingsListTheme } from "garmin-code-mini";
+import { Container, type SettingItem, SettingsList } from "@gcode/tui";
+import type { ExtensionAPI, ExtensionContext, ToolInfo } from "gcode";
+import { getSettingsListTheme } from "gcode";
 
 // State persisted to session
 interface ToolsState {
 	enabledTools: string[];
 }
 
-export default function toolsExtension(garminCodeMini: ExtensionAPI) {
+export default function toolsExtension(gcode: ExtensionAPI) {
 	// Track enabled tools
 	let enabledTools: Set<string> = new Set();
 	let allTools: ToolInfo[] = [];
 
 	// Persist current state
 	function persistState() {
-		garminCodeMini.appendEntry<ToolsState>("tools-config", {
+		gcode.appendEntry<ToolsState>("tools-config", {
 			enabledTools: Array.from(enabledTools),
 		});
 	}
 
 	// Apply current tool selection
 	function applyTools() {
-		garminCodeMini.setActiveTools(Array.from(enabledTools));
+		gcode.setActiveTools(Array.from(enabledTools));
 	}
 
 	// Find the last tools-config entry in the current branch
 	function restoreFromBranch(ctx: ExtensionContext) {
-		allTools = garminCodeMini.getAllTools();
+		allTools = gcode.getAllTools();
 
 		// Get entries in current branch only
 		const branchEntries = ctx.sessionManager.getBranch();
@@ -59,12 +59,12 @@ export default function toolsExtension(garminCodeMini: ExtensionAPI) {
 			applyTools();
 		} else {
 			// No saved state - sync with currently active tools
-			enabledTools = new Set(garminCodeMini.getActiveTools());
+			enabledTools = new Set(gcode.getActiveTools());
 		}
 	}
 
 	// Register /tools command
-	garminCodeMini.registerCommand("tools", {
+	gcode.registerCommand("tools", {
 		description: "Enable/disable tools",
 		handler: async (_args, ctx) => {
 			if (ctx.mode !== "tui") {
@@ -73,7 +73,7 @@ export default function toolsExtension(garminCodeMini: ExtensionAPI) {
 			}
 
 			// Refresh tool list
-			allTools = garminCodeMini.getAllTools();
+			allTools = gcode.getAllTools();
 
 			await ctx.ui.custom((tui, theme, _kb, done) => {
 				// Build settings items for each tool
@@ -135,12 +135,12 @@ export default function toolsExtension(garminCodeMini: ExtensionAPI) {
 	});
 
 	// Restore state on session start
-	garminCodeMini.on("session_start", async (_event, ctx) => {
+	gcode.on("session_start", async (_event, ctx) => {
 		restoreFromBranch(ctx);
 	});
 
 	// Restore state when navigating the session tree
-	garminCodeMini.on("session_tree", async (_event, ctx) => {
+	gcode.on("session_tree", async (_event, ctx) => {
 		restoreFromBranch(ctx);
 	});
 }

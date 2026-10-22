@@ -21,12 +21,12 @@ describe("regression #5996: session names do not contain newlines", () => {
 		expect(harness.eventsOfType("session_info_changed").map((event) => event.name)).toEqual(["hello world again"]);
 	});
 
-	it("filters newlines when an extension calls garminCodeMini.setSessionName", async () => {
+	it("filters newlines when an extension calls gcode.setSessionName", async () => {
 		let api: ExtensionAPI | undefined;
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					api = garminCodeMini;
+				(gcode) => {
+					api = gcode;
 				},
 			],
 		});

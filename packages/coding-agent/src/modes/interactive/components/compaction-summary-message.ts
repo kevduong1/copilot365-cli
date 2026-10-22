@@ -1,4 +1,4 @@
-import { Box, Container, Markdown, type MarkdownTheme, MouseRegion, Spacer, Text } from "@garmin-code-mini/tui";
+import { Box, Container, Markdown, type MarkdownTheme, MouseRegion, Spacer, Text } from "@gcode/tui";
 import type { CompactionSummaryMessage } from "../../../core/messages.ts";
 import { getMarkdownTheme, theme } from "../theme/theme.ts";
 import { keyText } from "./keybinding-hints.ts";

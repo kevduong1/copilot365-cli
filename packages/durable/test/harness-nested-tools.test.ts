@@ -9,9 +9,9 @@ import {
 	type ToolResultMessage,
 	Type,
 	type Usage,
-} from "@garmin-code-mini/ai";
-import type { JsonValue } from "@garmin-code-mini/chord";
-import { withAbortSignal } from "@garmin-code-mini/chord/context";
+} from "@gcode/ai";
+import type { JsonValue } from "@gcode/chord";
+import { withAbortSignal } from "@gcode/chord/context";
 import {
 	type AgentEvent,
 	AssistantEntry,
@@ -31,7 +31,7 @@ import {
 	type ToolTaskResult,
 	UsageDoc,
 	watchEvents,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { afterEach, describe, expect, it } from "vitest";
 import { openNodeSqliteStorage } from "../src/storage/sqlite/node.ts";
 import { allEntries, type ChatSetup, chatSetup, openChat } from "./chat-support.ts";
@@ -123,7 +123,7 @@ describe("nested tool calls", () => {
 		};
 		const { harness, root } = await openChat(storage, setup);
 		await (await root.submit({ type: "input", content: "go" }, context)).wait(context);
-		const nested = written.filter((write) => write.kind.startsWith("garmin-code-mini.tool."));
+		const nested = written.filter((write) => write.kind.startsWith("gcode.tool."));
 		expect(nested).toEqual([
 			{ kind: NestedCallDoc.definition.kind, key: "1" },
 			{ kind: NestedCallDoc.definition.kind, key: "named" },
@@ -429,7 +429,7 @@ describe("nested tool calls", () => {
 		await harness.close(context);
 	});
 
-	it("reports nested calls in garmin-code-mini.live.nestedTools and as tool events with their parent", async () => {
+	it("reports nested calls in gcode.live.nestedTools and as tool events with their parent", async () => {
 		const setup = chatSetup();
 		const release = deferred();
 		const running = deferred();
@@ -566,7 +566,7 @@ describe("nested tool calls", () => {
 	});
 
 	it("reattaches a replay-safe caller to the nested calls it made before a restart", async () => {
-		const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-nested-"));
+		const directory = await mkdtemp(join(tmpdir(), "gcode-durable-nested-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		const setup = chatSetup();
@@ -668,7 +668,7 @@ describe("nested tool calls", () => {
 	});
 
 	it("aborts left-running nested calls of a caller interrupted while it cleaned them up", async () => {
-		const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-nested-"));
+		const directory = await mkdtemp(join(tmpdir(), "gcode-durable-nested-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		const setup = chatSetup();
@@ -1279,7 +1279,7 @@ describe("tool task version 1 records", () => {
 	 * `{ assistant, callId }` input at version 1, with `checkpoint`. Returns the storage path and the task ID.
 	 */
 	async function storeVersion1(setup: ChatSetup, checkpoint: JsonValue): Promise<{ path: string; id: TaskId }> {
-		const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-tool-v1-"));
+		const directory = await mkdtemp(join(tmpdir(), "gcode-durable-tool-v1-"));
 		directories.add(directory);
 		const path = join(directory, "session.sqlite");
 		// No submission, so the Harness never starts scheduling and the task stays pending.

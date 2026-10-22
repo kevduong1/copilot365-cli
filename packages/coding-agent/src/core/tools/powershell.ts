@@ -17,7 +17,7 @@ const UTF8_OUTPUT_PREFIX = "try { [Console]::OutputEncoding=[System.Text.Encodin
 
 export const powershellToolSystemPromptContribution = {
 	snippet: "Execute PowerShell commands",
-	guidelines: ["You can inspect GARMIN_CODE_MINI_* environment variables for current model and session details."],
+	guidelines: ["You can inspect GCODE_* environment variables for current model and session details."],
 } as const;
 
 export type PowerShellOperations = BashOperations;
@@ -43,7 +43,7 @@ const powershellToolConfig: ShellToolConfig = {
 	prompt: "PS>",
 	promptSnippet: powershellToolSystemPromptContribution.snippet,
 	promptGuidelines: powershellToolSystemPromptContribution.guidelines,
-	tempFilePrefix: "garmin-code-mini-powershell",
+	tempFilePrefix: "gcode-powershell",
 };
 
 export function createPowerShellToolDefinition(

@@ -47,7 +47,7 @@ describe("SessionInfo.modified", () => {
 	});
 
 	it("uses last user/assistant message timestamp instead of file mtime", async () => {
-		const filePath = join(tmpdir(), `garmin-code-mini-session-${Date.now()}-modified.jsonl`);
+		const filePath = join(tmpdir(), `gcode-session-${Date.now()}-modified.jsonl`);
 		createSessionFile(filePath);
 
 		const before = await stat(filePath);

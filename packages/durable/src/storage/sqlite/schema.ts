@@ -1,6 +1,6 @@
-import { validateSqliteSchemaPrefix } from "@garmin-code-mini/chord/sqlite";
+import { validateSqliteSchemaPrefix } from "@gcode/chord/sqlite";
 
-export { validateSqliteSchemaPrefix } from "@garmin-code-mini/chord/sqlite";
+export { validateSqliteSchemaPrefix } from "@gcode/chord/sqlite";
 
 /**
  * Immutable identifier history for migrations and runtime queries. Never change or remove an existing value; a

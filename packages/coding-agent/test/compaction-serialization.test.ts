@@ -1,4 +1,4 @@
-import type { Message } from "@garmin-code-mini/ai";
+import type { Message } from "@gcode/ai";
 import { describe, expect, it } from "vitest";
 import { serializeConversation } from "../src/core/compaction/utils.ts";
 

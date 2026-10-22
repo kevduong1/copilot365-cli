@@ -11,13 +11,13 @@
  * - Minimal: Shows only tool call, no output (this extension's collapsed mode)
  *
  * Usage:
- *   garmin-code-mini -e ./minimal-mode.ts
+ *   gcode -e ./minimal-mode.ts
  *
  * Then use ctrl+o to toggle between minimal (collapsed) and full (expanded) views.
  */
 
-import { Text } from "@garmin-code-mini/tui";
-import type { ExtensionAPI } from "garmin-code-mini";
+import { Text } from "@gcode/tui";
+import type { ExtensionAPI } from "gcode";
 import {
 	createBashToolDefinition,
 	createEditToolDefinition,
@@ -27,7 +27,7 @@ import {
 	createReadToolDefinition,
 	createWriteToolDefinition,
 	formatReadLineRange,
-} from "garmin-code-mini";
+} from "gcode";
 import { homedir } from "os";
 
 /**
@@ -53,13 +53,13 @@ function createBuiltInTools(cwd: string) {
 	};
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	const tools = createBuiltInTools(process.cwd());
 
 	// =========================================================================
 	// Read Tool
 	// =========================================================================
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...tools.read,
 
 		renderCall(args, theme, _context) {
@@ -95,7 +95,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	// =========================================================================
 	// Bash Tool
 	// =========================================================================
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...tools.bash,
 
 		renderCall(args, theme, _context) {
@@ -135,7 +135,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	// =========================================================================
 	// Write Tool
 	// =========================================================================
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...tools.write,
 
 		renderCall(args, theme, _context) {
@@ -168,7 +168,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	// =========================================================================
 	// Edit Tool
 	// =========================================================================
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...tools.edit,
 		renderShell: "default",
 
@@ -205,7 +205,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	// =========================================================================
 	// Find Tool
 	// =========================================================================
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...tools.find,
 
 		renderCall(args, theme, _context) {
@@ -254,7 +254,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	// =========================================================================
 	// Grep Tool
 	// =========================================================================
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...tools.grep,
 
 		renderCall(args, theme, _context) {
@@ -307,7 +307,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	// =========================================================================
 	// Ls Tool
 	// =========================================================================
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...tools.ls,
 
 		renderCall(args, theme, _context) {

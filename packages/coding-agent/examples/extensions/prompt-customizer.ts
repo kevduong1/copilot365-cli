@@ -5,11 +5,11 @@
  * without replacing or reparsing the complete rendered prompt.
  *
  * Usage:
- * 1. Copy this file to ~/.garmin-code-mini/agent/extensions/ or your project's .garmin-code-mini/extensions/
+ * 1. Copy this file to ~/.gcode/agent/extensions/ or your project's .gcode/extensions/
  * 2. Use the extension — it automatically adapts to your active tools and skills
  */
 
-import type { BuildSystemPromptOptions, ExtensionAPI } from "garmin-code-mini";
+import type { BuildSystemPromptOptions, ExtensionAPI } from "gcode";
 
 function buildToolGuidance(options: BuildSystemPromptOptions): string {
 	const hasTool = (name: string) => options.selectedTools?.includes(name) ?? false;
@@ -37,8 +37,8 @@ function buildToolGuidance(options: BuildSystemPromptOptions): string {
 	return rules.join("\n");
 }
 
-export default function promptCustomizer(garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("before_agent_start", (event) => {
+export default function promptCustomizer(gcode: ExtensionAPI) {
+	gcode.on("before_agent_start", (event) => {
 		const guidance = buildToolGuidance(event.systemPromptOptions);
 		if (guidance) {
 			event.systemPromptOptions.sections.tool_guidance = guidance;

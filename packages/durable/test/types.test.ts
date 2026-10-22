@@ -1,4 +1,4 @@
-import type { Context } from "@garmin-code-mini/chord";
+import type { Context } from "@gcode/chord";
 import { expect, expectTypeOf, it } from "vitest";
 import { idFromNumber, seqFromNumber } from "../src/ids.ts";
 import type {

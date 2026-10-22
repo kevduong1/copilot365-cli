@@ -1,4 +1,4 @@
-import { Container, getKeybindings, Spacer, Text } from "@garmin-code-mini/tui";
+import { Container, getKeybindings, Spacer, Text } from "@gcode/tui";
 import {
 	getProjectTrustOptions,
 	type ProjectTrustOption,

@@ -12,6 +12,6 @@ export default defineConfig({
 		silent: "passed-only",
 	},
 	resolve: {
-		alias: [{ find: /^@garmin-code-mini\/telemetry$/, replacement: telemetrySrcIndex }],
+		alias: [{ find: /^@gcode\/telemetry$/, replacement: telemetrySrcIndex }],
 	},
 });

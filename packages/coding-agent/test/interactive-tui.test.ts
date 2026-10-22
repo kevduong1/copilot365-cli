@@ -1,5 +1,5 @@
-import type { Component, Terminal, TUI, WheelScrollLines } from "@garmin-code-mini/tui";
-import { Container, getKeybindings, isViewportTUI, ScrollView, setKeybindings, Text } from "@garmin-code-mini/tui";
+import type { Component, Terminal, TUI, WheelScrollLines } from "@gcode/tui";
+import { Container, getKeybindings, isViewportTUI, ScrollView, setKeybindings, Text } from "@gcode/tui";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal.ts";
 import { KeybindingsManager } from "../src/core/keybindings.ts";

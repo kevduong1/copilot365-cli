@@ -71,13 +71,12 @@ function parseEvalCli(args: readonly string[], environment: NodeJS.ProcessEnv = 
 	if (cliSelectedModel) {
 		if (!provider || !model) throw new Error("CLI model selection requires both --provider and --model.");
 	} else {
-		provider = environment.GARMIN_CODE_MINI_PROVIDER?.trim() || undefined;
-		model = environment.GARMIN_CODE_MINI_MODEL?.trim() || undefined;
-		if (Boolean(provider) !== Boolean(model))
-			throw new Error("Set both GARMIN_CODE_MINI_PROVIDER and GARMIN_CODE_MINI_MODEL, or neither.");
+		provider = environment.GCODE_PROVIDER?.trim() || undefined;
+		model = environment.GCODE_MODEL?.trim() || undefined;
+		if (Boolean(provider) !== Boolean(model)) throw new Error("Set both GCODE_PROVIDER and GCODE_MODEL, or neither.");
 	}
 
-	const configuredRuns = (runsText ?? environment.GARMIN_CODE_MINI_EVAL_RUNS_PER_VARIANT)?.trim();
+	const configuredRuns = (runsText ?? environment.GCODE_EVAL_RUNS_PER_VARIANT)?.trim();
 	const runsPerVariant = configuredRuns ? Number(configuredRuns) : 1;
 	if (!Number.isSafeInteger(runsPerVariant) || runsPerVariant < 1) {
 		throw new Error("Runs per variant must be a positive integer.");
@@ -113,8 +112,7 @@ function compareDiscovery(left: readonly DiscoveredEvalCase[], right: readonly D
 }
 
 const cli = parseEvalCli(process.argv.slice(2));
-if (!cli.provider || !cli.model)
-	throw new Error("Set GARMIN_CODE_MINI_PROVIDER and GARMIN_CODE_MINI_MODEL, or pass --provider and --model.");
+if (!cli.provider || !cli.model) throw new Error("Set GCODE_PROVIDER and GCODE_MODEL, or pass --provider and --model.");
 const selectedModel = { provider: cli.provider, model: cli.model };
 const modelIdentity = `${selectedModel.provider}/${selectedModel.model}`;
 const files = (

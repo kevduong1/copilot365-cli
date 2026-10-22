@@ -18,7 +18,7 @@ afterEach(() => {
 });
 
 function createTempDir(): string {
-	const dir = mkdtempSync(join(tmpdir(), "garmin-code-mini-startup-session-name-"));
+	const dir = mkdtempSync(join(tmpdir(), "gcode-startup-session-name-"));
 	tempDirs.push(dir);
 	return dir;
 }
@@ -73,7 +73,7 @@ async function runCli(args: string[], dirs: CliDirs): Promise<CliResult> {
 		env: {
 			...process.env,
 			[ENV_AGENT_DIR]: dirs.agentDir,
-			GARMIN_CODE_MINI_OFFLINE: "1",
+			GCODE_OFFLINE: "1",
 		},
 		stdio: ["ignore", "ignore", "pipe"],
 	});

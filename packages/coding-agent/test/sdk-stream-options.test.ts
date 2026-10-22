@@ -8,7 +8,7 @@ import {
 	type Model,
 	normalizeContext,
 	type SimpleStreamOptions,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import type { ExtensionFactory } from "../src/core/extensions/types.ts";
@@ -24,7 +24,7 @@ describe("createAgentSession stream options", () => {
 	let agentDir: string;
 
 	beforeEach(() => {
-		tempDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-sdk-stream-options-"));
+		tempDir = mkdtempSync(join(tmpdir(), "gcode-sdk-stream-options-"));
 		cwd = join(tempDir, "project");
 		agentDir = join(tempDir, "agent");
 		mkdirSync(cwd, { recursive: true });
@@ -277,8 +277,8 @@ describe("createAgentSession stream options", () => {
 			"openai-completions",
 			{},
 			{},
-			(garminCodeMini) => {
-				garminCodeMini.on("provider_stream_event", (event) => {
+			(gcode) => {
+				gcode.on("provider_stream_event", (event) => {
 					extensionEvents.push(event);
 				});
 			},
@@ -302,8 +302,8 @@ describe("createAgentSession stream options", () => {
 			"openai-completions",
 			{},
 			{ headers: { "x-explicit": "explicit" } },
-			(garminCodeMini) => {
-				garminCodeMini.on("before_provider_headers", (event) => {
+			(gcode) => {
+				gcode.on("before_provider_headers", (event) => {
 					event.headers["x-hook"] = [
 						event.headers["x-provider"],
 						event.headers["x-model"],

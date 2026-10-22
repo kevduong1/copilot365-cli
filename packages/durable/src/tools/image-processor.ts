@@ -25,7 +25,7 @@ export type PreparedImage = {
 
 /**
  * Decodes, orients, resizes, and re-encodes images so the model can take them. `read` uses one when given; without
- * one, it passes supported images within the byte limit through as they are. `@garmin-code-mini/durable/images`
+ * one, it passes supported images within the byte limit through as they are. `@gcode/durable/images`
  * provides a Photon-based one.
  */
 export type ImageProcessor = {

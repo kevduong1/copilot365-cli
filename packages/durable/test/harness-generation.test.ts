@@ -1,12 +1,12 @@
 import {
 	type AssistantMessage,
 	fauxAssistantMessage,
-	GARMIN_CODE_MINI_ATTRIBUTION,
+	GCODE_ATTRIBUTION,
 	type Message,
 	type Models,
 	type SimpleStreamOptions,
 	type SystemMessage,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import {
 	AssistantEntry,
 	type CommitPublication,
@@ -25,7 +25,7 @@ import {
 	type TaskId,
 	UserEntry,
 	wrapSection,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { resolveSettings } from "../src/harness/agent.ts";
 import type { SessionImpl } from "../src/session/session.ts";
@@ -78,7 +78,7 @@ function livePublications(harness: Harness): LiveState[] {
 	const values: LiveState[] = [];
 	harness.subscribeCommits((publication: CommitPublication) => {
 		for (const change of publication.changes) {
-			if (change.type === "document" && change.record.kind === "garmin-code-mini.live" && change.value !== null) {
+			if (change.type === "document" && change.record.kind === "gcode.live" && change.value !== null) {
 				values.push(change.value as LiveState);
 			}
 		}
@@ -100,18 +100,14 @@ describe("generation", () => {
 		const answer = await root.commit((tx) => tx.entry(AssistantEntry, settled.answer), context);
 		expect(textOf(answer?.model?.[0])).toBe("Hello there");
 		const entries = await allEntries(root);
-		expect(entries.map((entry) => entry.kind)).toEqual([
-			"garmin-code-mini.user",
-			"garmin-code-mini.system",
-			"garmin-code-mini.assistant",
-		]);
+		expect(entries.map((entry) => entry.kind)).toEqual(["gcode.user", "gcode.system", "gcode.assistant"]);
 		expect(entries[0]!.id).toBe(settled.entry);
 		expect(entries[1]!.model).toEqual([
 			{ role: "system", content: "", sections: { preamble: "You are helpful." }, timestamp: expect.any(Number) },
 		]);
 		expect(await live(harness, root)).toEqual({});
 		const task = (await harness.commit((tx) => tx.scanTasks({ conversationId: root.id }, 10), context)).items[0];
-		expect(task?.kind).toBe("garmin-code-mini.generation");
+		expect(task?.kind).toBe("gcode.generation");
 		// Entries written by the generation are attributed to it; the admitted user entry is not task work.
 		expect(entries.map((entry) => entry.byTaskId)).toEqual([undefined, task!.id, task!.id]);
 		expect(task?.state).toEqual({
@@ -127,7 +123,7 @@ describe("generation", () => {
 		const storage = new ControlledStorage();
 		const { harness, root } = await openChat(storage, setup);
 		const record = await storage.findDocument(
-			{ kind: "garmin-code-mini.live", scope: { kind: "conversation", conversationId: root.id } },
+			{ kind: "gcode.live", scope: { kind: "conversation", conversationId: root.id } },
 			"current",
 			context,
 		);
@@ -175,7 +171,7 @@ describe("generation", () => {
 		await root.configure({ model: { provider: "faux", modelId: "missing" } }, context);
 		const unknown = await (await root.submit({ type: "input", content: "hi" }, context)).wait(context);
 		expect(unknown).toMatchObject({ status: "unanswered", reason: "no_model", entry: expect.any(Number) });
-		expect((await allEntries(root)).map((entry) => entry.kind)).toEqual(["garmin-code-mini.user"]);
+		expect((await allEntries(root)).map((entry) => entry.kind)).toEqual(["gcode.user"]);
 		const tasks = await harness.commit((tx) => tx.scanTasks({ conversationId: root.id }, 10), context);
 		expect(tasks.items[0]!.state).toEqual({
 			status: "terminal",
@@ -201,10 +197,10 @@ describe("generation", () => {
 		expect(settled.status).toBe("done");
 		const entries = await allEntries(root);
 		expect(entries.map((entry) => entry.kind)).toEqual([
-			"garmin-code-mini.user",
-			"garmin-code-mini.system",
-			"garmin-code-mini.assistant",
-			"garmin-code-mini.assistant",
+			"gcode.user",
+			"gcode.system",
+			"gcode.assistant",
+			"gcode.assistant",
 		]);
 		expect((entries[2]!.model![0] as AssistantMessage).stopReason).toBe("error");
 		expect(values.some((value) => value.generation?.retry?.error === "503 Service Unavailable")).toBe(true);
@@ -222,9 +218,9 @@ describe("generation", () => {
 		const settled = await (await root.submit({ type: "input", content: "hi" }, context)).wait(context);
 		expect(settled).toMatchObject({ status: "unanswered", reason: "model_error", detail: "503 Service Unavailable" });
 		expect((await allEntries(root)).map((entry) => entry.kind)).toEqual([
-			"garmin-code-mini.user",
-			"garmin-code-mini.assistant",
-			"garmin-code-mini.assistant",
+			"gcode.user",
+			"gcode.assistant",
+			"gcode.assistant",
 		]);
 		expect(setup.faux.getPendingResponseCount()).toBe(1);
 		await harness.close(context);
@@ -261,10 +257,7 @@ describe("generation", () => {
 		expect((await (await root.submit({ type: "input", content: "hi" }, context)).wait(context)).status).toBe("done");
 		expect(setup.reports).toContainEqual(new Error("wrapper failed"));
 		// The failed section is absent, so nothing was rendered.
-		expect((await allEntries(root)).map((entry) => entry.kind)).toEqual([
-			"garmin-code-mini.user",
-			"garmin-code-mini.assistant",
-		]);
+		expect((await allEntries(root)).map((entry) => entry.kind)).toEqual(["gcode.user", "gcode.assistant"]);
 		await harness.close(context);
 	});
 
@@ -317,7 +310,7 @@ describe("generation", () => {
 		expect(await harness.abortTask(taskId, context)).toBe("marked");
 		expect(await submission.wait(context)).toMatchObject({ status: "unanswered", reason: "aborted" });
 		const entries = await allEntries(root);
-		expect(entries.map((entry) => entry.kind)).toEqual(["garmin-code-mini.user", "garmin-code-mini.assistant"]);
+		expect(entries.map((entry) => entry.kind)).toEqual(["gcode.user", "gcode.assistant"]);
 		const converted = entries[1]!.model![0] as AssistantMessage;
 		expect(converted.stopReason).toBe("aborted");
 		expect(textOf(converted)!.startsWith(textOf(partial as Message)!)).toBe(true);
@@ -384,7 +377,7 @@ describe("generation", () => {
 		await root.configure({ thinkingLevel: "high" }, context);
 		harness.resume();
 		await (await root.submit({ type: "input", content: "one" }, context)).wait(context);
-		// Both are read at the next preparation: the thinking level from garmin-code-mini.agent, the stream options live from settings.
+		// Both are read at the next preparation: the thinking level from gcode.agent, the stream options live from settings.
 		await root.configure({ thinkingLevel: null }, context);
 		setup.settings.stream = { timeoutMs: 99 };
 		await (await root.submit({ type: "input", content: "two" }, context)).wait(context);
@@ -402,7 +395,7 @@ describe("generation", () => {
 		await harness.close(context);
 	});
 
-	it("attributes model requests to garmin-code-mini by default and merges the Harness identity over it", async () => {
+	it("attributes model requests to gcode by default and merges the Harness identity over it", async () => {
 		const seen: (SimpleStreamOptions["identity"] | undefined)[] = [];
 		const capture = (_context: unknown, options?: SimpleStreamOptions) => {
 			seen.push(options?.identity);
@@ -418,7 +411,7 @@ describe("generation", () => {
 			await (await root.submit({ type: "input", content: "hi" }, context)).wait(context);
 			await harness.close(context);
 		}
-		expect(seen).toEqual([{ attribution: GARMIN_CODE_MINI_ATTRIBUTION }, { attribution: acme, userAgent: "short" }]);
+		expect(seen).toEqual([{ attribution: GCODE_ATTRIBUTION }, { attribution: acme, userAgent: "short" }]);
 	});
 
 	// Regression coverage for #10424.
@@ -613,7 +606,7 @@ describe("generation", () => {
 		await (await root.submit({ type: "input", content: "one" }, context)).wait(context);
 		await (await sub.submit({ type: "input", content: "two" }, context)).wait(context);
 		const sections = async (conversation: Conversation) =>
-			(await allEntries(conversation)).find((entry) => entry.kind === "garmin-code-mini.system")?.model?.[0];
+			(await allEntries(conversation)).find((entry) => entry.kind === "gcode.system")?.model?.[0];
 		expect(await sections(root)).toMatchObject({
 			sections: { cwd: "<cwd>\n/repo\n</cwd>", agents: "<agents>\nRead AGENTS.md\n</agents>" },
 		});
@@ -648,7 +641,7 @@ describe("generation", () => {
 		expect(values.some((value) => value.generation?.message !== undefined)).toBe(false);
 		await harness.abortTask((await live(harness, root))!.run!.taskId, context);
 		expect(await submission.wait(context)).toMatchObject({ status: "unanswered", reason: "aborted" });
-		expect((await allEntries(root)).map((entry) => entry.kind)).toEqual(["garmin-code-mini.user"]);
+		expect((await allEntries(root)).map((entry) => entry.kind)).toEqual(["gcode.user"]);
 		await harness.close(context);
 	});
 
@@ -666,7 +659,7 @@ describe("generation", () => {
 		});
 		expect(values.some((value) => textOf(value.generation?.message as Message) === "partial")).toBe(true);
 		const entries = await allEntries(root);
-		expect(entries.map((entry) => entry.kind)).toEqual(["garmin-code-mini.user", "garmin-code-mini.assistant"]);
+		expect(entries.map((entry) => entry.kind)).toEqual(["gcode.user", "gcode.assistant"]);
 		expect(entries[1]!.model![0]).toMatchObject({ role: "assistant", stopReason: "aborted" });
 		expect(textOf(entries[1]!.model![0])).toBe("partial");
 		expect(await live(harness, root)).toEqual({});
@@ -721,8 +714,8 @@ describe("generation", () => {
 			extension: () => undefined,
 			tools: () => [],
 			sections: () => [],
-			tasks: () => empty.tasks().filter((task) => task.definition.name !== "garmin-code-mini.generation"),
-			task: (name) => (name === "garmin-code-mini.generation" ? undefined : empty.task(name)),
+			tasks: () => empty.tasks().filter((task) => task.definition.name !== "gcode.generation"),
+			task: (name) => (name === "gcode.generation" ? undefined : empty.task(name)),
 		};
 		await expect(
 			Harness.open(
@@ -730,6 +723,6 @@ describe("generation", () => {
 				{ models: chatSetup().models, registry: { snapshot: () => snapshot, subscribe: () => () => {} } },
 				context,
 			),
-		).rejects.toThrow("Registry lacks built-in tasks garmin-code-mini.generation");
+		).rejects.toThrow("Registry lacks built-in tasks gcode.generation");
 	});
 });

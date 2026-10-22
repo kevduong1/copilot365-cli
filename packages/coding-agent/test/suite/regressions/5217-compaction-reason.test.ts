@@ -1,4 +1,4 @@
-import { fauxAssistantMessage } from "@garmin-code-mini/ai";
+import { fauxAssistantMessage } from "@gcode/ai";
 import { afterEach, describe, expect, it } from "vitest";
 import type { ExtensionFactory } from "../../../src/index.ts";
 import { createHarness, type Harness } from "../harness.ts";
@@ -14,8 +14,8 @@ interface RecordedCompactionEvent {
 }
 
 function recordingExtension(recorded: RecordedCompactionEvent[]): ExtensionFactory {
-	return (garminCodeMini) => {
-		garminCodeMini.on("session_before_compact", async (event) => {
+	return (gcode) => {
+		gcode.on("session_before_compact", async (event) => {
 			recorded.push({ type: event.type, reason: event.reason, willRetry: event.willRetry });
 			return {
 				compaction: {
@@ -26,7 +26,7 @@ function recordingExtension(recorded: RecordedCompactionEvent[]): ExtensionFacto
 				},
 			};
 		});
-		garminCodeMini.on("session_compact", async (event) => {
+		gcode.on("session_compact", async (event) => {
 			recorded.push({ type: event.type, reason: event.reason, willRetry: event.willRetry });
 		});
 	};

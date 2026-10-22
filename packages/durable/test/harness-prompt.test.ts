@@ -1,5 +1,5 @@
-import { type SystemMessage, type Tool, Type } from "@garmin-code-mini/ai";
-import { getCurrentTools, toToolDeclaration } from "@garmin-code-mini/ai/utils/transcript";
+import { type SystemMessage, type Tool, Type } from "@gcode/ai";
+import { getCurrentTools, toToolDeclaration } from "@gcode/ai/utils/transcript";
 import {
 	type Conversation,
 	createRegistry,
@@ -11,7 +11,7 @@ import {
 	SystemEntry,
 	type ToolRegistration,
 	wrapSection,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { resolveAgent, resolveSettings } from "../src/harness/agent.ts";
 import { planSystemEntries, renderSections, replaySections } from "../src/harness/prompt.ts";
@@ -46,7 +46,7 @@ async function root(): Promise<Conversation> {
 
 async function lastSystemId(conversation: Conversation): Promise<EntryId> {
 	const page = await conversation.entries({}, 100, undefined, context);
-	return page.items.find((entry) => entry.kind === "garmin-code-mini.system")!.id;
+	return page.items.find((entry) => entry.kind === "gcode.system")!.id;
 }
 
 async function marker(conversation: Conversation, head: EntryId | "self"): Promise<EntryId> {
@@ -170,7 +170,7 @@ describe("system prompt preparation", () => {
 		const conversation = await root();
 		await apply(conversation, { a: "1", b: "2" });
 		await conversation.commit(
-			(tx) => tx.appendEntry(conversation.id, { kind: "garmin-code-mini.user", model: [user("hi")] }),
+			(tx) => tx.appendEntry(conversation.id, { kind: "gcode.user", model: [user("hi")] }),
 			context,
 		);
 		await apply(conversation, { a: "1", b: "20" });

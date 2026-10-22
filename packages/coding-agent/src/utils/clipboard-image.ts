@@ -1,4 +1,4 @@
-import { getNativeClipboard } from "@garmin-code-mini/tui";
+import { getNativeClipboard } from "@gcode/tui";
 import { randomUUID } from "crypto";
 import { readFileSync, unlinkSync } from "fs";
 import { tmpdir } from "os";
@@ -116,7 +116,7 @@ async function readClipboardImageViaWlPaste(): Promise<ClipboardImage | null | u
  * directly, so we use it as a fallback.
  */
 async function readClipboardImageViaPowerShell(): Promise<ClipboardImage | null> {
-	const tmpFile = join(tmpdir(), `garmin-code-mini-wsl-clip-${randomUUID()}.png`);
+	const tmpFile = join(tmpdir(), `gcode-wsl-clip-${randomUUID()}.png`);
 
 	try {
 		const winPathResult = await runClipboardCommand("wslpath", ["-w", tmpFile], {

@@ -1,11 +1,5 @@
-import type { Op } from "@garmin-code-mini/chord/delta";
-import {
-	defineDoc,
-	defineDocFamily,
-	type EntryId,
-	type JsonObject,
-	type StorageWrite,
-} from "@garmin-code-mini/durable";
+import type { Op } from "@gcode/chord/delta";
+import { defineDoc, defineDocFamily, type EntryId, type JsonObject, type StorageWrite } from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { context, createConversation, documentChanges, flush, openTestSession } from "./session-support.ts";
 

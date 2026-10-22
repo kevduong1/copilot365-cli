@@ -1,6 +1,6 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import { fauxAssistantMessage, fauxToolCall } from "@garmin-code-mini/ai";
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { AgentTool } from "@gcode/agent-core";
+import { fauxAssistantMessage, fauxToolCall } from "@gcode/ai";
+import type { ExtensionAPI } from "gcode";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, getAssistantTexts, getUserTexts, type Harness } from "../harness.ts";
@@ -37,9 +37,9 @@ describe("issue #2023 queued slash-command follow-up", () => {
 		const harness = await createHarness({
 			tools: [waitTool],
 			extensionFactories: [
-				(garminCodeMini) => {
-					extensionApi = garminCodeMini;
-					garminCodeMini.registerCommand("testcmd", {
+				(gcode) => {
+					extensionApi = gcode;
+					gcode.registerCommand("testcmd", {
 						description: "Test command",
 						handler: async (args) => {
 							commandRuns.push(args);

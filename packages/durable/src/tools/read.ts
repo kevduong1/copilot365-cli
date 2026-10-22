@@ -1,5 +1,5 @@
-import type { Context } from "@garmin-code-mini/chord";
-import { characterEnd } from "@garmin-code-mini/chord/output";
+import type { Context } from "@gcode/chord";
+import { characterEnd } from "@gcode/chord/output";
 import { type Static, Type } from "typebox";
 import {
 	type BinaryReader,
@@ -133,7 +133,7 @@ export function createReadTool(options: ReadToolOptions = {}): ToolRegistration<
 /**
  * One image block, prepared by `processor` or, without one, as it is when its format is inline and it fits the limits
  * (its size is checked before reading it, its dimensions from its header); otherwise an error result saying why. What happened to the image is an `info` diagnostic, so programs get the
- * bare `ImageContent`. A model without image input sees garmin-code-mini-ai's placeholder instead; a diagnostic says so.
+ * bare `ImageContent`. A model without image input sees gcode-ai's placeholder instead; a diagnostic says so.
  */
 async function readImage(
 	reader: BinaryReader,

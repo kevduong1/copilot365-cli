@@ -27,7 +27,7 @@ vi.mock("../../../src/core/extensions/virtual-modules.ts", () => {
 	return {
 		VIRTUAL_MODULES: {
 			typebox: {},
-			"garmin-code-mini": {},
+			gcode: {},
 		},
 	};
 });
@@ -66,6 +66,6 @@ describe("Node SEA extension loading", () => {
 		expect(options.tryNative).toBe(false);
 		expect(options.alias).toBeUndefined();
 		expect(options.virtualModules?.typebox).toBeDefined();
-		expect(options.virtualModules?.["garmin-code-mini"]).toBeDefined();
+		expect(options.virtualModules?.gcode).toBeDefined();
 	});
 });

@@ -1,7 +1,7 @@
 {
-	"name": "@garmin-code-mini/mcp",
+	"name": "@gcode/mcp",
 	"version": "1.3.0",
-	"description": "Standalone Model Context Protocol client for garmin-code-mini and other applications",
+	"description": "Standalone Model Context Protocol client for gcode and other applications",
 	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",

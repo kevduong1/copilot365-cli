@@ -1,7 +1,7 @@
-import type { AssistantMessage, Message, ModelThinkingLevel, SimpleStreamOptions } from "@garmin-code-mini/ai";
-import { calculateContextTokens, estimateMessageTokens } from "@garmin-code-mini/ai/utils/estimate";
-import { isRetryableAssistantError, retryDelayMs } from "@garmin-code-mini/ai/utils/retry";
-import type { Context, Draft } from "@garmin-code-mini/chord";
+import type { AssistantMessage, Message, ModelThinkingLevel, SimpleStreamOptions } from "@gcode/ai";
+import { calculateContextTokens, estimateMessageTokens } from "@gcode/ai/utils/estimate";
+import { isRetryableAssistantError, retryDelayMs } from "@gcode/ai/utils/retry";
+import type { Context, Draft } from "@gcode/chord";
 import { CompactionEntry } from "../entries.ts";
 import { defineTask } from "../tasks.ts";
 import type {
@@ -110,7 +110,7 @@ Keep each section concise. Preserve exact file paths, function names, and error 
  * conversation-owned one places its summary through a write submission.
  */
 export const CompactionTask = defineTask<CompactionInput, CompactionCheckpoint, CompactionResult, CompactionHooks>({
-	name: "garmin-code-mini.compaction",
+	name: "gcode.compaction",
 	version: 1,
 	initial: () => ({ phase: "select" }),
 	phases: {

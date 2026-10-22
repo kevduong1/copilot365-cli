@@ -1,5 +1,5 @@
-import type { AssistantMessage } from "@garmin-code-mini/ai";
-import { Container } from "@garmin-code-mini/tui";
+import type { AssistantMessage } from "@gcode/ai";
+import { Container } from "@gcode/tui";
 import { describe, expect, test } from "vitest";
 import { InteractiveMode } from "../src/modes/interactive/interactive-mode.ts";
 import { initTheme } from "../src/modes/interactive/theme/theme.ts";

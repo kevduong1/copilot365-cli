@@ -1,4 +1,4 @@
-# @garmin-code-mini/chord
+# @gcode/chord
 
 Chord builds applications out of **objects** that live in several processes (a server, workers, browser tabs) and can be **hot reloaded** while they run.
 
@@ -14,21 +14,21 @@ Contracts are runtime values described with [TypeBox](https://github.com/sinclai
 
 | Import | Contents | Runs in |
 |--------|----------|---------|
-| `@garmin-code-mini/chord` | Contracts (`local`, `remote`, `method`, `opaque`), declarations (through the factory's `self`: `state`, `derive`, `resource`, `on`, `task`), hosts (`createHost`, `defineFacet`, `defineRegistry`), links (`memoryLinkPair`, `ipcLink`, `webSocketLink`, `acceptWebSockets`), errors (`ChordError`, `isChordError`, `forbidden`, `invalid`). Also the shared base: `Context`, `JsonValue`, `JsonRepresentation`, `Draft`, `copyJson`, `isJsonValue`, and `replicatedState` with its types. | Node and browsers |
-| `@garmin-code-mini/chord/node` | Child host processes: `createHostManager`, `forkDriver`, `childControl`, `processLock`; the facet module loader `nodeLoader`. | Node |
-| `@garmin-code-mini/chord/context` | Explicit cancellation, telemetry, and invocation values: `BACKGROUND_CONTEXT`, `withCancel`, `withAbortSignal`, `withoutAbortSignal`, `withTelemetry`, `traceIn`, `withContextValue`, `awaitWithContext`. | Node and browsers |
-| `@garmin-code-mini/chord/delta` | The transactional JSON tracker, structural diff, immutable apply, and the wire encoder/decoder for operation batches. | Node and browsers |
-| `@garmin-code-mini/chord/output` | Bounded output streams and paced progress: `OutputBuffer` (head or tail window of a stream, `OutputLimits`, `OutputSkip`), `boundOutput`, `sanitizeOutput`, `utf8ByteLength`, and `Progress` (adaptive commits of a changing value). | Node and browsers |
-| `@garmin-code-mini/chord/telemetry-sqlite` | `createSqliteTelemetry(db, { retentionMs?, maxQueuedSpans? })`: buffered recording and backend-independent `TelemetryStore` queries. | Any SQLite adapter |
-| `@garmin-code-mini/chord/sqlite` | Portable `SqliteDatabase`, `SqliteExecutor`, and `SqliteValue`, atomic `applySqliteMigrations(database, migrations, { table })`, and `validateSqliteSchemaPrefix`. The metadata table must be a valid, non-reserved SQLite identifier; migration versions start at 1 and are contiguous. | Any SQLite adapter |
-| `@garmin-code-mini/chord/sqlite/node` | `NodeSqliteDatabase`, `openNodeSqliteDatabase`, and `NodeSqliteDatabaseOptions`. | Node |
-| `@garmin-code-mini/chord/sqlite/cloudflare` | `DurableObjectSqliteDatabase` and the structural `DurableObjectSqliteStorage` binding type. | Cloudflare Durable Objects |
+| `@gcode/chord` | Contracts (`local`, `remote`, `method`, `opaque`), declarations (through the factory's `self`: `state`, `derive`, `resource`, `on`, `task`), hosts (`createHost`, `defineFacet`, `defineRegistry`), links (`memoryLinkPair`, `ipcLink`, `webSocketLink`, `acceptWebSockets`), errors (`ChordError`, `isChordError`, `forbidden`, `invalid`). Also the shared base: `Context`, `JsonValue`, `JsonRepresentation`, `Draft`, `copyJson`, `isJsonValue`, and `replicatedState` with its types. | Node and browsers |
+| `@gcode/chord/node` | Child host processes: `createHostManager`, `forkDriver`, `childControl`, `processLock`; the facet module loader `nodeLoader`. | Node |
+| `@gcode/chord/context` | Explicit cancellation, telemetry, and invocation values: `BACKGROUND_CONTEXT`, `withCancel`, `withAbortSignal`, `withoutAbortSignal`, `withTelemetry`, `traceIn`, `withContextValue`, `awaitWithContext`. | Node and browsers |
+| `@gcode/chord/delta` | The transactional JSON tracker, structural diff, immutable apply, and the wire encoder/decoder for operation batches. | Node and browsers |
+| `@gcode/chord/output` | Bounded output streams and paced progress: `OutputBuffer` (head or tail window of a stream, `OutputLimits`, `OutputSkip`), `boundOutput`, `sanitizeOutput`, `utf8ByteLength`, and `Progress` (adaptive commits of a changing value). | Node and browsers |
+| `@gcode/chord/telemetry-sqlite` | `createSqliteTelemetry(db, { retentionMs?, maxQueuedSpans? })`: buffered recording and backend-independent `TelemetryStore` queries. | Any SQLite adapter |
+| `@gcode/chord/sqlite` | Portable `SqliteDatabase`, `SqliteExecutor`, and `SqliteValue`, atomic `applySqliteMigrations(database, migrations, { table })`, and `validateSqliteSchemaPrefix`. The metadata table must be a valid, non-reserved SQLite identifier; migration versions start at 1 and are contiguous. | Any SQLite adapter |
+| `@gcode/chord/sqlite/node` | `NodeSqliteDatabase`, `openNodeSqliteDatabase`, and `NodeSqliteDatabaseOptions`. | Node |
+| `@gcode/chord/sqlite/cloudflare` | `DurableObjectSqliteDatabase` and the structural `DurableObjectSqliteStorage` binding type. | Cloudflare Durable Objects |
 
 ## Quick start
 
 ```ts
 import { Type } from "typebox";
-import { createHost, hostNamed, method, remote } from "@garmin-code-mini/chord";
+import { createHost, hostNamed, method, remote } from "@gcode/chord";
 
 // contract.ts: shared by provider and consumers
 export const Counter = remote("demo.counter", {
@@ -68,15 +68,15 @@ await host.root(async (ctx) => {
 - [Tutorial](docs/tutorial.md): a shared todo list, built up section by section. Every example runs as `test/tutorial.test.ts`.
 - [Usage guide](docs/guide.md): API reference for contracts, objects, state, roots, lifetime, plugins, hot reload, hosts, and links.
 - [Specification](docs/spec.md): compatibility, lifetime, and reload semantics, plus known limitations and implementation decisions.
-- [Delta guide](src/delta/README.md): ownership, lifecycle, operation, and replica contracts of `@garmin-code-mini/chord/delta`.
+- [Delta guide](src/delta/README.md): ownership, lifecycle, operation, and replica contracts of `@gcode/chord/delta`.
 
 ## Explicit Context telemetry
 
 `Context` always carries a `telemetry: TelemetrySpan`, alongside `abortSignal`. `BACKGROUND_CONTEXT` and `TODO_CONTEXT` use the shared no-op span `NOOP_TELEMETRY_CONTEXT`. Adapters (`TelemetryContext`) belong to hosts and start root spans; adapters are never placed in a `Context`.
 
 ```ts
-import { BACKGROUND_CONTEXT, traceIn, withTelemetry } from '@garmin-code-mini/chord/context';
-import { InMemoryTelemetryContext } from '@garmin-code-mini/telemetry';
+import { BACKGROUND_CONTEXT, traceIn, withTelemetry } from '@gcode/chord/context';
+import { InMemoryTelemetryContext } from '@gcode/telemetry';
 
 const telemetry = new InMemoryTelemetryContext();
 await telemetry.startSpan({ name: 'app.request' }, async (span) => {
@@ -95,9 +95,9 @@ These helpers operate on the standalone `Context` API. They do not yet instrumen
 ## SQLite telemetry
 
 ```ts
-import { createSqliteTelemetry } from '@garmin-code-mini/chord/telemetry-sqlite';
-import { openNodeSqliteDatabase } from '@garmin-code-mini/chord/sqlite/node';
-import { renderTrace } from '@garmin-code-mini/telemetry/render';
+import { createSqliteTelemetry } from '@gcode/chord/telemetry-sqlite';
+import { openNodeSqliteDatabase } from '@gcode/chord/sqlite/node';
+import { renderTrace } from '@gcode/telemetry/render';
 
 const db = await openNodeSqliteDatabase('telemetry.db');
 const telemetry = await createSqliteTelemetry(db);
@@ -122,10 +122,10 @@ The adapter implements `TelemetryStore`: `findTraces()`, `getTrace()`, and `find
 
 ## Tracking JSON deltas
 
-Import the standalone transactional tracker from `@garmin-code-mini/chord/delta`:
+Import the standalone transactional tracker from `@gcode/chord/delta`:
 
 ```ts
-import { applyImmutable, track } from "@garmin-code-mini/chord/delta";
+import { applyImmutable, track } from "@gcode/chord/delta";
 
 const tracker = track({ output: "", count: 0 });
 const change = tracker.beginChange();
@@ -156,7 +156,7 @@ standalone observable value, independent of hosts; Durable uses it for document,
 view, and task-graph states:
 
 ```ts
-import { replicatedState } from "@garmin-code-mini/chord";
+import { replicatedState } from "@gcode/chord";
 
 const initial = { output: "", count: 0 };
 const status = replicatedState(initial); // transfers ownership of initial

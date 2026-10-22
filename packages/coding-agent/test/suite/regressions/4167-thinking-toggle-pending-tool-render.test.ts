@@ -1,6 +1,6 @@
-import type { AgentMessage } from "@garmin-code-mini/agent-core";
-import type { AssistantMessage, ToolResultMessage, Usage } from "@garmin-code-mini/ai";
-import { Container, Text, type TUI } from "@garmin-code-mini/tui";
+import type { AgentMessage } from "@gcode/agent-core";
+import type { AssistantMessage, ToolResultMessage, Usage } from "@gcode/ai";
+import { Container, Text, type TUI } from "@gcode/tui";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import type { AgentSessionEvent } from "../../../src/core/agent-session.ts";
 import type { SessionEntry } from "../../../src/core/session-manager.ts";

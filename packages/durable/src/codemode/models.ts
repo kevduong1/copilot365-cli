@@ -8,22 +8,14 @@
  * code mode tool turns a script's call of the global into a call of that tool.
  */
 
-import type {
-	AnyModel,
-	ClassifierContext,
-	ImagesContext,
-	Models,
-	ModelType,
-	ModelTypeMap,
-	Usage,
-} from "@garmin-code-mini/ai";
-import type { Context, JsonValue } from "@garmin-code-mini/chord";
+import type { AnyModel, ClassifierContext, ImagesContext, Models, ModelType, ModelTypeMap, Usage } from "@gcode/ai";
+import type { Context, JsonValue } from "@gcode/chord";
 import { Type } from "typebox";
 import { defineTool } from "../harness/define.ts";
 import type { ToolRegistration } from "../harness/types.ts";
 
 /** Reserved names of code mode's internal tools; they are never listed to scripts or the model. */
-export const CODEMODE_INTERNAL_PREFIX = "garmin-code-mini.codemode.";
+export const CODEMODE_INTERNAL_PREFIX = "gcode.codemode.";
 export const CLASSIFY_TOOL = `${CODEMODE_INTERNAL_PREFIX}models.classify`;
 export const GENERATE_IMAGES_TOOL = `${CODEMODE_INTERNAL_PREFIX}models.generateImages`;
 

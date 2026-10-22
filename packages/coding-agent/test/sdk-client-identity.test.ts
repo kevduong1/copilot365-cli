@@ -9,7 +9,7 @@ import {
 	type Model,
 	normalizeContext,
 	type SimpleStreamOptions,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import { createAgentSession } from "../src/core/sdk.ts";
@@ -24,23 +24,20 @@ describe("createAgentSession client identity", () => {
 	let originalTelemetryEnv: string | undefined;
 
 	beforeEach(() => {
-		tempDir = join(
-			tmpdir(),
-			`garmin-code-mini-sdk-identity-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-		);
+		tempDir = join(tmpdir(), `gcode-sdk-identity-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		cwd = join(tempDir, "project");
 		agentDir = join(tempDir, "agent");
 		mkdirSync(cwd, { recursive: true });
 		mkdirSync(agentDir, { recursive: true });
-		originalTelemetryEnv = process.env.GARMIN_CODE_MINI_TELEMETRY;
-		delete process.env.GARMIN_CODE_MINI_TELEMETRY;
+		originalTelemetryEnv = process.env.GCODE_TELEMETRY;
+		delete process.env.GCODE_TELEMETRY;
 	});
 
 	afterEach(() => {
 		if (originalTelemetryEnv === undefined) {
-			delete process.env.GARMIN_CODE_MINI_TELEMETRY;
+			delete process.env.GCODE_TELEMETRY;
 		} else {
-			process.env.GARMIN_CODE_MINI_TELEMETRY = originalTelemetryEnv;
+			process.env.GCODE_TELEMETRY = originalTelemetryEnv;
 		}
 		if (tempDir && existsSync(tempDir)) {
 			rmSync(tempDir, { recursive: true, force: true });
@@ -145,7 +142,7 @@ describe("createAgentSession client identity", () => {
 		const options = await captureOptions(model);
 
 		expect(options?.identity).toEqual({
-			userAgent: { custom: "garmin-code-mini" },
+			userAgent: { custom: "gcode" },
 			attribution: null,
 		});
 		expect(getAttributionHeaders(model, options?.identity)).toEqual({});
@@ -155,12 +152,12 @@ describe("createAgentSession client identity", () => {
 		const model = createModel("local-identity", "http://localhost:8080/v1");
 		const options = await captureOptions(model, { telemetryEnabled: false });
 
-		expect(options?.identity).toEqual({ userAgent: { custom: "garmin-code-mini" }, attribution: null });
+		expect(options?.identity).toEqual({ userAgent: { custom: "gcode" }, attribution: null });
 		expect(getAttributionHeaders(model, options?.identity)).toEqual({});
 	});
 
-	it("turns attribution off with GARMIN_CODE_MINI_TELEMETRY=0", async () => {
-		process.env.GARMIN_CODE_MINI_TELEMETRY = "0";
+	it("turns attribution off with GCODE_TELEMETRY=0", async () => {
+		process.env.GCODE_TELEMETRY = "0";
 		const options = await captureOptions(createModel("local-identity", "http://localhost:8080/v1"));
 
 		expect(options?.identity?.attribution).toBeNull();

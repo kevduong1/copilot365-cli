@@ -4,8 +4,8 @@
  * Run with: node --import ./src/experimental/source-resolver.ts test/streaming-render-debug.ts
  */
 
-import type { AssistantMessage } from "@garmin-code-mini/ai";
-import { ProcessTerminal, type TUI, TuiMainScreen } from "@garmin-code-mini/tui";
+import type { AssistantMessage } from "@gcode/ai";
+import { ProcessTerminal, type TUI, TuiMainScreen } from "@gcode/tui";
 import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";

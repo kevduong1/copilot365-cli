@@ -1,6 +1,6 @@
-import { createModels, Type } from "@garmin-code-mini/ai";
-import type { Context } from "@garmin-code-mini/chord";
-import { withAbortSignal, withCancel } from "@garmin-code-mini/chord/context";
+import { createModels, Type } from "@gcode/ai";
+import type { Context } from "@gcode/chord";
+import { withAbortSignal, withCancel } from "@gcode/chord/context";
 import {
 	type Conversation,
 	createRegistry,
@@ -15,7 +15,7 @@ import {
 	type RegistrySnapshot,
 	type TaskId,
 	type TaskRuntime,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { addHooks, addTask, addTool, user } from "./harness-support.ts";
 import { ControlledStorage, context, flush } from "./session-support.ts";

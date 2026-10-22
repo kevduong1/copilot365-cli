@@ -4,7 +4,7 @@
  * Shows how to select a specific model and thinking level.
  */
 
-import { createAgentSession, ModelRuntime } from "garmin-code-mini";
+import { createAgentSession, ModelRuntime } from "gcode";
 
 const modelRuntime = await ModelRuntime.create();
 

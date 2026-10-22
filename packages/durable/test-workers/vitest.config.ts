@@ -13,10 +13,10 @@ export default mergeConfig(baseConfig, defineConfig({
 	resolve: {
 		conditions: ["source"],
 		alias: [
-			{ find: /^@garmin-code-mini\/durable$/, replacement: source("../src/index.ts") },
-			{ find: /^@garmin-code-mini\/durable\/testing$/, replacement: source("../src/testing/index.ts") },
+			{ find: /^@gcode\/durable$/, replacement: source("../src/index.ts") },
+			{ find: /^@gcode\/durable\/testing$/, replacement: source("../src/testing/index.ts") },
 			{
-				find: /^@garmin-code-mini\/durable\/storage\/sqlite\/cloudflare$/,
+				find: /^@gcode\/durable\/storage\/sqlite\/cloudflare$/,
 				replacement: source("../src/storage/sqlite/cloudflare.ts"),
 			},
 		],

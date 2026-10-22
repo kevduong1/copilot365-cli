@@ -22,10 +22,10 @@
  */
 
 import { join } from "node:path";
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import type { CodemodeJsonSchema, CodemodeTool } from "@garmin-code-mini/codemode";
-import { renderToolOutputType, renderToolSample, toCodemodeIdentifier } from "@garmin-code-mini/codemode/declarations";
-import { CODEMODE_SOURCE_GRAMMAR } from "@garmin-code-mini/codemode/source";
+import type { AgentTool } from "@gcode/agent-core";
+import type { CodemodeJsonSchema, CodemodeTool } from "@gcode/codemode";
+import { renderToolOutputType, renderToolSample, toCodemodeIdentifier } from "@gcode/codemode/declarations";
+import { CODEMODE_SOURCE_GRAMMAR } from "@gcode/codemode/source";
 import { type Static, Type } from "typebox";
 import { getDocsPath } from "../../config.ts";
 import type { ToolDefinition, ToolLoadout, ToolLoadoutChanges, ToolNamespace } from "../../core/extensions/types.ts";

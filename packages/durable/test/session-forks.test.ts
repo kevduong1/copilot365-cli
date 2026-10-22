@@ -6,7 +6,7 @@ import {
 	type EntryId,
 	type StorageWrite,
 	type TaskId,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import {
 	context,

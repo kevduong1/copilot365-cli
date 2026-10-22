@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Build garmin-code-mini binaries for all platforms locally.
+# Build gcode binaries for all platforms locally.
 # Mirrors .github/workflows/build-binaries.yml
 #
 # Usage:
@@ -14,12 +14,12 @@
 #
 # Output:
 #   packages/coding-agent/binaries/
-#     garmin-code-mini-darwin-arm64.tar.gz
-#     garmin-code-mini-darwin-x64.tar.gz
-#     garmin-code-mini-linux-x64.tar.gz
-#     garmin-code-mini-linux-arm64.tar.gz
-#     garmin-code-mini-windows-x64.zip
-#     garmin-code-mini-windows-arm64.zip
+#     gcode-darwin-arm64.tar.gz
+#     gcode-darwin-x64.tar.gz
+#     gcode-linux-x64.tar.gz
+#     gcode-linux-arm64.tar.gz
+#     gcode-windows-x64.zip
+#     gcode-windows-arm64.zip
 
 set -euo pipefail
 
@@ -116,12 +116,12 @@ for platform in "${PLATFORMS[@]}"; do
     # for the worker specifiers in the runtime to resolve.
     #
     # Disable cwd bunfig.toml autoload so project preload scripts cannot crash the
-    # standalone binary before garmin-code-mini starts (see #7684). Disable cwd .env autoload so
-    # project env files do not leak into garmin-code-mini's environment (see #10473).
+    # standalone binary before gcode starts (see #7684). Disable cwd .env autoload so
+    # project env files do not leak into gcode's environment (see #10473).
     if [[ "$platform" == windows-* ]]; then
-        bun build --compile --no-compile-autoload-bunfig --no-compile-autoload-dotenv --target="$bun_target" ./dist/bun/cli.js ./src/utils/image-resize-worker.ts ./src/extensions/codemode/worker.ts --outfile "$OUTPUT_DIR/$platform/garmin-code-mini.exe"
+        bun build --compile --no-compile-autoload-bunfig --no-compile-autoload-dotenv --target="$bun_target" ./dist/bun/cli.js ./src/utils/image-resize-worker.ts ./src/extensions/codemode/worker.ts --outfile "$OUTPUT_DIR/$platform/gcode.exe"
     else
-        bun build --compile --no-compile-autoload-bunfig --no-compile-autoload-dotenv --target="$bun_target" ./dist/bun/cli.js ./src/utils/image-resize-worker.ts ./src/extensions/codemode/worker.ts --outfile "$OUTPUT_DIR/$platform/garmin-code-mini"
+        bun build --compile --no-compile-autoload-bunfig --no-compile-autoload-dotenv --target="$bun_target" ./dist/bun/cli.js ./src/utils/image-resize-worker.ts ./src/extensions/codemode/worker.ts --outfile "$OUTPUT_DIR/$platform/gcode"
     fi
 done
 
@@ -154,12 +154,12 @@ cd "$OUTPUT_DIR"
 for platform in "${PLATFORMS[@]}"; do
     if [[ "$platform" == windows-* ]]; then
         # Windows (zip)
-        echo "Creating garmin-code-mini-$platform.zip..."
-        (cd "$platform" && zip -r ../garmin-code-mini-$platform.zip .)
+        echo "Creating gcode-$platform.zip..."
+        (cd "$platform" && zip -r ../gcode-$platform.zip .)
     else
         # Unix platforms (tar.gz) - use wrapper directory for mise compatibility
-        echo "Creating garmin-code-mini-$platform.tar.gz..."
-        mv "$platform" garmin-code-mini && tar -czf garmin-code-mini-$platform.tar.gz garmin-code-mini && mv garmin-code-mini "$platform"
+        echo "Creating gcode-$platform.tar.gz..."
+        mv "$platform" gcode && tar -czf gcode-$platform.tar.gz gcode && mv gcode "$platform"
     fi
 done
 
@@ -168,9 +168,9 @@ echo "==> Extracting archives for testing..."
 for platform in "${PLATFORMS[@]}"; do
     rm -rf "$platform"
     if [[ "$platform" == windows-* ]]; then
-        mkdir -p "$platform" && (cd "$platform" && unzip -q ../garmin-code-mini-$platform.zip)
+        mkdir -p "$platform" && (cd "$platform" && unzip -q ../gcode-$platform.zip)
     else
-        tar -xzf garmin-code-mini-$platform.tar.gz && mv garmin-code-mini "$platform"
+        tar -xzf gcode-$platform.tar.gz && mv gcode "$platform"
     fi
 done
 
@@ -182,8 +182,8 @@ echo ""
 echo "Extracted directories for testing:"
 for platform in "${PLATFORMS[@]}"; do
     if [[ "$platform" == windows-* ]]; then
-        echo "  $OUTPUT_DIR/$platform/garmin-code-mini.exe"
+        echo "  $OUTPUT_DIR/$platform/gcode.exe"
     else
-        echo "  $OUTPUT_DIR/$platform/garmin-code-mini"
+        echo "  $OUTPUT_DIR/$platform/gcode"
     fi
 done

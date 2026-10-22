@@ -11,9 +11,9 @@ const outputDir = join(codingAgentDir, "install-lock");
 const rootLockfilePath = join(repoRoot, "package-lock.json");
 const outputPackageJsonPath = join(outputDir, "package.json");
 const outputLockfilePath = join(outputDir, "package-lock.json");
-const internalPackagePrefix = "@garmin-code-mini/";
-const internalPackageNames = new Set(["garmin-code-mini"]);
-const installPackageName = "garmin-code-mini-install";
+const internalPackagePrefix = "@gcode/";
+const internalPackageNames = new Set(["gcode"]);
+const installPackageName = "gcode-install";
 const allowedInstallScriptPackages = new Map();
 
 const args = new Set(process.argv.slice(2));
@@ -245,7 +245,7 @@ function createInstallerPackageJson(codingAgentPackage) {
 		name: installPackageName,
 		version: codingAgentPackage.version,
 		private: true,
-		description: "Lockfile root used by the garmin-code-mini installer and updater.",
+		description: "Lockfile root used by the gcode installer and updater.",
 		dependencies: {
 			[codingAgentPackage.name]: codingAgentPackage.version,
 		},

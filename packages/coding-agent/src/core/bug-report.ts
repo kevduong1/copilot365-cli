@@ -1,9 +1,9 @@
 import * as os from "node:os";
-import type { AgentMessage, StreamFn, ThinkingLevel } from "@garmin-code-mini/agent-core";
-import { contentText, normalizeContext, type RetryPolicy, uuidv7 } from "@garmin-code-mini/ai";
-import type { Api, Model, Provider, SimpleStreamOptions } from "@garmin-code-mini/ai/compat";
+import type { AgentMessage, StreamFn, ThinkingLevel } from "@gcode/agent-core";
+import { contentText, normalizeContext, type RetryPolicy, uuidv7 } from "@gcode/ai";
+import type { Api, Model, Provider, SimpleStreamOptions } from "@gcode/ai/compat";
 import { VERSION } from "../config.ts";
-import { getGarminCodeMiniUserAgent } from "../utils/garmin-code-mini-user-agent.ts";
+import { getGcodeUserAgent } from "../utils/gcode-user-agent.ts";
 import { writeZipArchive } from "../utils/zip.ts";
 import { completeSummarization, estimateTokens, getSummarizationFailure } from "./compaction/compaction.ts";
 import { serializeConversation } from "./compaction/utils.ts";
@@ -14,7 +14,7 @@ import type { ModelRuntime } from "./model-runtime.ts";
 import type { ReadonlySessionManager } from "./session-manager.ts";
 import type { Settings } from "./settings-manager.ts";
 
-export const BUG_REPORT_CUSTOM_ENTRY_TYPE = "garmin-code-mini.bug-report";
+export const BUG_REPORT_CUSTOM_ENTRY_TYPE = "gcode.bug-report";
 const BUG_REPORT_SCHEMA_VERSION = 1;
 const REDACTED = "<redacted>";
 const SENSITIVE_KEY = /(?:^|[-_])(api[-_]?key|secret|token|password|passwd|credential|authorization|cookie)(?:$|[-_])/i;
@@ -67,7 +67,7 @@ function collectEnvironment() {
 	const env = (name: string): string | null => process.env[name] || null;
 	return {
 		version: VERSION,
-		userAgent: getGarminCodeMiniUserAgent(VERSION),
+		userAgent: getGcodeUserAgent(VERSION),
 		runtime: process.versions.bun ? `bun/${process.versions.bun}` : `node/${process.version}`,
 		platform: process.platform,
 		arch: process.arch,
@@ -84,8 +84,8 @@ function collectEnvironment() {
 			ci: Boolean(process.env.CI),
 		},
 		// Names help diagnose configuration; values never leave the machine.
-		garminCodeMiniEnvironmentVariables: Object.keys(process.env)
-			.filter((name) => name.startsWith("GARMIN_CODE_MINI_"))
+		gcodeEnvironmentVariables: Object.keys(process.env)
+			.filter((name) => name.startsWith("GCODE_"))
 			.sort(),
 	};
 }
@@ -276,10 +276,10 @@ export function writeBugReportArchive(bundle: BugReportBundle, filePath: string)
 }
 
 export function bugReportArchiveFileName(id: string): string {
-	return `garmin-code-mini-bug-report-${id}.zip`;
+	return `gcode-bug-report-${id}.zip`;
 }
 
-const BUG_SUMMARY_SYSTEM_PROMPT = `You are helping a user file a bug report about garmin-code-mini, the coding agent they are talking to. You will be shown the conversation transcript. Write a report for the garmin-code-mini developers describing what the user was doing and what went wrong.
+const BUG_SUMMARY_SYSTEM_PROMPT = `You are helping a user file a bug report about gcode, the coding agent they are talking to. You will be shown the conversation transcript. Write a report for the gcode developers describing what the user was doing and what went wrong.
 
 Do NOT continue the conversation. Do NOT respond to any questions in the conversation. ONLY output the report.`;
 

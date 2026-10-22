@@ -3,8 +3,8 @@
  * Uses Kitty keyboard protocol for smooth movement (press/release detection)
  */
 
-import { isKeyRelease, Key, matchesKey, visibleWidth } from "@garmin-code-mini/tui";
-import type { ExtensionAPI } from "garmin-code-mini";
+import { isKeyRelease, Key, matchesKey, visibleWidth } from "@gcode/tui";
+import type { ExtensionAPI } from "gcode";
 
 const GAME_WIDTH = 60;
 const GAME_HEIGHT = 24;
@@ -524,8 +524,8 @@ class SpaceInvadersComponent {
 
 const INVADERS_SAVE_TYPE = "space-invaders-save";
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerCommand("invaders", {
+export default function (gcode: ExtensionAPI) {
+	gcode.registerCommand("invaders", {
 		description: "Play Space Invaders!",
 
 		handler: async (_args, ctx) => {
@@ -550,7 +550,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 					tui,
 					() => done(undefined),
 					(state) => {
-						garminCodeMini.appendEntry(INVADERS_SAVE_TYPE, state);
+						gcode.appendEntry(INVADERS_SAVE_TYPE, state);
 					},
 					savedState,
 				);

@@ -27,32 +27,32 @@ function runSyncVersions(root) {
 
 // #10865: caret ranges allowed older agents to install incompatible newer workspace dependencies.
 test("pins published and private dependencies without touching registry aliases, generated manifests, or published lockstep", async () => {
-	const root = await mkdtemp(join(tmpdir(), "garmin-code-mini-sync-versions-"));
+	const root = await mkdtemp(join(tmpdir(), "gcode-sync-versions-"));
 	try {
 		await writeManifest(root, "packages/ai", {
-			name: "@garmin-code-mini/ai",
+			name: "@gcode/ai",
 			version: "2.0.0",
 		});
 		await writeManifest(root, "packages/coding-agent", {
-			name: "garmin-code-mini",
+			name: "gcode",
 			version: "2.0.0",
 			dependencies: {
-				"@garmin-code-mini/ai": "^2.0.0",
+				"@gcode/ai": "^2.0.0",
 			},
 			devDependencies: {
-				"@garmin-code-mini/ai": "~1.0.0",
+				"@gcode/ai": "~1.0.0",
 			},
 			optionalDependencies: {
-				"@garmin-code-mini/ai": "1.0.0",
+				"@gcode/ai": "1.0.0",
 			},
 		});
 		await writeManifest(root, "packages/evals", {
-			name: "@garmin-code-mini/evals",
+			name: "@gcode/evals",
 			version: "9.9.9",
 			private: true,
 			dependencies: {
-				"garmin-code-mini": "^1.0.0",
-				"@garmin-code-mini/ai": "npm:@garmin-code-mini/ai@1.0.0",
+				"gcode": "^1.0.0",
+				"@gcode/ai": "npm:@gcode/ai@1.0.0",
 			},
 		});
 		await writeManifest(root, "packages/coding-agent/install-lock", {
@@ -60,7 +60,7 @@ test("pins published and private dependencies without touching registry aliases,
 			version: "0.0.0",
 			private: true,
 			dependencies: {
-				"garmin-code-mini": "^1.0.0",
+				"gcode": "^1.0.0",
 			},
 		});
 
@@ -69,20 +69,20 @@ test("pins published and private dependencies without touching registry aliases,
 
 		const agentManifest = await readManifest(root, "packages/coding-agent");
 		for (const section of ["dependencies", "devDependencies", "optionalDependencies"]) {
-			assert.equal(agentManifest[section]["@garmin-code-mini/ai"], "2.0.0");
+			assert.equal(agentManifest[section]["@gcode/ai"], "2.0.0");
 		}
 		const evalsManifest = await readManifest(root, "packages/evals");
-		assert.equal(evalsManifest.dependencies["garmin-code-mini"], "2.0.0");
-		assert.equal(evalsManifest.dependencies["@garmin-code-mini/ai"], "npm:@garmin-code-mini/ai@1.0.0");
+		assert.equal(evalsManifest.dependencies["gcode"], "2.0.0");
+		assert.equal(evalsManifest.dependencies["@gcode/ai"], "npm:@gcode/ai@1.0.0");
 		const generatedManifest = await readManifest(root, "packages/coding-agent/install-lock");
-		assert.equal(generatedManifest.dependencies["garmin-code-mini"], "^1.0.0");
+		assert.equal(generatedManifest.dependencies["gcode"], "^1.0.0");
 
 		const alreadySynced = runSyncVersions(root);
 		assert.equal(alreadySynced.status, 0, alreadySynced.stderr);
 		assert.match(alreadySynced.stdout, /All inter-package dependencies are already in sync/);
 
 		await writeManifest(root, "packages/ai", {
-			name: "@garmin-code-mini/ai",
+			name: "@gcode/ai",
 			version: "3.0.0",
 		});
 		const lockstepFailure = runSyncVersions(root);
@@ -92,20 +92,20 @@ test("pins published and private dependencies without touching registry aliases,
 	}
 });
 
-test("writes the garmin-code-mini-ai version constant", async () => {
-	const root = await mkdtemp(join(tmpdir(), "garmin-code-mini-sync-versions-"));
+test("writes the gcode-ai version constant", async () => {
+	const root = await mkdtemp(join(tmpdir(), "gcode-sync-versions-"));
 	try {
 		await writeManifest(root, "packages/ai", {
-			name: "@garmin-code-mini/ai",
+			name: "@gcode/ai",
 			version: "2.0.0",
 		});
 		const versionPath = join(root, "packages/ai/src/utils/version.ts");
 		await mkdir(join(root, "packages/ai/src/utils"), { recursive: true });
-		await writeFile(versionPath, 'export const GARMIN_CODE_MINI_AI_VERSION = "1.0.0";\n');
+		await writeFile(versionPath, 'export const GCODE_AI_VERSION = "1.0.0";\n');
 
 		const result = runSyncVersions(root);
 		assert.equal(result.status, 0, result.stderr);
-		assert.match(await readFile(versionPath, "utf8"), /export const GARMIN_CODE_MINI_AI_VERSION = "2\.0\.0";\n$/);
+		assert.match(await readFile(versionPath, "utf8"), /export const GCODE_AI_VERSION = "2\.0\.0";\n$/);
 	} finally {
 		await rm(root, { recursive: true, force: true });
 	}

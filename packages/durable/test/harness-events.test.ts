@@ -6,8 +6,8 @@ import {
 	fauxThinking,
 	fauxToolCall,
 	Type,
-} from "@garmin-code-mini/ai";
-import type { Draft } from "@garmin-code-mini/chord";
+} from "@gcode/ai";
+import type { Draft } from "@gcode/chord";
 import {
 	AgentDoc,
 	type AgentEvent,
@@ -22,7 +22,7 @@ import {
 	type SnapshotEvent,
 	UsageDoc,
 	watchEvents,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { type ChatSetup, chatSetup, openChat, textOf, waitFor } from "./chat-support.ts";
 import { addTool } from "./harness-support.ts";
@@ -96,7 +96,7 @@ function partialsOf(harness: Harness): AssistantMessage[] {
 	harness.subscribeCommits((publication) => {
 		for (const change of documentChanges(publication)) {
 			const message = (change.value as LiveState | null)?.generation?.message as AssistantMessage | undefined;
-			if (change.record.kind === "garmin-code-mini.live" && message !== undefined) partials.push(message);
+			if (change.record.kind === "gcode.live" && message !== undefined) partials.push(message);
 		}
 	});
 	return partials;
@@ -114,8 +114,7 @@ describe("agent events", () => {
 		harness.subscribeCommits((publication) => {
 			for (const change of documentChanges(publication)) {
 				const message = (change.value as LiveState | null)?.generation?.message as AssistantMessage | undefined;
-				if (change.record.kind === "garmin-code-mini.live" && message !== undefined)
-					partials.push(textOf(message) ?? "");
+				if (change.record.kind === "gcode.live" && message !== undefined) partials.push(textOf(message) ?? "");
 			}
 		});
 		const submission = await root.submit({ type: "input", content: "hi" }, context);
@@ -203,7 +202,7 @@ describe("agent events", () => {
 		expect(end).toMatchObject({
 			type: "tool_execution_end",
 			toolCallId: "c1",
-			entry: { kind: "garmin-code-mini.tool-result" },
+			entry: { kind: "gcode.tool-result" },
 		});
 		// As in the coding agent, the tool ends directly before its result message.
 		const all = events();
@@ -294,7 +293,7 @@ describe("agent events", () => {
 		let current: AssistantMessage | undefined;
 		// The streamed tool-calling message, up to its end; the short final answer commits no partial.
 		for (const event of events()) {
-			if (event.type === "message_end" && event.entry?.kind === "garmin-code-mini.assistant") break;
+			if (event.type === "message_end" && event.entry?.kind === "gcode.assistant") break;
 			if (event.type === "message_start" && event.message.role === "assistant") current = event.message;
 			else if (event.type === "message_update") current = applyChanges(current!, event.changes);
 			else continue;
@@ -341,7 +340,7 @@ describe("agent events", () => {
 		harness.subscribeCommits((publication) => {
 			for (const change of documentChanges(publication)) {
 				const output = (change.value as LiveState | null)?.tools?.[0]?.output;
-				if (change.record.kind === "garmin-code-mini.live" && output !== undefined && output !== outputs.at(-1)) {
+				if (change.record.kind === "gcode.live" && output !== undefined && output !== outputs.at(-1)) {
 					outputs.push(output);
 				}
 			}
@@ -440,10 +439,10 @@ describe("agent events", () => {
 		);
 		const ghostEnd = round.indexOf("tool_execution_end");
 		expect(round.slice(ghostEnd - 1, ghostEnd + 3)).toEqual([
-			"end:garmin-code-mini.assistant",
+			"end:gcode.assistant",
 			"tool_execution_end",
 			"start:toolResult",
-			"end:garmin-code-mini.tool-result",
+			"end:gcode.tool-result",
 		]);
 		const tool = events().filter((event) => event.type.startsWith("tool_execution"));
 		expect(tool.map((event) => [event.type, "toolCallId" in event && event.toolCallId, "entry" in event])).toEqual([
@@ -615,7 +614,7 @@ describe("agent events", () => {
 		await submission.wait(context);
 		await drained();
 		const assistantEnds = events().filter(
-			(event) => event.type === "message_end" && event.entry?.kind === "garmin-code-mini.assistant",
+			(event) => event.type === "message_end" && event.entry?.kind === "gcode.assistant",
 		);
 		expect(assistantEnds).toHaveLength(1);
 		expect(

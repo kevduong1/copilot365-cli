@@ -1,14 +1,5 @@
-import { type Model, modelsAreEqual } from "@garmin-code-mini/ai";
-import {
-	Container,
-	type Focusable,
-	fuzzyFilter,
-	getKeybindings,
-	Input,
-	Spacer,
-	Text,
-	type TUI,
-} from "@garmin-code-mini/tui";
+import { type Model, modelsAreEqual } from "@gcode/ai";
+import { Container, type Focusable, fuzzyFilter, getKeybindings, Input, Spacer, Text, type TUI } from "@gcode/tui";
 import type { ModelRuntime } from "../../../core/model-runtime.ts";
 import { getModelSelectorSearchText } from "../model-search.ts";
 import { theme } from "../theme/theme.ts";

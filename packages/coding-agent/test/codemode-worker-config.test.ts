@@ -15,7 +15,7 @@ describe("resolveCodemodeWorkerSpecifier", () => {
 		);
 	});
 
-	test("uses the garmin-code-mini-codemode worker when unbundled", () => {
+	test("uses the gcode-codemode worker when unbundled", () => {
 		expect(resolveCodemodeWorkerSpecifier("unbundled", import.meta.url)).toBeUndefined();
 	});
 });

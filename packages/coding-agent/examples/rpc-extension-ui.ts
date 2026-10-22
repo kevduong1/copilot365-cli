@@ -27,7 +27,7 @@ import {
 	SelectList,
 	type TUI,
 	TuiMainScreen,
-} from "@garmin-code-mini/tui";
+} from "@gcode/tui";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

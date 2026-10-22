@@ -6,7 +6,7 @@
  * definition, so the tool's public shape is unchanged.
  */
 
-import { Container, Text } from "@garmin-code-mini/tui";
+import { Container, Text } from "@gcode/tui";
 import { keyHint } from "../../../modes/interactive/components/keybinding-hints.ts";
 import { getLanguageFromPath, highlightCode, type Theme } from "../../../modes/interactive/theme/theme.ts";
 import type { ToolDefinition, ToolRenderResultOptions } from "../../extensions/types.ts";

@@ -12,10 +12,10 @@
  * - Progress tracking widget during execution
  */
 
-import type { AgentMessage } from "@garmin-code-mini/agent-core";
-import type { AssistantMessage, TextContent } from "@garmin-code-mini/ai";
-import { Key } from "@garmin-code-mini/tui";
-import type { ExtensionAPI, ExtensionContext } from "garmin-code-mini";
+import type { AgentMessage } from "@gcode/agent-core";
+import type { AssistantMessage, TextContent } from "@gcode/ai";
+import { Key } from "@gcode/tui";
+import type { ExtensionAPI, ExtensionContext } from "gcode";
 import { extractTodoItems, isSafeCommand, markCompletedSteps, type TodoItem } from "./utils.ts";
 
 // Tools
@@ -44,13 +44,13 @@ function getTextContent(message: AssistantMessage): string {
 		.join("\n");
 }
 
-export default function planModeExtension(garminCodeMini: ExtensionAPI): void {
+export default function planModeExtension(gcode: ExtensionAPI): void {
 	let planModeEnabled = false;
 	let executionMode = false;
 	let todoItems: TodoItem[] = [];
 	let toolsBeforePlanMode: string[] | undefined;
 
-	garminCodeMini.registerFlag("plan", {
+	gcode.registerFlag("plan", {
 		description: "Start in plan mode (read-only exploration)",
 		type: "boolean",
 		default: false,
@@ -103,18 +103,18 @@ export default function planModeExtension(garminCodeMini: ExtensionAPI): void {
 
 	function enablePlanModeTools(): void {
 		if (toolsBeforePlanMode === undefined) {
-			toolsBeforePlanMode = garminCodeMini.getActiveTools();
+			toolsBeforePlanMode = gcode.getActiveTools();
 		}
-		garminCodeMini.setActiveTools(getPlanModeTools(toolsBeforePlanMode));
+		gcode.setActiveTools(getPlanModeTools(toolsBeforePlanMode));
 	}
 
 	function restoreNormalModeTools(): void {
-		garminCodeMini.setActiveTools(toolsBeforePlanMode ?? getNormalModeTools(garminCodeMini.getActiveTools()));
+		gcode.setActiveTools(toolsBeforePlanMode ?? getNormalModeTools(gcode.getActiveTools()));
 		toolsBeforePlanMode = undefined;
 	}
 
 	function persistState(): void {
-		garminCodeMini.appendEntry("plan-mode", {
+		gcode.appendEntry("plan-mode", {
 			enabled: planModeEnabled,
 			todos: todoItems,
 			executing: executionMode,
@@ -138,12 +138,12 @@ export default function planModeExtension(garminCodeMini: ExtensionAPI): void {
 		persistState();
 	}
 
-	garminCodeMini.registerCommand("plan", {
+	gcode.registerCommand("plan", {
 		description: "Toggle plan mode (read-only exploration)",
 		handler: async (_args, ctx) => togglePlanMode(ctx),
 	});
 
-	garminCodeMini.registerCommand("todos", {
+	gcode.registerCommand("todos", {
 		description: "Show current plan todo list",
 		handler: async (_args, ctx) => {
 			if (todoItems.length === 0) {
@@ -155,13 +155,13 @@ export default function planModeExtension(garminCodeMini: ExtensionAPI): void {
 		},
 	});
 
-	garminCodeMini.registerShortcut(Key.ctrlAlt("p"), {
+	gcode.registerShortcut(Key.ctrlAlt("p"), {
 		description: "Toggle plan mode",
 		handler: async (ctx) => togglePlanMode(ctx),
 	});
 
 	// Block destructive bash commands in plan mode
-	garminCodeMini.on("tool_call", async (event) => {
+	gcode.on("tool_call", async (event) => {
 		if (!planModeEnabled || event.toolName !== "bash") return;
 
 		const command = event.input.command as string;
@@ -174,7 +174,7 @@ export default function planModeExtension(garminCodeMini: ExtensionAPI): void {
 	});
 
 	// Filter out stale plan mode context when not in plan mode
-	garminCodeMini.on("context", async (event) => {
+	gcode.on("context", async (event) => {
 		if (planModeEnabled) return;
 
 		return {
@@ -200,7 +200,7 @@ export default function planModeExtension(garminCodeMini: ExtensionAPI): void {
 	// Inject plan/execution context before a user prompt. Runs started by custom messages, such as
 	// background task notifications, skip it: the context from the last prompt is still in the
 	// conversation, and adding it again on every notification would only repeat it.
-	garminCodeMini.on("before_agent_start", async (event) => {
+	gcode.on("before_agent_start", async (event) => {
 		if (event.messageType !== "user") return;
 
 		if (planModeEnabled) {
@@ -251,7 +251,7 @@ After completing a step, include a [DONE:n] tag in your response.`,
 	});
 
 	// Track progress after each turn
-	garminCodeMini.on("turn_end", async (event, ctx) => {
+	gcode.on("turn_end", async (event, ctx) => {
 		if (!executionMode || todoItems.length === 0) return;
 		if (!isAssistantMessage(event.message)) return;
 
@@ -263,12 +263,12 @@ After completing a step, include a [DONE:n] tag in your response.`,
 	});
 
 	// Handle plan completion and plan mode UI
-	garminCodeMini.on("agent_end", async (event, ctx) => {
+	gcode.on("agent_end", async (event, ctx) => {
 		// Check if execution is complete
 		if (executionMode && todoItems.length > 0) {
 			if (todoItems.every((t) => t.completed)) {
 				const completedList = todoItems.map((t) => `~~${t.text}~~`).join("\n");
-				garminCodeMini.sendMessage(
+				gcode.sendMessage(
 					{ customType: "plan-complete", content: `**Plan Complete!** ✓\n\n${completedList}`, display: true },
 					{ triggerTurn: false },
 				);
@@ -326,23 +326,23 @@ ${remainingList}
 
 Start with: ${firstTodoItem.text}
 After completing a step, include a [DONE:n] tag in your response.`;
-			garminCodeMini.sendMessage(planTodoListMessage, { deliverAs: "followUp" });
-			garminCodeMini.sendMessage(
+			gcode.sendMessage(planTodoListMessage, { deliverAs: "followUp" });
+			gcode.sendMessage(
 				{ customType: "plan-mode-execute", content: execMessage, display: true },
 				{ triggerTurn: true, deliverAs: "followUp" },
 			);
 		} else if (choice === "Refine the plan") {
 			const refinement = await ctx.ui.editor("Refine the plan:", "");
 			if (refinement?.trim()) {
-				garminCodeMini.sendMessage(planTodoListMessage, { deliverAs: "followUp" });
-				garminCodeMini.sendUserMessage(refinement.trim(), { deliverAs: "followUp" });
+				gcode.sendMessage(planTodoListMessage, { deliverAs: "followUp" });
+				gcode.sendUserMessage(refinement.trim(), { deliverAs: "followUp" });
 			}
 		}
 	});
 
 	// Restore state on session start/resume
-	garminCodeMini.on("session_start", async (_event, ctx) => {
-		if (garminCodeMini.getFlag("plan") === true) {
+	gcode.on("session_start", async (_event, ctx) => {
+		if (gcode.getFlag("plan") === true) {
 			planModeEnabled = true;
 		}
 

@@ -1,6 +1,6 @@
-import { fauxAssistantMessage, fauxToolCall, Type } from "@garmin-code-mini/ai";
-import { withTelemetry } from "@garmin-code-mini/chord/context";
-import { CodemodeSandbox } from "@garmin-code-mini/codemode";
+import { fauxAssistantMessage, fauxToolCall, Type } from "@gcode/ai";
+import { withTelemetry } from "@gcode/chord/context";
+import { CodemodeSandbox } from "@gcode/codemode";
 import {
 	CompactionTask,
 	defineTask,
@@ -10,8 +10,8 @@ import {
 	MemoryStorage,
 	type Storage,
 	type TaskId,
-} from "@garmin-code-mini/durable";
-import { InMemoryTelemetryContext } from "@garmin-code-mini/telemetry";
+} from "@gcode/durable";
+import { InMemoryTelemetryContext } from "@gcode/telemetry";
 import { describe, expect, it, vi } from "vitest";
 import { createCodemodeTool } from "../src/codemode/codemode.ts";
 import { type ChatSetup, chatSetup, waitFor } from "./chat-support.ts";
@@ -77,12 +77,12 @@ describe("Durable telemetry", () => {
 		);
 		expect(await again.status(context)).toEqual(record);
 		const spans = telemetry.getSpans();
-		const submit = spans.find((span) => span.name === "garmin-code-mini.durable.submit")!;
+		const submit = spans.find((span) => span.name === "gcode.durable.submit")!;
 		expect(submit).toMatchObject({ parentId: null, attributes: { "submission.id": submitted.id, result: "placed" } });
 		expect(record.trace).toEqual(submit.context);
-		const phases = spans.filter((span) => span.name === "garmin-code-mini.durable.phase");
+		const phases = spans.filter((span) => span.name === "gcode.durable.phase");
 		expect(phases.length).toBeGreaterThan(4);
-		const requests = spans.filter((span) => span.name === "garmin-code-mini.ai.request");
+		const requests = spans.filter((span) => span.name === "gcode.ai.request");
 		expect(requests).toHaveLength(2);
 		for (const request of requests)
 			expect(phases.find((phase) => phase.id === request.parentId)?.attributes.phase).toBe("request");
@@ -95,16 +95,16 @@ describe("Durable telemetry", () => {
 		expect(inner.parentContext).toEqual(outer.context);
 		expect(outer.attributes).toMatchObject({ phase: "call", outcome: "done", "tool.call_id": "call-1" });
 		expect(outer.events).toContainEqual({
-			name: "garmin-code-mini.durable.checkpoint",
+			name: "gcode.durable.checkpoint",
 			attributes: { phase: "execute" },
 		});
 		expect(phases.some((span) => span.attributes.outcome === "waiting")).toBe(true);
 		expect(submit.events).toContainEqual({
-			name: "garmin-code-mini.durable.entry",
-			attributes: { "entry.id": record.entry, "entry.kind": "garmin-code-mini.user" },
+			name: "gcode.durable.entry",
+			attributes: { "entry.id": record.entry, "entry.kind": "gcode.user" },
 		});
 		expect(phases.flatMap((span) => span.events)).toContainEqual({
-			name: "garmin-code-mini.durable.submission",
+			name: "gcode.durable.submission",
 			attributes: { "submission.id": submitted.id, status: "done", "answer.entry_id": record.answer },
 		});
 		const recorded = JSON.stringify(spans.map(({ attributes, events }) => ({ attributes, events })));
@@ -120,15 +120,13 @@ describe("Durable telemetry", () => {
 			expect(recorded).not.toContain(content);
 		await harness.close(context);
 		const metrics = telemetry.getMetrics();
-		expect(metrics.filter((metric) => metric.name === "garmin-code-mini.durable.phase.duration")).toHaveLength(
-			phases.length,
-		);
+		expect(metrics.filter((metric) => metric.name === "gcode.durable.phase.duration")).toHaveLength(phases.length);
 		expect(
 			metrics
-				.filter((metric) => metric.name === "garmin-code-mini.durable.tasks.active")
+				.filter((metric) => metric.name === "gcode.durable.tasks.active")
 				.reduce((sum, metric) => sum + metric.value, 0),
 		).toBe(0);
-		for (const metric of metrics.filter((metric) => metric.name.startsWith("garmin-code-mini.durable.")))
+		for (const metric of metrics.filter((metric) => metric.name.startsWith("gcode.durable.")))
 			expect(Object.keys(metric.attributes).some((key) => key.includes("id"))).toBe(false);
 		expect(setup.reports).toEqual([]);
 	});
@@ -163,7 +161,7 @@ describe("Durable telemetry", () => {
 		expect(
 			telemetry
 				.getSpans()
-				.filter((span) => span.name === "garmin-code-mini.durable.submit")
+				.filter((span) => span.name === "gcode.durable.submit")
 				.map((span) => span.attributes.result),
 		).toEqual(["placed", "queued", "queued"]);
 		reads.mockRestore();
@@ -211,7 +209,7 @@ describe("Durable telemetry", () => {
 		const creator = telemetry.getSpans()[0]!;
 		const records = await Promise.all(ids.map((id) => harness.getTask(id, context)));
 		expect(records.map((record) => record!.trace)).toEqual([creator.context, creator.context, undefined]);
-		const phases = telemetry.getSpans().filter((span) => span.name === "garmin-code-mini.durable.phase");
+		const phases = telemetry.getSpans().filter((span) => span.name === "gcode.durable.phase");
 		expect(phases.map((span) => span.parentContext)).toEqual([creator.context, creator.context, null]);
 		await harness.close(context);
 	});
@@ -249,8 +247,8 @@ describe("Durable telemetry", () => {
 			telemetry
 				.getSpans()
 				.flatMap((span) => span.events)
-				.filter((event) => event.name === "garmin-code-mini.durable.checkpoint"),
-		).toEqual([{ name: "garmin-code-mini.durable.checkpoint", attributes: { phase: "finish" } }]);
+				.filter((event) => event.name === "gcode.durable.checkpoint"),
+		).toEqual([{ name: "gcode.durable.checkpoint", attributes: { phase: "finish" } }]);
 		await harness.close(context);
 	});
 
@@ -282,7 +280,7 @@ describe("Durable telemetry", () => {
 		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
 		const spans = telemetry.getSpans();
 		const caller = spans.find((span) => span.name === "caller")!;
-		const submits = spans.filter((span) => span.name === "garmin-code-mini.durable.submit");
+		const submits = spans.filter((span) => span.name === "gcode.durable.submit");
 		expect(submits).toHaveLength(2);
 		for (const submit of submits) {
 			expect(submit.parentId).toBeNull();
@@ -290,7 +288,7 @@ describe("Durable telemetry", () => {
 			expect(
 				spans.some(
 					(span) =>
-						span.name === "garmin-code-mini.durable.phase" &&
+						span.name === "gcode.durable.phase" &&
 						span.attributes.phase === "prepare" &&
 						JSON.stringify(span.parentContext) === JSON.stringify(submit.context),
 				),
@@ -327,14 +325,11 @@ describe("Durable telemetry", () => {
 		await third.wait(context);
 		await harness.waitForIdle(context);
 		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
-		const tasks = await harness.commit((tx) => tx.scanTasks({ kind: "garmin-code-mini.generation" }, 10), context);
+		const tasks = await harness.commit((tx) => tx.scanTasks({ kind: "gcode.generation" }, 10), context);
 		expect(tasks.items[1]).toMatchObject({ trace: secondTrace, links: [thirdTrace] });
 		const phases = telemetry
 			.getSpans()
-			.filter(
-				(span) =>
-					span.name === "garmin-code-mini.durable.phase" && span.attributes["task.id"] === tasks.items[1]!.id,
-			);
+			.filter((span) => span.name === "gcode.durable.phase" && span.attributes["task.id"] === tasks.items[1]!.id);
 		expect(phases.map((span) => span.attributes.phase)).toEqual(["prepare", "request"]);
 		for (const phase of phases) expect(phase.links).toEqual([{ context: thirdTrace, attributes: {} }]);
 		await harness.close(context);
@@ -363,7 +358,7 @@ describe("Durable telemetry", () => {
 		const first = await root.submit({ type: "input", content: "first" }, context);
 		await reached.promise;
 		const run = (await harness.inspect(context)).tasks.find(
-			(task) => task.record.kind === "garmin-code-mini.generation",
+			(task) => task.record.kind === "gcode.generation",
 		)!.record;
 		const steer = await root.submit({ type: "input", content: "steer", whenBusy: "steer" }, context);
 		const steerTrace = (await steer.status(context)).trace;
@@ -377,7 +372,7 @@ describe("Durable telemetry", () => {
 		expect(
 			telemetry
 				.getSpans()
-				.filter((span) => span.name === "garmin-code-mini.durable.phase")
+				.filter((span) => span.name === "gcode.durable.phase")
 				.some((span) => JSON.stringify(span.parentContext) === JSON.stringify(steerTrace)),
 		).toBe(false);
 		await harness.close(context);
@@ -395,22 +390,19 @@ describe("Durable telemetry", () => {
 				withTelemetry(caller, context),
 			);
 			await held.entered;
-			const inFlight = telemetry.getSpans().find((span) => span.name === "garmin-code-mini.durable.submit")!;
+			const inFlight = telemetry.getSpans().find((span) => span.name === "gcode.durable.submit")!;
 			expect(inFlight).toMatchObject({ settled: false, events: [] });
 			held.release();
 			const submission = await writing;
 			const record = await submission.status(context);
-			const span = telemetry.getSpans().find((span) => span.name === "garmin-code-mini.durable.submit")!;
+			const span = telemetry.getSpans().find((span) => span.name === "gcode.durable.submit")!;
 			expect(span).toMatchObject({
 				parentContext: telemetry.getSpans()[0]!.context,
 				settled: true,
 				attributes: { result: "done" },
 			});
 			expect(record.trace).toEqual(span.context);
-			expect(span.events.map((event) => event.name)).toEqual([
-				"garmin-code-mini.durable.entry",
-				"garmin-code-mini.durable.submission",
-			]);
+			expect(span.events.map((event) => event.name)).toEqual(["gcode.durable.entry", "gcode.durable.submission"]);
 		});
 		await harness.close(context);
 	});
@@ -446,7 +438,7 @@ describe("Durable telemetry", () => {
 		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
 		const spans = telemetry.getSpans();
 		const tool = spans.find((span) => span.attributes["tool.name"] === "delegate")!;
-		const child = spans.filter((span) => span.name === "garmin-code-mini.durable.submit")[1]!;
+		const child = spans.filter((span) => span.name === "gcode.durable.submit")[1]!;
 		expect(child.parentId).toBeNull();
 		expect(child.links).toEqual([{ context: tool.context, attributes: {} }]);
 		await harness.close(context);
@@ -461,29 +453,26 @@ describe("Durable telemetry", () => {
 		const { harness, root } = await openTracked(new MemoryStorage(), setup, telemetry);
 		await root.commit(async (tx) => {
 			await tx.appendEntry(root.id, {
-				kind: "garmin-code-mini.user",
+				kind: "gcode.user",
 				model: [{ role: "user", content: "x".repeat(400), timestamp: 1 }],
 			});
 			await tx.appendEntry(root.id, {
-				kind: "garmin-code-mini.assistant",
+				kind: "gcode.assistant",
 				model: [fauxAssistantMessage("y".repeat(400))],
 			});
 		}, context);
 		await (await root.submit({ type: "input", content: "z".repeat(400) }, context)).wait(context);
 		await harness.waitForIdle(context);
 		await waitFor(() =>
-			telemetry
-				.getSpans()
-				.some((span) => span.attributes["task.name"] === "garmin-code-mini.compaction" && span.settled),
+			telemetry.getSpans().some((span) => span.attributes["task.name"] === "gcode.compaction" && span.settled),
 		);
 		const spans = telemetry.getSpans();
 		const prepare = spans.find(
-			(span) =>
-				span.attributes["task.name"] === "garmin-code-mini.generation" && span.attributes.phase === "prepare",
+			(span) => span.attributes["task.name"] === "gcode.generation" && span.attributes.phase === "prepare",
 		)!;
-		const compaction = spans.find((span) => span.attributes["task.name"] === "garmin-code-mini.compaction")!;
+		const compaction = spans.find((span) => span.attributes["task.name"] === "gcode.compaction")!;
 		expect(compaction.parentContext).toEqual(prepare.context);
-		const tasks = await harness.commit((tx) => tx.scanTasks({ kind: "garmin-code-mini.compaction" }, 10), context);
+		const tasks = await harness.commit((tx) => tx.scanTasks({ kind: "gcode.compaction" }, 10), context);
 		expect(tasks.items[0]).toMatchObject({ background: true, trace: prepare.context });
 		await harness.close(context);
 	});
@@ -536,7 +525,7 @@ describe("Durable telemetry", () => {
 		await harness.waitForTask(id, context);
 		await waitFor(() => reopenedTelemetry.getSpans().every((span) => span.settled));
 		const phases = [...telemetry.getSpans(), ...reopenedTelemetry.getSpans()].filter(
-			(span) => span.name === "garmin-code-mini.durable.phase",
+			(span) => span.name === "gcode.durable.phase",
 		);
 		expect(phases.map((span) => span.attributes.resumed)).toEqual([false, true, false]);
 		expect(phases[0]!.attributes.outcome).toBe("aborted");
@@ -545,7 +534,7 @@ describe("Durable telemetry", () => {
 		await harness.close(context);
 		expect(
 			[...telemetry.getMetrics(), ...reopenedTelemetry.getMetrics()]
-				.filter((metric) => metric.name === "garmin-code-mini.durable.tasks.active")
+				.filter((metric) => metric.name === "gcode.durable.tasks.active")
 				.map((metric) => metric.value),
 		).toEqual([1, -1, 1, -1]);
 	});
@@ -578,9 +567,9 @@ describe("Durable telemetry", () => {
 				ctx,
 			);
 			expect(telemetry.getSpans()[0]!.events).toEqual([
-				{ name: "garmin-code-mini.durable.entry", attributes: { "entry.id": entry.id, "entry.kind": "app.note" } },
+				{ name: "gcode.durable.entry", attributes: { "entry.id": entry.id, "entry.kind": "app.note" } },
 				{
-					name: "garmin-code-mini.durable.submission",
+					name: "gcode.durable.submission",
 					attributes: { "submission.id": submission.id, status: "done" },
 				},
 			]);
@@ -603,18 +592,16 @@ describe("Durable telemetry", () => {
 		const { harness, root } = await openTracked(storage, setup, telemetry);
 		await root.commit(async (tx) => {
 			await tx.appendEntry(root.id, {
-				kind: "garmin-code-mini.user",
+				kind: "gcode.user",
 				model: [{ role: "user", content: "old", timestamp: 1 }],
 			});
-			await tx.appendEntry(root.id, { kind: "garmin-code-mini.assistant", model: [fauxAssistantMessage("answer")] });
+			await tx.appendEntry(root.id, { kind: "gcode.assistant", model: [fauxAssistantMessage("answer")] });
 		}, context);
 		const id = await root.compact(undefined, context);
 		await waitFor(() => held !== undefined);
 		await held!.entered;
-		expect(telemetry.getSpans().some((span) => span.name === "garmin-code-mini.durable.submit")).toBe(false);
-		expect(
-			telemetry.getSpans().find((span) => span.attributes["task.name"] === "garmin-code-mini.compaction"),
-		).toMatchObject({
+		expect(telemetry.getSpans().some((span) => span.name === "gcode.durable.submit")).toBe(false);
+		expect(telemetry.getSpans().find((span) => span.attributes["task.name"] === "gcode.compaction")).toMatchObject({
 			settled: false,
 			events: [],
 		});
@@ -622,13 +609,11 @@ describe("Durable telemetry", () => {
 		await harness.waitForTask(id, context);
 		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
 		const spans = telemetry.getSpans();
-		const phase = spans.find((span) => span.attributes["task.name"] === "garmin-code-mini.compaction")!;
-		expect(spans.some((span) => span.name === "garmin-code-mini.durable.submit")).toBe(false);
-		expect(phase.events.some((event) => event.name === "garmin-code-mini.durable.entry")).toBe(true);
+		const phase = spans.find((span) => span.attributes["task.name"] === "gcode.compaction")!;
+		expect(spans.some((span) => span.name === "gcode.durable.submit")).toBe(false);
+		expect(phase.events.some((event) => event.name === "gcode.durable.entry")).toBe(true);
 		expect(
-			phase.events.some(
-				(event) => event.name === "garmin-code-mini.durable.submission" && event.attributes.status === "done",
-			),
+			phase.events.some((event) => event.name === "gcode.durable.submission" && event.attributes.status === "done"),
 		).toBe(true);
 		expect(JSON.stringify(spans)).not.toContain("private-summary");
 		await harness.close(context);
@@ -678,7 +663,7 @@ describe("Durable telemetry", () => {
 				status === "orphaned" ? { status, reason: message } : { status, error: { message } },
 			);
 			await waitFor(() => telemetry.getSpans().every((span) => span.settled));
-			const span = telemetry.getSpans().find((span) => span.name === "garmin-code-mini.durable.phase")!;
+			const span = telemetry.getSpans().find((span) => span.name === "gcode.durable.phase")!;
 			expect(span).toMatchObject({ parentId: null, attributes: { outcome: "faulted" } });
 			expect(span.status).toEqual({
 				status: "error",
@@ -686,7 +671,7 @@ describe("Durable telemetry", () => {
 			});
 			if (status === "faulted")
 				expect(span.events).toContainEqual({
-					name: "garmin-code-mini.durable.report",
+					name: "gcode.durable.report",
 					attributes: { type: "task_faulted", reason: "threw", extension: "task:test.fault", "task.id": id },
 				});
 			expect(JSON.stringify(span)).not.toContain("private-exception-name");
@@ -725,7 +710,7 @@ describe("Durable telemetry", () => {
 		await harness.abortTask(id, context);
 		await harness.waitForTask(id, context);
 		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
-		const phases = telemetry.getSpans().filter((span) => span.name === "garmin-code-mini.durable.phase");
+		const phases = telemetry.getSpans().filter((span) => span.name === "gcode.durable.phase");
 		expect(phases.map((span) => span.attributes.kind)).toEqual(["run", "abort"]);
 		for (const span of phases) {
 			expect(span.attributes.outcome).toBe("aborted");
@@ -763,24 +748,24 @@ describe("Durable telemetry", () => {
 		const id = await root.commit((tx) => tx.createTask(Task, null, { ownership: { kind: "conversation" } }), context);
 		await harness.waitForTask(id, context);
 		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
-		const span = telemetry.getSpans().find((span) => span.name === "garmin-code-mini.durable.phase")!;
+		const span = telemetry.getSpans().find((span) => span.name === "gcode.durable.phase")!;
 		expect(span.events).toEqual([
 			{
-				name: "garmin-code-mini.durable.report",
+				name: "gcode.durable.report",
 				attributes: { type: "task_error", extension: "task:test.report", "task.id": id },
 			},
 			{
-				name: "garmin-code-mini.durable.report",
+				name: "gcode.durable.report",
 				attributes: { type: "extension_error", extension: "reporting-extension", "task.id": id },
 			},
-			{ name: "garmin-code-mini.durable.report", attributes: { type: "host_error", "task.id": id } },
+			{ name: "gcode.durable.report", attributes: { type: "host_error", "task.id": id } },
 		]);
 		expect(setup.reports).toEqual([error, error, error]);
-		expect(telemetry.getSpans().some((span) => span.name === "garmin-code-mini.durable.report")).toBe(false);
+		expect(telemetry.getSpans().some((span) => span.name === "gcode.durable.report")).toBe(false);
 		expect(
 			telemetry
 				.getMetrics()
-				.filter((metric) => metric.name === "garmin-code-mini.durable.reports")
+				.filter((metric) => metric.name === "gcode.durable.reports")
 				.map(({ attributes, value }) => ({ attributes, value })),
 		).toEqual([
 			{ attributes: { type: "task_error" }, value: 1 },
@@ -812,9 +797,9 @@ describe("Durable telemetry", () => {
 		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
 		const request = telemetry
 			.getSpans()
-			.find((span) => span.name === "garmin-code-mini.durable.phase" && span.attributes.phase === "request")!;
+			.find((span) => span.name === "gcode.durable.phase" && span.attributes.phase === "request")!;
 		expect(request.events).toContainEqual({
-			name: "garmin-code-mini.durable.report",
+			name: "gcode.durable.report",
 			attributes: {
 				type: "extension_error",
 				extension: "reporting-hooks",
@@ -849,11 +834,11 @@ describe("Durable telemetry", () => {
 		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
 		const clock = telemetry.getSpans().find((span) => span.attributes["task.name"] === "test.clock")!;
 		expect(clock.events).toEqual([]);
-		expect(telemetry.getSpans().some((span) => span.name === "garmin-code-mini.durable.report")).toBe(false);
+		expect(telemetry.getSpans().some((span) => span.name === "gcode.durable.report")).toBe(false);
 		expect(
 			telemetry
 				.getMetrics()
-				.filter((metric) => metric.name === "garmin-code-mini.durable.reports")
+				.filter((metric) => metric.name === "gcode.durable.reports")
 				.map((metric) => metric.attributes),
 		).toEqual([{ type: "extension_error" }, { type: "host_error" }]);
 		expect(setup.reports).toEqual([hookError, clockError]);
@@ -878,7 +863,7 @@ describe("Durable telemetry", () => {
 		expect(
 			telemetry
 				.getMetrics()
-				.filter((metric) => metric.name === "garmin-code-mini.durable.reports")
+				.filter((metric) => metric.name === "gcode.durable.reports")
 				.map((metric) => metric.attributes),
 		).toEqual([{ type: "session_failed" }]);
 	});
@@ -897,7 +882,7 @@ describe("Durable telemetry", () => {
 		expect(
 			telemetry
 				.getMetrics()
-				.filter((metric) => metric.name === "garmin-code-mini.durable.reports")
+				.filter((metric) => metric.name === "gcode.durable.reports")
 				.map((metric) => metric.attributes),
 		).toEqual([{ type: "listener_error" }]);
 		unsubscribe();
@@ -911,20 +896,16 @@ describe("Durable telemetry", () => {
 		const { harness, root } = await openTracked(new MemoryStorage(), setup, telemetry);
 		const error = new Error("private-listener-error");
 		const unsubscribe = harness.subscribeCommits((publication) => {
-			if (
-				publication.changes.some(
-					(change) => change.type === "entry" && change.value.kind === "garmin-code-mini.user",
-				)
-			)
+			if (publication.changes.some((change) => change.type === "entry" && change.value.kind === "gcode.user"))
 				throw error;
 		});
 		await (await root.submit({ type: "input", content: "input" }, context)).wait(context);
 		await harness.waitForIdle(context);
 		await waitFor(() => telemetry.getSpans().every((span) => span.settled));
 		expect(setup.reports).toEqual([error]);
-		const span = telemetry.getSpans().find((span) => span.name === "garmin-code-mini.durable.submit")!;
+		const span = telemetry.getSpans().find((span) => span.name === "gcode.durable.submit")!;
 		expect(span.events).toContainEqual({
-			name: "garmin-code-mini.durable.report",
+			name: "gcode.durable.report",
 			attributes: { type: "listener_error" },
 		});
 		expect(JSON.stringify(telemetry.getSpans())).not.toContain("private-listener-error");
@@ -939,11 +920,7 @@ describe("Durable telemetry", () => {
 		const { harness, root } = await openTracked(new MemoryStorage(), setup, telemetry);
 		const failed = Promise.withResolvers<void>();
 		const unsubscribe = harness.subscribeCommits((publication) => {
-			if (
-				publication.changes.some(
-					(change) => change.type === "entry" && change.value.kind === "garmin-code-mini.user",
-				)
-			)
+			if (publication.changes.some((change) => change.type === "entry" && change.value.kind === "gcode.user"))
 				return failed.promise;
 		});
 		await (await root.submit({ type: "input", content: "input" }, context)).wait(context);
@@ -956,7 +933,7 @@ describe("Durable telemetry", () => {
 		expect(
 			telemetry
 				.getMetrics()
-				.filter((metric) => metric.name === "garmin-code-mini.durable.reports")
+				.filter((metric) => metric.name === "gcode.durable.reports")
 				.map((metric) => metric.attributes),
 		).toEqual([{ type: "listener_error" }]);
 		expect(JSON.stringify(telemetry.getSpans())).not.toContain("private-async-listener-error");
@@ -1020,8 +997,8 @@ describe("Durable telemetry", () => {
 			telemetry
 				.getSpans()
 				.flatMap((span) => span.events)
-				.filter((event) => event.name === "garmin-code-mini.durable.replay"),
-		).toContainEqual({ name: "garmin-code-mini.durable.replay", attributes: { "tool.name": "once" } });
+				.filter((event) => event.name === "gcode.durable.replay"),
+		).toContainEqual({ name: "gcode.durable.replay", attributes: { "tool.name": "once" } });
 		await harness.close(context);
 		await sandbox.close();
 	});

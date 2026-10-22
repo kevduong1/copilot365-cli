@@ -22,7 +22,7 @@ let
   installLock = source + "/packages/coding-agent/install-lock";
 
   workspacePackages = stdenv.mkDerivation {
-    pname = "garmin-code-mini-workspace-packages";
+    pname = "gcode-workspace-packages";
     inherit (packageJson) version;
     src = source;
 
@@ -70,18 +70,18 @@ let
     # The install lock points internal packages at registry releases. Replace
     # them with the packages built from this checkout.
     packageSourceOverrides = {
-      "node_modules/@garmin-code-mini/agent-core" = workspacePackages + "/agent.tgz";
-      "node_modules/@garmin-code-mini/ai" = workspacePackages + "/ai.tgz";
-      "node_modules/@garmin-code-mini/codemode" = workspacePackages + "/codemode.tgz";
-      "node_modules/garmin-code-mini" = workspacePackages + "/coding-agent.tgz";
-      "node_modules/@garmin-code-mini/mcp" = workspacePackages + "/mcp.tgz";
-      "node_modules/@garmin-code-mini/telemetry" = workspacePackages + "/telemetry.tgz";
-      "node_modules/@garmin-code-mini/tui" = workspacePackages + "/tui.tgz";
+      "node_modules/@gcode/agent-core" = workspacePackages + "/agent.tgz";
+      "node_modules/@gcode/ai" = workspacePackages + "/ai.tgz";
+      "node_modules/@gcode/codemode" = workspacePackages + "/codemode.tgz";
+      "node_modules/gcode" = workspacePackages + "/coding-agent.tgz";
+      "node_modules/@gcode/mcp" = workspacePackages + "/mcp.tgz";
+      "node_modules/@gcode/telemetry" = workspacePackages + "/telemetry.tgz";
+      "node_modules/@gcode/tui" = workspacePackages + "/tui.tgz";
     };
   };
 in
 stdenv.mkDerivation {
-  pname = "garmin-code-mini";
+  pname = "gcode";
   inherit (packageJson) version;
   src = installLock;
   inherit npmDeps;
@@ -106,15 +106,15 @@ stdenv.mkDerivation {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p "$out/lib/garmin-code-mini" "$out/bin"
-    cp -R . "$out/lib/garmin-code-mini"
+    mkdir -p "$out/lib/gcode" "$out/bin"
+    cp -R . "$out/lib/gcode"
 
-    # The wrapper runs garmin-code-mini with an absolute Node path. Append Node
+    # The wrapper runs gcode with an absolute Node path. Append Node
     # so shells started by the bash tool keep the user's Node installation.
     # fd, ripgrep,
-    # and the clipboard tools are garmin-code-mini's own dependencies and take precedence.
-    makeWrapper ${nodejs}/bin/node "$out/bin/garmin-code-mini" \
-      --add-flags "$out/lib/garmin-code-mini/node_modules/garmin-code-mini/dist/bundle/cli.js" \
+    # and the clipboard tools are gcode's own dependencies and take precedence.
+    makeWrapper ${nodejs}/bin/node "$out/bin/gcode" \
+      --add-flags "$out/lib/gcode/node_modules/gcode/dist/bundle/cli.js" \
       --suffix PATH : ${lib.makeBinPath [ nodejs ]} \
       --prefix PATH : ${
         lib.makeBinPath (
@@ -135,27 +135,27 @@ stdenv.mkDerivation {
   doInstallCheck = true;
   installCheckPhase = ''
     runHook preInstallCheck
-    test "$("$out/bin/garmin-code-mini" --version)" = "${packageJson.version}"
+    test "$("$out/bin/gcode" --version)" = "${packageJson.version}"
     # Load host-platform TUI helpers directly so missing native dependencies
     # fail the build rather than silently disabling clipboard support.
     ${nodejs}/bin/node -e \
       "const fs = require('node:fs');
        const path = require('node:path');
-       const dir = '$out/lib/garmin-code-mini/node_modules/@garmin-code-mini/tui/native/' + process.platform + '/prebuilds/' + process.platform + '-' + process.arch;
+       const dir = '$out/lib/gcode/node_modules/@gcode/tui/native/' + process.platform + '/prebuilds/' + process.platform + '-' + process.arch;
        if (fs.existsSync(dir)) {
          for (const file of fs.readdirSync(dir)) {
            if (file.endsWith('.node')) require(path.join(dir, file));
          }
        }"
     ${nodejs}/bin/node -e \
-      "require('$out/lib/garmin-code-mini/node_modules/@silvia-odwyer/photon-node')"
+      "require('$out/lib/gcode/node_modules/@silvia-odwyer/photon-node')"
     runHook postInstallCheck
   '';
 
   meta = {
     description = packageJson.description;
     license = lib.licenses.mit;
-    mainProgram = "garmin-code-mini";
+    mainProgram = "gcode";
     platforms = [
       "aarch64-darwin"
       "aarch64-linux"

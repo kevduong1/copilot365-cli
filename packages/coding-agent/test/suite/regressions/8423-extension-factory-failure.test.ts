@@ -17,7 +17,7 @@ describe("issue #8423 extension factory failure", () => {
 		let flagDuringLoad: boolean | string | undefined;
 
 		await loadExtensionFromFactory(
-			(garminCodeMini) => garminCodeMini.registerProvider("working-provider", providerConfig),
+			(gcode) => gcode.registerProvider("working-provider", providerConfig),
 			process.cwd(),
 			eventBus,
 			runtime,
@@ -25,15 +25,15 @@ describe("issue #8423 extension factory failure", () => {
 		);
 		await expect(
 			loadExtensionFromFactory(
-				(garminCodeMini) => {
-					capturedApi = garminCodeMini;
-					garminCodeMini.events.on("factory-failure", () => {
+				(gcode) => {
+					capturedApi = gcode;
+					gcode.events.on("factory-failure", () => {
 						eventCalls++;
 					});
-					garminCodeMini.registerFlag("failed-flag", { type: "boolean", default: true });
-					flagDuringLoad = garminCodeMini.getFlag("failed-flag");
-					garminCodeMini.unregisterProvider("working-provider");
-					garminCodeMini.registerProvider("failed-provider", providerConfig);
+					gcode.registerFlag("failed-flag", { type: "boolean", default: true });
+					flagDuringLoad = gcode.getFlag("failed-flag");
+					gcode.unregisterProvider("working-provider");
+					gcode.registerProvider("failed-provider", providerConfig);
 					throw new Error("factory failed");
 				},
 				process.cwd(),
@@ -62,8 +62,8 @@ describe("issue #8423 extension factory failure", () => {
 			releaseFailure = resolve;
 		});
 		const failingLoad = loadExtensionFromFactory(
-			async (garminCodeMini) => {
-				garminCodeMini.registerProvider("failed-provider", providerConfig);
+			async (gcode) => {
+				gcode.registerProvider("failed-provider", providerConfig);
 				await waitBeforeFailure;
 				throw new Error("factory failed");
 			},
@@ -74,7 +74,7 @@ describe("issue #8423 extension factory failure", () => {
 		);
 
 		await loadExtensionFromFactory(
-			(garminCodeMini) => garminCodeMini.registerProvider("working-provider", providerConfig),
+			(gcode) => gcode.registerProvider("working-provider", providerConfig),
 			process.cwd(),
 			eventBus,
 			runtime,

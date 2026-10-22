@@ -1,4 +1,4 @@
-import { colorToOklch, colorToRgb, parseColor, type RgbColor, rgbColor } from "@garmin-code-mini/tui";
+import { colorToOklch, colorToRgb, parseColor, type RgbColor, rgbColor } from "@gcode/tui";
 import { afterEach, describe, expect, it } from "vitest";
 import {
 	generateSystemThemeColors,
@@ -83,7 +83,7 @@ describe("generateSystemThemeColors", () => {
 		expect(Math.abs(hue(resolved(DRACULA, "error")) - hue(DRACULA.palette![1]))).toBeLessThan(8);
 	});
 
-	// https://github.com/earendil-works/garmin-code-mini/issues/10255
+	// https://github.com/earendil-works/gcode/issues/10255
 	it("keeps pastel palette colors pastel at other lightnesses", () => {
 		const frappe: SystemThemeInput = {
 			background: rgb("#303446"),

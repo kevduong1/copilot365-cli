@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { normalizeContext } from "@garmin-code-mini/ai";
-import type { Api, Model, OpenAICompletionsCompat } from "@garmin-code-mini/ai/compat";
-import { getApiProvider, getSupportedThinkingLevels } from "@garmin-code-mini/ai/compat";
+import { normalizeContext } from "@gcode/ai";
+import type { Api, Model, OpenAICompletionsCompat } from "@gcode/ai/compat";
+import { getApiProvider, getSupportedThinkingLevels } from "@gcode/ai/compat";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import type { ModelsJsonProvider } from "../src/core/model-config.ts";
@@ -16,10 +16,7 @@ describe("ModelRegistry", () => {
 	let authStorage: AuthStorage;
 
 	beforeEach(() => {
-		tempDir = join(
-			tmpdir(),
-			`garmin-code-mini-test-model-registry-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-		);
+		tempDir = join(tmpdir(), `gcode-test-model-registry-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		mkdirSync(tempDir, { recursive: true });
 		modelsJsonPath = join(tempDir, "models.json");
 		authStorage = AuthStorage.inMemory();
@@ -635,7 +632,7 @@ describe("ModelRegistry", () => {
 			expect(registry.find("local", "second-local-model")?.promptCache).toEqual({ short: 300, long: 1800 });
 		});
 
-		// Regression test for https://github.com/earendil-works/garmin-code-mini/issues/9631
+		// Regression test for https://github.com/earendil-works/gcode/issues/9631
 		test("model override deep-merges image resize limits", async () => {
 			writeRawModelsJson({
 				test: {

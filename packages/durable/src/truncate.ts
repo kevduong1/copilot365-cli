@@ -1,4 +1,4 @@
-import { utf8ByteLength } from "@garmin-code-mini/chord/output";
+import { utf8ByteLength } from "@gcode/chord/output";
 /**
  * Shared truncation utilities for tool outputs.
  *
@@ -6,7 +6,7 @@ import { utf8ByteLength } from "@garmin-code-mini/chord/output";
  * - Line limit (default: 2000 lines)
  * - Byte limit (default: 50KB)
  *
- * Never returns partial lines. Tool output streams are bounded by `OutputBuffer` from `@garmin-code-mini/chord/output` instead.
+ * Never returns partial lines. Tool output streams are bounded by `OutputBuffer` from `@gcode/chord/output` instead.
  */
 
 export const DEFAULT_MAX_LINES = 2000;

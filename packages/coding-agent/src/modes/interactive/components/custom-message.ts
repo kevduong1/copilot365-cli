@@ -1,6 +1,6 @@
-import type { TextContent } from "@garmin-code-mini/ai";
-import type { Component } from "@garmin-code-mini/tui";
-import { Box, Container, Markdown, type MarkdownTheme, Spacer, Text } from "@garmin-code-mini/tui";
+import type { TextContent } from "@gcode/ai";
+import type { Component } from "@gcode/tui";
+import { Box, Container, Markdown, type MarkdownTheme, Spacer, Text } from "@gcode/tui";
 import type { MessageRenderer } from "../../../core/extensions/types.ts";
 import type { CustomMessage } from "../../../core/messages.ts";
 import { getMarkdownTheme, theme } from "../theme/theme.ts";

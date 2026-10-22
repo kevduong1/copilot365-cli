@@ -1,5 +1,5 @@
-import type { AgentTool, AgentToolResult } from "@garmin-code-mini/agent-core";
-import { fauxAssistantMessage, fauxToolCall } from "@garmin-code-mini/ai";
+import type { AgentTool, AgentToolResult } from "@gcode/agent-core";
+import { fauxAssistantMessage, fauxToolCall } from "@gcode/ai";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import {

@@ -8,15 +8,15 @@
  * file changes, giving the model immediate context. During steering the
  * exec call is skipped so the correction reaches the model without delay.
  *
- * Start garmin-code-mini with this extension:
- *   garmin-code-mini -e ./examples/extensions/input-transform-streaming.ts
+ * Start gcode with this extension:
+ *   gcode -e ./examples/extensions/input-transform-streaming.ts
  */
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
 const TRIGGER = /\b(changes?|diff|modified)\b/i;
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("input", async (event) => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("input", async (event) => {
 		// During steering, skip the exec call — corrections should be fast
 		if (event.streamingBehavior === "steer") {
 			return { action: "continue" };
@@ -26,7 +26,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 			return { action: "continue" };
 		}
 
-		const { stdout, code } = await garminCodeMini.exec("git", ["diff", "--stat"]);
+		const { stdout, code } = await gcode.exec("git", ["diff", "--stat"]);
 		if (code !== 0 || !stdout.trim()) {
 			return { action: "continue" };
 		}

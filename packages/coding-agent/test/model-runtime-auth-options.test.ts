@@ -1,4 +1,4 @@
-import { type AuthType, type CredentialStore, InMemoryCredentialStore } from "@garmin-code-mini/ai";
+import { type AuthType, type CredentialStore, InMemoryCredentialStore } from "@gcode/ai";
 import { describe, expect, it } from "vitest";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import { ModelRuntime } from "../src/core/model-runtime.ts";
@@ -33,7 +33,7 @@ function testModel(id: string) {
 }
 
 describe("ModelRuntime auth options", () => {
-	it("accepts a garmin-code-mini-ai CredentialStore", async () => {
+	it("accepts a gcode-ai CredentialStore", async () => {
 		const credentials = new InMemoryCredentialStore();
 		await credentials.modify("local", async () => ({ type: "api_key", key: "stored-key" }));
 		const runtime = await ModelRuntime.create({ credentials, modelsPath: null });

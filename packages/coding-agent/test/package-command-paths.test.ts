@@ -42,10 +42,7 @@ describe("package commands", () => {
 	}
 
 	beforeEach(() => {
-		tempDir = join(
-			tmpdir(),
-			`garmin-code-mini-package-commands-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-		);
+		tempDir = join(tmpdir(), `gcode-package-commands-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		agentDir = join(tempDir, "agent");
 		projectDir = join(tempDir, "project");
 		packageDir = join(tempDir, "local-package");
@@ -55,7 +52,7 @@ describe("package commands", () => {
 
 		originalCwd = process.cwd();
 		originalAgentDir = process.env[ENV_AGENT_DIR];
-		originalPackageDir = process.env.GARMIN_CODE_MINI_PACKAGE_DIR;
+		originalPackageDir = process.env.GCODE_PACKAGE_DIR;
 		originalPath = process.env.PATH;
 		originalExitCode = process.exitCode;
 		originalExecPath = process.execPath;
@@ -84,9 +81,9 @@ describe("package commands", () => {
 			process.env[ENV_AGENT_DIR] = originalAgentDir;
 		}
 		if (originalPackageDir === undefined) {
-			delete process.env.GARMIN_CODE_MINI_PACKAGE_DIR;
+			delete process.env.GCODE_PACKAGE_DIR;
 		} else {
-			process.env.GARMIN_CODE_MINI_PACKAGE_DIR = originalPackageDir;
+			process.env.GCODE_PACKAGE_DIR = originalPackageDir;
 		}
 		if (originalPath === undefined) {
 			delete process.env.PATH;
@@ -125,11 +122,8 @@ describe("package commands", () => {
 	});
 
 	it("skips untrusted project package settings", async () => {
-		mkdirSync(join(projectDir, ".garmin-code-mini"), { recursive: true });
-		writeFileSync(
-			join(projectDir, ".garmin-code-mini", "settings.json"),
-			JSON.stringify({ packages: ["../local-package"] }),
-		);
+		mkdirSync(join(projectDir, ".gcode"), { recursive: true });
+		writeFileSync(join(projectDir, ".gcode", "settings.json"), JSON.stringify({ packages: ["../local-package"] }));
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
 		try {
@@ -144,11 +138,8 @@ describe("package commands", () => {
 	});
 
 	it("uses remembered project trust for list", async () => {
-		mkdirSync(join(projectDir, ".garmin-code-mini"), { recursive: true });
-		writeFileSync(
-			join(projectDir, ".garmin-code-mini", "settings.json"),
-			JSON.stringify({ packages: ["../local-package"] }),
-		);
+		mkdirSync(join(projectDir, ".gcode"), { recursive: true });
+		writeFileSync(join(projectDir, ".gcode", "settings.json"), JSON.stringify({ packages: ["../local-package"] }));
 		new ProjectTrustStore(agentDir).set(projectDir, true);
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
@@ -166,11 +157,8 @@ describe("package commands", () => {
 	});
 
 	it("overrides remembered trust for list with --no-approve", async () => {
-		mkdirSync(join(projectDir, ".garmin-code-mini"), { recursive: true });
-		writeFileSync(
-			join(projectDir, ".garmin-code-mini", "settings.json"),
-			JSON.stringify({ packages: ["../local-package"] }),
-		);
+		mkdirSync(join(projectDir, ".gcode"), { recursive: true });
+		writeFileSync(join(projectDir, ".gcode", "settings.json"), JSON.stringify({ packages: ["../local-package"] }));
 		new ProjectTrustStore(agentDir).set(projectDir, true);
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
@@ -187,11 +175,8 @@ describe("package commands", () => {
 	});
 
 	it("approves project trust for list with --approve", async () => {
-		mkdirSync(join(projectDir, ".garmin-code-mini"), { recursive: true });
-		writeFileSync(
-			join(projectDir, ".garmin-code-mini", "settings.json"),
-			JSON.stringify({ packages: ["../local-package"] }),
-		);
+		mkdirSync(join(projectDir, ".gcode"), { recursive: true });
+		writeFileSync(join(projectDir, ".gcode", "settings.json"), JSON.stringify({ packages: ["../local-package"] }));
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
 		try {
@@ -208,12 +193,9 @@ describe("package commands", () => {
 	});
 
 	it("uses default project trust for list", async () => {
-		mkdirSync(join(projectDir, ".garmin-code-mini"), { recursive: true });
+		mkdirSync(join(projectDir, ".gcode"), { recursive: true });
 		writeFileSync(join(agentDir, "settings.json"), JSON.stringify({ defaultProjectTrust: "always" }));
-		writeFileSync(
-			join(projectDir, ".garmin-code-mini", "settings.json"),
-			JSON.stringify({ packages: ["../local-package"] }),
-		);
+		writeFileSync(join(projectDir, ".gcode", "settings.json"), JSON.stringify({ packages: ["../local-package"] }));
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
 		try {
@@ -230,19 +212,16 @@ describe("package commands", () => {
 	});
 
 	it("uses project_trust extensions for package commands", async () => {
-		mkdirSync(join(projectDir, ".garmin-code-mini"), { recursive: true });
-		writeFileSync(
-			join(projectDir, ".garmin-code-mini", "settings.json"),
-			JSON.stringify({ packages: ["../local-package"] }),
-		);
+		mkdirSync(join(projectDir, ".gcode"), { recursive: true });
+		writeFileSync(join(projectDir, ".gcode", "settings.json"), JSON.stringify({ packages: ["../local-package"] }));
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
 		try {
 			await expect(
 				main(["list"], {
 					extensionFactories: [
-						(garminCodeMini) => {
-							garminCodeMini.on("project_trust", () => ({ trusted: "yes" }));
+						(gcode) => {
+							gcode.on("project_trust", () => ({ trusted: "yes" }));
 						},
 					],
 				}),
@@ -259,12 +238,9 @@ describe("package commands", () => {
 	});
 
 	it("lets trust.json override default project trust", async () => {
-		mkdirSync(join(projectDir, ".garmin-code-mini"), { recursive: true });
+		mkdirSync(join(projectDir, ".gcode"), { recursive: true });
 		writeFileSync(join(agentDir, "settings.json"), JSON.stringify({ defaultProjectTrust: "always" }));
-		writeFileSync(
-			join(projectDir, ".garmin-code-mini", "settings.json"),
-			JSON.stringify({ packages: ["../local-package"] }),
-		);
+		writeFileSync(join(projectDir, ".gcode", "settings.json"), JSON.stringify({ packages: ["../local-package"] }));
 		new ProjectTrustStore(agentDir).set(projectDir, false);
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
@@ -281,8 +257,8 @@ describe("package commands", () => {
 	});
 
 	it("blocks local package changes when project is untrusted", async () => {
-		mkdirSync(join(projectDir, ".garmin-code-mini"), { recursive: true });
-		writeFileSync(join(projectDir, ".garmin-code-mini", "settings.json"), "{}");
+		mkdirSync(join(projectDir, ".gcode"), { recursive: true });
+		writeFileSync(join(projectDir, ".gcode", "settings.json"), "{}");
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
 		try {
@@ -299,11 +275,11 @@ describe("package commands", () => {
 	it("allows local package install to initialize fresh project settings", async () => {
 		await main(["install", "-l", packageDir]);
 
-		const settingsPath = join(projectDir, ".garmin-code-mini", "settings.json");
+		const settingsPath = join(projectDir, ".gcode", "settings.json");
 		const settings = JSON.parse(readFileSync(settingsPath, "utf-8")) as { packages?: string[] };
 		expect(settings.packages?.length).toBe(1);
 		const stored = settings.packages?.[0] ?? "";
-		expect(realpathSync(join(projectDir, ".garmin-code-mini", stored))).toBe(realpathSync(packageDir));
+		expect(realpathSync(join(projectDir, ".gcode", stored))).toBe(realpathSync(packageDir));
 		expect(process.exitCode).toBeUndefined();
 	});
 
@@ -315,7 +291,7 @@ describe("package commands", () => {
 			await expect(main(["install", "--help"])).resolves.toBeUndefined();
 
 			const stdout = logSpy.mock.calls.map(([message]) => String(message)).join("\n");
-			expect(stdout).toContain("garmin-code-mini install <local-path> [-l]");
+			expect(stdout).toContain("gcode install <local-path> [-l]");
 			expect(errorSpy).not.toHaveBeenCalled();
 			expect(process.exitCode).toBeUndefined();
 		} finally {

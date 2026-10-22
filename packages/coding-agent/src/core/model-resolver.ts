@@ -2,14 +2,8 @@
  * Model resolution, scoping, and initial selection
  */
 
-import type { ThinkingLevel } from "@garmin-code-mini/agent-core";
-import {
-	type Api,
-	type AuthOperationOptions,
-	type KnownProvider,
-	type Model,
-	modelsAreEqual,
-} from "@garmin-code-mini/ai";
+import type { ThinkingLevel } from "@gcode/agent-core";
+import { type Api, type AuthOperationOptions, type KnownProvider, type Model, modelsAreEqual } from "@gcode/ai";
 import chalk from "chalk";
 import { minimatch } from "minimatch";
 import { isValidThinkingLevel } from "../cli/args.ts";
@@ -18,7 +12,7 @@ import type { ModelRuntime } from "./model-runtime.ts";
 
 /** Default chat model IDs for providers with built-in chat models. */
 export const defaultModelPerProvider: Partial<Record<KnownProvider, string>> = {
-	local: process.env.GARMIN_CODE_MINI_MODEL?.trim() || "local-model",
+	local: process.env.GCODE_MODEL?.trim() || "local-model",
 };
 
 export interface ScopedModel {

@@ -1,13 +1,8 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Agent } from "@garmin-code-mini/agent-core";
-import {
-	type AssistantMessage,
-	createAssistantMessageEventStream,
-	getModel,
-	type Model,
-} from "@garmin-code-mini/ai/compat";
+import { Agent } from "@gcode/agent-core";
+import { type AssistantMessage, createAssistantMessageEventStream, getModel, type Model } from "@gcode/ai/compat";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AgentSession } from "../src/core/agent-session.ts";
 import type { AgentSessionRuntime } from "../src/core/agent-session-runtime.ts";
@@ -91,7 +86,7 @@ async function createRuntimeHost(options: {
 	runtimeHost: AgentSessionRuntime;
 	cleanup: () => Promise<void>;
 }> {
-	const tempDir = join(tmpdir(), `garmin-code-mini-rpc-prompt-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+	const tempDir = join(tmpdir(), `gcode-rpc-prompt-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 	mkdirSync(tempDir, { recursive: true });
 
 	const model = options.model ?? getModel("local", "local-model");
@@ -245,9 +240,9 @@ describe("RPC prompt response semantics", () => {
 			withAuth: false,
 			responseDelayMs: 0,
 			extensionsResult: await createTestExtensionsResult([
-				(garminCodeMini) => {
-					garminCodeMini.registerCommand("handled", { handler: async () => {} });
-					garminCodeMini.on("input", (event) => {
+				(gcode) => {
+					gcode.registerCommand("handled", { handler: async () => {} });
+					gcode.on("input", (event) => {
 						if (event.text === "handled input") return { action: "handled" };
 					});
 				},
@@ -317,10 +312,10 @@ describe("RPC prompt response semantics", () => {
 				withAuth: true,
 				responseDelayMs: 500,
 				extensionsResult: await createTestExtensionsResult([
-					(garminCodeMini) => {
-						garminCodeMini.on("input", (event) => {
+					(gcode) => {
+						gcode.on("input", (event) => {
 							if (event.text === "A" && event.source === "rpc") {
-								garminCodeMini.sendUserMessage("B", { deliverAs: type === "steer" ? "steer" : "followUp" });
+								gcode.sendUserMessage("B", { deliverAs: type === "steer" ? "steer" : "followUp" });
 								return { action: "handled" };
 							}
 						});
@@ -363,8 +358,8 @@ describe("RPC prompt response semantics", () => {
 			withAuth: false,
 			responseDelayMs: 0,
 			extensionsResult: await createTestExtensionsResult([
-				(garminCodeMini) => {
-					garminCodeMini.on("input", (event) => {
+				(gcode) => {
+					gcode.on("input", (event) => {
 						if (event.text === "A") return { action: "transform", text: "B" };
 					});
 				},

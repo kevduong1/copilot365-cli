@@ -2,7 +2,7 @@
  * TUI session selector for --resume flag
  */
 
-import { setKeybindings } from "@garmin-code-mini/tui";
+import { setKeybindings } from "@gcode/tui";
 import { KeybindingsManager } from "../core/keybindings.ts";
 import type { SessionInfo, SessionListProgress } from "../core/session-manager.ts";
 import type { SettingsManager } from "../core/settings-manager.ts";

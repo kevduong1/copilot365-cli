@@ -1543,7 +1543,7 @@ describe("TuiAltScreen", () => {
 	it("coalesces slash and hyphen separated segments for double-click word selection", async () => {
 		for (const { line, needle } of [
 			{ line: "extensions/starline/fixed-editor/compositor.ts", needle: "starline" },
-			{ line: "earendil-works/garmin-code-mini-tui", needle: "works" },
+			{ line: "earendil-works/gcode-tui", needle: "works" },
 		]) {
 			const copied: string[] = [];
 			const terminal = new RecordingTerminal(80, 1);

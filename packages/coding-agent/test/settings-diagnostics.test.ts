@@ -7,7 +7,7 @@ import { SettingsManager, type SettingsStorage } from "../src/core/settings-mana
 
 describe("settings diagnostics", () => {
 	it("includes the settings file path for file-backed storage", () => {
-		const tempDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-settings-diagnostics-"));
+		const tempDir = mkdtempSync(join(tmpdir(), "gcode-settings-diagnostics-"));
 		const agentDir = join(tempDir, "agent");
 		const settingsPath = join(agentDir, "settings.json");
 		mkdirSync(agentDir);

@@ -2,9 +2,9 @@
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/10-registry-reload.ts
 
-import { Type } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { Type } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { createRegistry, defineExtension, defineTool, Harness, MemoryStorage, wrapTool } from "../../src/index.ts";
 
 const context = BACKGROUND_CONTEXT;

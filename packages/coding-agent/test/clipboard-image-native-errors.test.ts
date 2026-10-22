@@ -1,9 +1,9 @@
-import type * as Tui from "@garmin-code-mini/tui";
+import type * as Tui from "@gcode/tui";
 import { afterEach, expect, test, vi } from "vitest";
 import { InteractiveMode } from "../src/modes/interactive/interactive-mode.ts";
 
 const readClipboardText = vi.hoisted(() => vi.fn<() => Promise<string | null>>());
-vi.mock("@garmin-code-mini/tui", async (importOriginal) => ({
+vi.mock("@gcode/tui", async (importOriginal) => ({
 	...(await importOriginal<typeof Tui>()),
 	getNativeClipboard: () => ({
 		async getImage() {

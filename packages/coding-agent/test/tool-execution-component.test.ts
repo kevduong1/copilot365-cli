@@ -1,5 +1,5 @@
 import { join, resolve } from "node:path";
-import { resetCapabilitiesCache, setCapabilities, Text, type TUI, type TuiMouseEvent } from "@garmin-code-mini/tui";
+import { resetCapabilitiesCache, setCapabilities, Text, type TUI, type TuiMouseEvent } from "@gcode/tui";
 import { Type } from "typebox";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -642,17 +642,17 @@ describe("ToolExecutionComponent parity", () => {
 		},
 		{
 			title: "AGENTS.md",
-			path: join(process.cwd(), ".garmin-code-mini", "AGENTS.md"),
+			path: join(process.cwd(), ".gcode", "AGENTS.md"),
 			content: "Hidden resource instructions",
-			compact: "read resource .garmin-code-mini/AGENTS.md",
+			compact: "read resource .gcode/AGENTS.md",
 			hidden: "Hidden resource instructions",
 			absent: undefined,
 		},
 		{
 			title: "AGENTS.override.md",
-			path: join(process.cwd(), ".garmin-code-mini", "AGENTS.override.md"),
+			path: join(process.cwd(), ".gcode", "AGENTS.override.md"),
 			content: "Hidden override instructions",
-			compact: "read resource .garmin-code-mini/AGENTS.override.md",
+			compact: "read resource .gcode/AGENTS.override.md",
 			hidden: "Hidden override instructions",
 			absent: undefined,
 		},
@@ -665,7 +665,7 @@ describe("ToolExecutionComponent parity", () => {
 			absent: undefined,
 		},
 		{
-			title: "garmin-code-mini documentation",
+			title: "gcode documentation",
 			path: getReadmePath(),
 			content: "Hidden docs content",
 			compact: "read docs README.md",
@@ -703,7 +703,7 @@ describe("ToolExecutionComponent parity", () => {
 
 	for (const scenario of [
 		{ title: "SKILL.md", path: join(process.cwd(), "attio", "SKILL.md"), compact: "[skill] attio:120-329" },
-		{ title: "garmin-code-mini documentation", path: getReadmePath(), compact: "read docs README.md:120-329" },
+		{ title: "gcode documentation", path: getReadmePath(), compact: "read docs README.md:120-329" },
 	] as const) {
 		test(`shows the read line range in compact ${scenario.title} reads before the expand hint`, () => {
 			const component = new ToolExecutionComponent(

@@ -4,11 +4,11 @@
  * Exposes /tui to show TUI redraw stats.
  */
 
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { Text } from "@earendil-works/pi-tui";
+import type { ExtensionAPI } from "gcode";
+import { Text } from "@gcode/tui";
 
-export default function (pi: ExtensionAPI) {
-	pi.registerCommand("tui", {
+export default function (gcode: ExtensionAPI) {
+	gcode.registerCommand("tui", {
 		description: "Show TUI stats",
 		handler: async (_args, ctx) => {
 			if (!ctx.hasUI) return;

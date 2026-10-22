@@ -57,8 +57,8 @@ describe("DefaultPackageManager", () => {
 	let previousOfflineEnv: string | undefined;
 
 	beforeEach(() => {
-		previousOfflineEnv = process.env.GARMIN_CODE_MINI_OFFLINE;
-		delete process.env.GARMIN_CODE_MINI_OFFLINE;
+		previousOfflineEnv = process.env.GCODE_OFFLINE;
+		delete process.env.GCODE_OFFLINE;
 		tempDir = join(tmpdir(), `pm-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		mkdirSync(tempDir, { recursive: true });
 		agentDir = join(tempDir, "agent");
@@ -74,9 +74,9 @@ describe("DefaultPackageManager", () => {
 
 	afterEach(() => {
 		if (previousOfflineEnv === undefined) {
-			delete process.env.GARMIN_CODE_MINI_OFFLINE;
+			delete process.env.GCODE_OFFLINE;
 		} else {
-			process.env.GARMIN_CODE_MINI_OFFLINE = previousOfflineEnv;
+			process.env.GCODE_OFFLINE = previousOfflineEnv;
 		}
 		vi.restoreAllMocks();
 		vi.unstubAllGlobals();
@@ -154,7 +154,7 @@ Content`,
 			expect(result.skills.some((r) => r.path === skillFile && r.enabled)).toBe(true);
 		});
 
-		it("should auto-discover root markdown skills from .garmin-code-mini skill dirs", async () => {
+		it("should auto-discover root markdown skills from .gcode skill dirs", async () => {
 			const skillFile = join(agentDir, "skills", "single-file.md");
 			mkdirSync(join(agentDir, "skills"), { recursive: true });
 			writeFileSync(
@@ -170,8 +170,8 @@ Content`,
 			expect(result.skills.some((r) => r.path === skillFile && r.enabled)).toBe(true);
 		});
 
-		it("should resolve project paths relative to .garmin-code-mini", async () => {
-			const extDir = join(tempDir, ".garmin-code-mini", "extensions");
+		it("should resolve project paths relative to .gcode", async () => {
+			const extDir = join(tempDir, ".gcode", "extensions");
 			mkdirSync(extDir, { recursive: true });
 			const extPath = join(extDir, "project-ext.ts");
 			writeFileSync(extPath, "export default function() {}");
@@ -223,15 +223,15 @@ Content`,
 				writeFileSync(join(sharedThemesDir, "shared.json"), JSON.stringify({ name: "shared-theme" }));
 
 				mkdirSync(join(agentDir), { recursive: true });
-				mkdirSync(join(tempDir, ".garmin-code-mini"), { recursive: true });
+				mkdirSync(join(tempDir, ".gcode"), { recursive: true });
 				symlinkSync(sharedExtensionsDir, join(agentDir, "extensions"), "dir");
 				symlinkSync(sharedSkillsDir, join(agentDir, "skills"), "dir");
 				symlinkSync(sharedPromptsDir, join(agentDir, "prompts"), "dir");
 				symlinkSync(sharedThemesDir, join(agentDir, "themes"), "dir");
-				symlinkSync(sharedExtensionsDir, join(tempDir, ".garmin-code-mini", "extensions"), "dir");
-				symlinkSync(sharedSkillsDir, join(tempDir, ".garmin-code-mini", "skills"), "dir");
-				symlinkSync(sharedPromptsDir, join(tempDir, ".garmin-code-mini", "prompts"), "dir");
-				symlinkSync(sharedThemesDir, join(tempDir, ".garmin-code-mini", "themes"), "dir");
+				symlinkSync(sharedExtensionsDir, join(tempDir, ".gcode", "extensions"), "dir");
+				symlinkSync(sharedSkillsDir, join(tempDir, ".gcode", "skills"), "dir");
+				symlinkSync(sharedPromptsDir, join(tempDir, ".gcode", "prompts"), "dir");
+				symlinkSync(sharedThemesDir, join(tempDir, ".gcode", "themes"), "dir");
 
 				const result = await packageManager.resolve();
 
@@ -263,7 +263,7 @@ Content`,
 		});
 
 		it("should auto-discover project prompts with overrides", async () => {
-			const promptsDir = join(tempDir, ".garmin-code-mini", "prompts");
+			const promptsDir = join(tempDir, ".gcode", "prompts");
 			mkdirSync(promptsDir, { recursive: true });
 			const promptPath = join(promptsDir, "is.md");
 			writeFileSync(promptPath, "Is prompt");
@@ -274,15 +274,15 @@ Content`,
 			expect(result.prompts.some((r) => r.path === promptPath && !r.enabled)).toBe(true);
 		});
 
-		it("should resolve directory with package.json garmin-code-mini.extensions in extensions setting", async () => {
-			// Create a package with garmin-code-mini.extensions in package.json
+		it("should resolve directory with package.json gcode.extensions in extensions setting", async () => {
+			// Create a package with gcode.extensions in package.json
 			const pkgDir = join(tempDir, "my-extensions-pkg");
 			mkdirSync(join(pkgDir, "extensions"), { recursive: true });
 			writeFileSync(
 				join(pkgDir, "package.json"),
 				JSON.stringify({
 					name: "my-extensions-pkg",
-					garminCodeMini: {
+					gcode: {
 						extensions: ["./extensions/clip.ts", "./extensions/cost.ts"],
 					},
 				}),
@@ -296,7 +296,7 @@ Content`,
 
 			const result = await packageManager.resolve();
 
-			// Should find the extensions declared in package.json garmin-code-mini.extensions
+			// Should find the extensions declared in package.json gcode.extensions
 			expect(result.extensions.some((r) => r.path === join(pkgDir, "extensions", "clip.ts") && r.enabled)).toBe(
 				true,
 			);
@@ -310,10 +310,10 @@ Content`,
 	});
 
 	describe("auto-discovered skill metadata", () => {
-		it("should use the agent dir as baseDir for user .garmin-code-mini/agent skills", async () => {
-			const skillPath = join(agentDir, "skills", "user-garmin-code-mini", "SKILL.md");
-			mkdirSync(join(agentDir, "skills", "user-garmin-code-mini"), { recursive: true });
-			writeFileSync(skillPath, "---\nname: user-garmin-code-mini\ndescription: user garmin-code-mini\n---\n");
+		it("should use the agent dir as baseDir for user .gcode/agent skills", async () => {
+			const skillPath = join(agentDir, "skills", "user-gcode", "SKILL.md");
+			mkdirSync(join(agentDir, "skills", "user-gcode"), { recursive: true });
+			writeFileSync(skillPath, "---\nname: user-gcode\ndescription: user gcode\n---\n");
 
 			const result = await packageManager.resolve();
 			const skill = result.skills.find((r) => r.path === skillPath);
@@ -323,11 +323,11 @@ Content`,
 			expect(skill?.metadata.baseDir).toBe(agentDir);
 		});
 
-		it("should use the project .garmin-code-mini dir as baseDir for project .garmin-code-mini skills", async () => {
-			const projectBaseDir = join(tempDir, ".garmin-code-mini");
-			const skillPath = join(projectBaseDir, "skills", "project-garmin-code-mini", "SKILL.md");
-			mkdirSync(join(projectBaseDir, "skills", "project-garmin-code-mini"), { recursive: true });
-			writeFileSync(skillPath, "---\nname: project-garmin-code-mini\ndescription: project garmin-code-mini\n---\n");
+		it("should use the project .gcode dir as baseDir for project .gcode skills", async () => {
+			const projectBaseDir = join(tempDir, ".gcode");
+			const skillPath = join(projectBaseDir, "skills", "project-gcode", "SKILL.md");
+			mkdirSync(join(projectBaseDir, "skills", "project-gcode"), { recursive: true });
+			writeFileSync(skillPath, "---\nname: project-gcode\ndescription: project gcode\n---\n");
 
 			const result = await packageManager.resolve();
 			const skill = result.skills.find((r) => r.path === skillPath);
@@ -486,7 +486,7 @@ Content`,
 
 			try {
 				const cwd = join(tempDir, "scratch", "nested");
-				const localAgentDir = join(tempDir, ".garmin-code-mini", "agent");
+				const localAgentDir = join(tempDir, ".gcode", "agent");
 				const localSettingsManager = SettingsManager.inMemory();
 				mkdirSync(cwd, { recursive: true });
 				mkdirSync(localAgentDir, { recursive: true });
@@ -516,7 +516,7 @@ Content`,
 			}
 		});
 
-		it("should dedupe user skill entries when ~/.garmin-code-mini/agent/skills is a symlink to ~/.agents/skills", async () => {
+		it("should dedupe user skill entries when ~/.gcode/agent/skills is a symlink to ~/.agents/skills", async () => {
 			const previousHome = process.env.HOME;
 			process.env.HOME = tempDir;
 
@@ -567,10 +567,10 @@ Content`,
 			expect(result.skills.some((r) => r.path.includes("venv") && r.enabled)).toBe(false);
 		});
 
-		it("should not apply parent .gitignore to .garmin-code-mini auto-discovery", async () => {
-			writeFileSync(join(tempDir, ".gitignore"), ".garmin-code-mini\n");
+		it("should not apply parent .gitignore to .gcode auto-discovery", async () => {
+			writeFileSync(join(tempDir, ".gitignore"), ".gcode\n");
 
-			const skillDir = join(tempDir, ".garmin-code-mini", "skills", "auto-skill");
+			const skillDir = join(tempDir, ".gcode", "skills", "auto-skill");
 			mkdirSync(skillDir, { recursive: true });
 			const skillPath = join(skillDir, "SKILL.md");
 			writeFileSync(skillPath, "---\nname: auto-skill\ndescription: Auto\n---\nContent");
@@ -589,14 +589,14 @@ Content`,
 			expect(result.extensions.some((r) => r.path === extPath && r.enabled)).toBe(true);
 		});
 
-		it("should handle directories with garmin-code-mini manifest", async () => {
+		it("should handle directories with gcode manifest", async () => {
 			const pkgDir = join(tempDir, "my-package");
 			mkdirSync(pkgDir, { recursive: true });
 			writeFileSync(
 				join(pkgDir, "package.json"),
 				JSON.stringify({
 					name: "my-package",
-					garminCodeMini: {
+					gcode: {
 						extensions: ["./src/index.ts"],
 						skills: ["./skills"],
 					},
@@ -618,7 +618,7 @@ Content`,
 			);
 		});
 
-		it("should keep garmin-code-mini manifest entries with leading tilde package-relative", async () => {
+		it("should keep gcode manifest entries with leading tilde package-relative", async () => {
 			const pkgDir = join(tempDir, "tilde-manifest-package");
 			const directExtensionPath = join(pkgDir, "~extensions", "main.ts");
 			const slashExtensionPath = join(pkgDir, "~", "extensions", "alt.ts");
@@ -637,7 +637,7 @@ Content`,
 				join(pkgDir, "package.json"),
 				JSON.stringify({
 					name: "tilde-manifest-package",
-					garminCodeMini: {
+					gcode: {
 						extensions: ["~extensions/main.ts", "~/extensions/alt.ts"],
 						skills: ["~skills", "~/skills"],
 					},
@@ -761,7 +761,7 @@ Content`,
 			expect(settings.packages?.[0]).toBe(expected);
 		});
 
-		it("should store project local packages relative to .garmin-code-mini settings base", () => {
+		it("should store project local packages relative to .gcode settings base", () => {
 			const projectPkgDir = join(tempDir, "project-local-pkg");
 			mkdirSync(join(projectPkgDir, "extensions"), { recursive: true });
 			writeFileSync(join(projectPkgDir, "extensions", "index.ts"), "export default function() {}");
@@ -770,7 +770,7 @@ Content`,
 			expect(added).toBe(true);
 
 			const settings = settingsManager.getProjectSettings();
-			const rel = relative(join(tempDir, ".garmin-code-mini"), projectPkgDir);
+			const rel = relative(join(tempDir, ".gcode"), projectPkgDir);
 			const expected = rel.startsWith(".") ? rel : `./${rel}`;
 			expect(settings.packages?.[0]).toBe(expected);
 		});
@@ -1080,7 +1080,7 @@ Content`,
 		});
 	});
 
-	describe("pattern filtering in garmin-code-mini manifest", () => {
+	describe("pattern filtering in gcode manifest", () => {
 		it("should support glob patterns in manifest extensions", async () => {
 			const pkgDir = join(tempDir, "manifest-pkg");
 			mkdirSync(join(pkgDir, "extensions"), { recursive: true });
@@ -1092,7 +1092,7 @@ Content`,
 				join(pkgDir, "package.json"),
 				JSON.stringify({
 					name: "manifest-pkg",
-					garminCodeMini: {
+					gcode: {
 						extensions: ["extensions", "node_modules/dep/extensions", "!**/skip.ts"],
 					},
 				}),
@@ -1120,7 +1120,7 @@ Content`,
 				join(pkgDir, "package.json"),
 				JSON.stringify({
 					name: "skill-manifest-pkg",
-					garminCodeMini: {
+					gcode: {
 						skills: ["skills", "!**/bad-skill"],
 					},
 				}),
@@ -1147,7 +1147,7 @@ Content`,
 				join(pkgDir, "package.json"),
 				JSON.stringify({
 					name: "skill-manifest-glob-pkg",
-					garminCodeMini: {
+					gcode: {
 						skills: ["./plugins/*/skills"],
 					},
 				}),
@@ -1189,7 +1189,7 @@ Content`,
 				join(pkgDir, "package.json"),
 				JSON.stringify({
 					name: "manifest-glob-semantics-pkg",
-					garminCodeMini: {
+					gcode: {
 						extensions: [
 							"./extension-files/*.ts",
 							"./extension-files/**/.ignored.ts",
@@ -1226,7 +1226,7 @@ Content`,
 				join(pkgDir, "package.json"),
 				JSON.stringify({
 					name: "layered-pkg",
-					garminCodeMini: {
+					gcode: {
 						extensions: ["extensions", "!**/baz.ts"],
 					},
 				}),
@@ -1343,10 +1343,7 @@ Content`,
 		it("should resolve autoload-disabled project package entries as deltas over global packages", async () => {
 			const pkgDir = join(tempDir, "shared-local-tools");
 			mkdirSync(join(pkgDir, "extensions"), { recursive: true });
-			writeFileSync(
-				join(pkgDir, "package.json"),
-				JSON.stringify({ name: "garmin-code-mini-tools", version: "1.0.0" }),
-			);
+			writeFileSync(join(pkgDir, "package.json"), JSON.stringify({ name: "gcode-tools", version: "1.0.0" }));
 			writeFileSync(join(pkgDir, "extensions", "foo.ts"), "export default function() {}");
 			writeFileSync(join(pkgDir, "extensions", "bar.ts"), "export default function() {}");
 			settingsManager.setPackages([pkgDir]);
@@ -1373,7 +1370,7 @@ Content`,
 			writeFileSync(join(pkgDir, "skills", "foo", "SKILL.md"), "# Foo\n");
 			settingsManager.setProjectPackages([
 				{
-					source: relative(join(tempDir, ".garmin-code-mini"), pkgDir),
+					source: relative(join(tempDir, ".gcode"), pkgDir),
 					autoload: false,
 					extensions: ["+extensions/foo.ts"],
 				},
@@ -1475,7 +1472,7 @@ Content`,
 				join(pkgDir, "package.json"),
 				JSON.stringify({
 					name: "manifest-force-pkg",
-					garminCodeMini: {
+					gcode: {
 						extensions: ["extensions", "!**/two.ts", "+extensions/two.ts"],
 					},
 				}),
@@ -1701,7 +1698,7 @@ export default function(api) { api.registerTool({ name: "test", description: "te
 			expect(result.extensions.some((r) => pathEndsWith(r.path, "agents.ts"))).toBe(false);
 		});
 
-		it("should respect package.json garmin-code-mini.extensions manifest in subdirectories", async () => {
+		it("should respect package.json gcode.extensions manifest in subdirectories", async () => {
 			const pkgDir = join(tempDir, "manifest-subdir-pkg");
 			mkdirSync(join(pkgDir, "extensions", "custom"), { recursive: true });
 
@@ -1709,7 +1706,7 @@ export default function(api) { api.registerTool({ name: "test", description: "te
 			writeFileSync(
 				join(pkgDir, "extensions", "custom", "package.json"),
 				JSON.stringify({
-					garminCodeMini: {
+					gcode: {
 						extensions: ["./main.ts"],
 					},
 				}),

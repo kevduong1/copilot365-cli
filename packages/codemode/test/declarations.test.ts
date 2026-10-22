@@ -64,7 +64,7 @@ describe("schemaToType", () => {
 		).toBe("{\n  // Outer\n  outer?: {\n    // Inner\n    inner?: string;\n  };\n}");
 	});
 
-	// https://github.com/earendil-works/garmin-code-mini/issues/10707
+	// https://github.com/earendil-works/gcode/issues/10707
 	it("puts constraints the type cannot express on property comment lines", () => {
 		expect(
 			schemaToType({

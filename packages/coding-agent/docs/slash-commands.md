@@ -1,8 +1,8 @@
 # Slash commands
 
-Type `/` in garmin-code-mini's terminal editor to search the commands available in the current session. This page lists the built-in commands in the current garmin-code-mini release.
+Type `/` in gcode's terminal editor to search the commands available in the current session. This page lists the built-in commands in the current gcode release.
 
-Extensions, prompt templates, and skills can add commands. The command menu in garmin-code-mini is therefore the exact reference for the resources loaded in your session.
+Extensions, prompt templates, and skills can add commands. The command menu in gcode is therefore the exact reference for the resources loaded in your session.
 
 ## Models and settings
 
@@ -40,11 +40,11 @@ Review a session before distributing an export. Sessions can contain prompts, to
 
 | Command | Description |
 |---|---|
-| `/trust` | Save a project trust decision for future garmin-code-mini processes |
+| `/trust` | Save a project trust decision for future gcode processes |
 | `/reload` | Reload keybindings, extensions, skills, templates, themes, and context files |
 | `/hotkeys` | Show active keyboard shortcuts |
 | `/changelog` | Show changelog entries |
-| `/quit` | Quit garmin-code-mini |
+| `/quit` | Quit gcode |
 
 ## Commands added by resources
 

@@ -12,9 +12,9 @@
 import { mkdtemp, readdir, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT as context } from "@garmin-code-mini/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT as context } from "@gcode/chord/context";
 import { Type } from "typebox";
 import {
 	type Conversation,
@@ -36,7 +36,7 @@ type Scenario = {
 	depth: 1 | 2;
 	bytes: number;
 	gapMs: number;
-	/** Whether nested calls stream their running output to `garmin-code-mini.live`. */
+	/** Whether nested calls stream their running output to `gcode.live`. */
 	progress: boolean;
 	runs: number;
 };
@@ -92,7 +92,7 @@ function noWrites(): Written {
 }
 
 async function runScenario(scenario: Scenario): Promise<{ perRun: Run[]; closedBytes: number }> {
-	const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-nested-bench-"));
+	const directory = await mkdtemp(join(tmpdir(), "gcode-durable-nested-bench-"));
 	try {
 		const faux = fauxProvider();
 		const models = createModels();

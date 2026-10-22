@@ -1,6 +1,6 @@
 import type { Component } from "./tui.ts";
 
-export const LAYOUT_NODE = Symbol.for("@garmin-code-mini/tui/layout-node");
+export const LAYOUT_NODE = Symbol.for("@gcode/tui/layout-node");
 
 export interface LayoutViewport {
 	width: number;

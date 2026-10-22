@@ -2,9 +2,9 @@
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/14-chat.ts
 
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { AssistantEntry, createRegistry, defineExtension, Harness, MemoryStorage, section } from "../../src/index.ts";
 
 const context = BACKGROUND_CONTEXT;
@@ -26,7 +26,7 @@ const harness = await Harness.open(new MemoryStorage(), { models, registry }, co
 const root = await harness.root(context, { agent: { model: { provider: "faux", modelId: "faux-1" } } });
 
 // submit() durably admits user input and returns a Submission. The built-in
-// garmin-code-mini.generation task prepares the system prompt from the agent's sections,
+// gcode.generation task prepares the system prompt from the agent's sections,
 // calls the model, and appends the answer; wait() resolves once the input is
 // answered or has failed.
 const capital = await root.submit({ type: "input", content: "Capital of France?" }, context);

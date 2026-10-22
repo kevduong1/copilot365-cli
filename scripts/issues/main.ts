@@ -1,11 +1,11 @@
-// Issue triage: sync issues, triage new ones with a garmin-code-mini-durable agent, and serve a small web UI for decisions.
+// Issue triage: sync issues, triage new ones with a gcode-durable agent, and serve a small web UI for decisions.
 // See README.md.
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import { chmodSync, existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { ModelThinkingLevel } from "@garmin-code-mini/ai";
+import type { ModelThinkingLevel } from "@gcode/ai";
 import { Corpus, issueStatus, REPO } from "./github.ts";
 import { PRIORITIES, type Priority, Triage } from "./triage.ts";
 

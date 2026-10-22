@@ -4,7 +4,7 @@
  * Shows how to replace or modify the default system prompt.
  */
 
-import { createAgentSession, DefaultResourceLoader, getAgentDir, SessionManager } from "garmin-code-mini";
+import { createAgentSession, DefaultResourceLoader, getAgentDir, SessionManager } from "gcode";
 
 const cwd = process.cwd();
 const agentDir = getAgentDir();
@@ -15,7 +15,7 @@ const loader1 = new DefaultResourceLoader({
 	agentDir,
 	systemPromptOverride: () => `You are a helpful assistant that speaks like a pirate.
 Always end responses with "Arrr!"`,
-	// Needed to avoid DefaultResourceLoader appending APPEND_SYSTEM.md from ~/.garmin-code-mini/agent or <cwd>/.garmin-code-mini.
+	// Needed to avoid DefaultResourceLoader appending APPEND_SYSTEM.md from ~/.gcode/agent or <cwd>/.gcode.
 	appendSystemPromptOverride: () => [],
 });
 await loader1.reload();

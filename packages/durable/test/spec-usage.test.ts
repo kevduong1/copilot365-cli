@@ -4,8 +4,8 @@
  * patterns end to end.
  */
 
-import { type AssistantMessage, type Models, type ToolCall, Type } from "@garmin-code-mini/ai";
-import type { Context, Draft } from "@garmin-code-mini/chord";
+import { type AssistantMessage, type Models, type ToolCall, Type } from "@gcode/ai";
+import type { Context, Draft } from "@gcode/chord";
 import {
 	type ConversationId,
 	configure,
@@ -31,7 +31,7 @@ import {
 	type Tx,
 	type UserInput,
 	wrapTool,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { expect, expectTypeOf, it } from "vitest";
 import type { ExecutionEnv } from "../src/env/index.ts";
 import { CodingTools, createBashTool, createEditTool, createReadTool } from "../src/tools/index.ts";

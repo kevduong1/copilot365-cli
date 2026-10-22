@@ -1,4 +1,4 @@
-import type { ProgramStatus, Terminal } from "@garmin-code-mini/tui";
+import type { ProgramStatus, Terminal } from "@gcode/tui";
 import { APP_NAME } from "../../config.ts";
 import type { AgentSessionEvent } from "../../core/agent-session.ts";
 

@@ -15,26 +15,26 @@ jev/auto:low                             ->  anthropic/claude-sonnet-4-5:high
 
 The virtual thinking level is an input to the router. Its meaning is up to the router; it need not correspond to a reasoning budget.
 
-garmin-code-mini keeps the two pairs apart:
+gcode keeps the two pairs apart:
 
 | | Selection | Dispatch |
 |---|---|---|
 | Recorded in | `model_change` and `thinking_level_change` entries | Each assistant message: `provider`, `api`, `model`, `thinkingLevel` |
-| Visible as | `ctx.model`, `ctx.thinkingLevel`, `GARMIN_CODE_MINI_MODEL`, `GARMIN_CODE_MINI_REASONING_LEVEL`, `/model` | The assistant message of each response |
+| Visible as | `ctx.model`, `ctx.thinkingLevel`, `GCODE_MODEL`, `GCODE_REASONING_LEVEL`, `/model` | The assistant message of each response |
 
-Providers only receive physical models. Assistant messages name the physical model, so replaying a conversation across different physical models works the same as after a manual model switch. Resuming a session restores the virtual selection from its latest `model_change` entry. If the virtual model is no longer registered, garmin-code-mini falls back to the physical model that answered last.
+Providers only receive physical models. Assistant messages name the physical model, so replaying a conversation across different physical models works the same as after a manual model switch. Resuming a session restores the virtual selection from its latest `model_change` entry. If the virtual model is no longer registered, gcode falls back to the physical model that answered last.
 
 In interactive mode, the footer shows the routed model next to the selection, for example `auto • high → gpt-5.6-luna • medium`. `/session` lists the cost for each physical model.
 
-Context usage uses the limits of the physical model that produced the latest response, even if that response came before switching to the virtual model. Without such a response, it uses the limits declared on the virtual model, if any. Compaction checks the same limits, and again the limits of the model each request is routed to. If that model's context window is too small for the conversation, garmin-code-mini compacts before sending the request; the route stays as the router chose it.
+Context usage uses the limits of the physical model that produced the latest response, even if that response came before switching to the virtual model. Without such a response, it uses the limits declared on the virtual model, if any. Compaction checks the same limits, and again the limits of the model each request is routed to. If that model's context window is too small for the conversation, gcode compacts before sending the request; the route stays as the router chose it.
 
 ## Register a virtual model
 
 ```typescript
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
-  garminCodeMini.registerVirtualModel({
+export default function (gcode: ExtensionAPI) {
+  gcode.registerVirtualModel({
     provider: "router",
     id: "auto",
     name: "Auto",
@@ -58,11 +58,11 @@ export default function (garminCodeMini: ExtensionAPI) {
 - `contextWindow` and `maxTokens` are shown before the first response. Unset limits are unknown.
 - `input` lists the input types offered for selection. It defaults to text and images; physical models without image support receive placeholders.
 
-Registration follows the same queuing and reload rules as `garminCodeMini.registerProvider()`. Registering the same provider and ID again replaces the virtual model. `garminCodeMini.unregisterVirtualModel(provider, id)` removes it; `garminCodeMini.unregisterProvider()` does not. SDK code can register one without an extension: `modelRuntime.registerVirtualModel(definition)`.
+Registration follows the same queuing and reload rules as `gcode.registerProvider()`. Registering the same provider and ID again replaces the virtual model. `gcode.unregisterVirtualModel(provider, id)` removes it; `gcode.unregisterProvider()` does not. SDK code can register one without an extension: `modelRuntime.registerVirtualModel(definition)`.
 
 ## Route requests
 
-`route(request, ctx)` runs before every request made with the virtual model and returns `{ model, thinkingLevel }`. The model can be any physical model in the catalog whose provider has credentials; look it up with `ctx.modelRegistry`. A virtual model cannot route to another virtual model. garmin-code-mini clamps the thinking level to the returned model.
+`route(request, ctx)` runs before every request made with the virtual model and returns `{ model, thinkingLevel }`. The model can be any physical model in the catalog whose provider has credentials; look it up with `ctx.modelRegistry`. A virtual model cannot route to another virtual model. gcode clamps the thinking level to the returned model.
 
 | Field | Meaning |
 |---|---|
@@ -87,10 +87,10 @@ If `route()` throws, or returns a virtual model or a model without credentials, 
 
 ## Keep routing state
 
-`route()` can return `state` next to the model. garmin-code-mini stores it on the session branch and passes it back as `request.state` on later requests. Use it for decisions the transcript does not record, such as classifier results or a routing phase:
+`route()` can return `state` next to the model. gcode stores it on the session branch and passes it back as `request.state` on later requests. Use it for decisions the transcript does not record, such as classifier results or a routing phase:
 
 ```typescript
-garminCodeMini.registerVirtualModel<{ phase: "plan" | "build" }>({
+gcode.registerVirtualModel<{ phase: "plan" | "build" }>({
   provider: "router",
   id: "phased",
   name: "Phased",
@@ -103,9 +103,9 @@ garminCodeMini.registerVirtualModel<{ phase: "plan" | "build" }>({
 ```
 
 - State must be JSON-serializable. Returning `undefined` or `request.state` itself keeps the current state.
-- garmin-code-mini stores any other returned object as new state, before the request is sent, even when it equals the current state. Return a new object only when the state changes. The state stays stored if the request later fails.
+- gcode stores any other returned object as new state, before the request is sent, even when it equals the current state. Return a new object only when the state changes. The state stays stored if the request later fails.
 - State follows the session tree, so forks and `/tree` navigation see the state of their branch. It survives compaction.
-- `direct` requests have no state, and garmin-code-mini ignores state they return.
+- `direct` requests have no state, and gcode ignores state they return.
 
 The transcript already records the selection and every dispatched model, and `ctx.sessionManager.getBranch()` exposes both.
 

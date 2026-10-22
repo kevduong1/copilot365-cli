@@ -83,8 +83,8 @@ export const ThemeJsonSchema = Type.Object(
 		),
 	},
 	{
-		title: "garmin-code-mini Coding Agent Theme",
-		description: "Theme schema for garmin-code-mini coding agent",
+		title: "gcode Coding Agent Theme",
+		description: "Theme schema for gcode coding agent",
 		additionalProperties: false,
 	},
 );

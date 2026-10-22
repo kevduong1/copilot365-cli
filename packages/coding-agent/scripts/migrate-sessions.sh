@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 #
-# Migrate sessions from ~/.garmin-code-mini/agent/*.jsonl to proper session directories.
+# Migrate sessions from ~/.gcode/agent/*.jsonl to proper session directories.
 # This fixes sessions created by the bug in v0.30.0 where sessions were
-# saved to ~/.garmin-code-mini/agent/ instead of ~/.garmin-code-mini/agent/sessions/<encoded-cwd>/.
+# saved to ~/.gcode/agent/ instead of ~/.gcode/agent/sessions/<encoded-cwd>/.
 #
 # Usage: ./migrate-sessions.sh [--dry-run]
 #
 
 set -e
 
-AGENT_DIR="${GARMIN_CODE_MINI_AGENT_DIR:-$HOME/.garmin-code-mini/agent}"
+AGENT_DIR="${GCODE_AGENT_DIR:-$HOME/.gcode/agent}"
 DRY_RUN=false
 
 if [[ "$1" == "--dry-run" ]]; then

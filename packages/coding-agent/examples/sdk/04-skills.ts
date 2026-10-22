@@ -12,7 +12,7 @@ import {
 	getAgentDir,
 	SessionManager,
 	type Skill,
-} from "garmin-code-mini";
+} from "gcode";
 
 // Or define custom skills inline
 const customSkill: Skill = {
@@ -37,7 +37,7 @@ const loader = new DefaultResourceLoader({
 });
 await loader.reload();
 
-// Discover all skills from cwd/.garmin-code-mini/skills, ~/.garmin-code-mini/agent/skills, etc.
+// Discover all skills from cwd/.gcode/skills, ~/.gcode/agent/skills, etc.
 const { skills: allSkills, diagnostics } = loader.getSkills();
 console.log(
 	"Discovered skills:",

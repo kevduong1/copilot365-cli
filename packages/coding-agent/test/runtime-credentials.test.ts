@@ -1,4 +1,4 @@
-import type { CredentialStore } from "@garmin-code-mini/ai";
+import type { CredentialStore } from "@gcode/ai";
 import { describe, expect, test, vi } from "vitest";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import { RuntimeCredentials } from "../src/core/runtime-credentials.ts";

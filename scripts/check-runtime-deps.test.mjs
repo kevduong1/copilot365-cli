@@ -9,7 +9,7 @@ import test from "node:test";
 const script = fileURLToPath(new URL("./check-runtime-deps.mjs", import.meta.url));
 
 async function check(t, manifest, source, extraFiles = {}) {
-	const root = await mkdtemp(join(tmpdir(), "garmin-code-mini-runtime-deps-"));
+	const root = await mkdtemp(join(tmpdir(), "gcode-runtime-deps-"));
 	t.after(() => rm(root, { recursive: true, force: true }));
 	const files = {
 		"packages/example/package.json": JSON.stringify({ name: "example", version: "1.0.0", ...manifest }),
@@ -26,11 +26,11 @@ async function check(t, manifest, source, extraFiles = {}) {
 
 // #9132: workspace resolution and installing every release package masked a missing runtime dependency.
 test("rejects undeclared imports even when the workspace package exists", async (t) => {
-	const result = await check(t, {}, 'export { createUnixServer } from "@garmin-code-mini/server/unix";', {
-		"packages/server/package.json": JSON.stringify({ name: "@garmin-code-mini/server", version: "1.0.0" }),
+	const result = await check(t, {}, 'export { createUnixServer } from "@gcode/server/unix";', {
+		"packages/server/package.json": JSON.stringify({ name: "@gcode/server", version: "1.0.0" }),
 	});
 	assert.equal(result.status, 1);
-	assert.match(result.stderr, /src[\\/]index\.ts:1: @garmin-code-mini\/server\/unix is not declared/);
+	assert.match(result.stderr, /src[\\/]index\.ts:1: @gcode\/server\/unix is not declared/);
 });
 
 test("accepts runtime declarations, builtins, self imports, relative imports, and erased types", async (t) => {

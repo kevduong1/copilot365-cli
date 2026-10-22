@@ -17,10 +17,10 @@ export default defineConfig({
 	resolve: {
 		conditions: ["source"],
 		alias: [
-			{ find: /^@garmin-code-mini\/telemetry$/, replacement: telemetrySrcIndex },
-			{ find: /^@garmin-code-mini\/agent-core$/, replacement: agentSrcIndex },
-			{ find: /^@garmin-code-mini\/ai$/, replacement: aiSrcIndex },
-			{ find: /^@garmin-code-mini\/ai\/compat$/, replacement: aiSrcCompat },
+			{ find: /^@gcode\/telemetry$/, replacement: telemetrySrcIndex },
+			{ find: /^@gcode\/agent-core$/, replacement: agentSrcIndex },
+			{ find: /^@gcode\/ai$/, replacement: aiSrcIndex },
+			{ find: /^@gcode\/ai\/compat$/, replacement: aiSrcCompat },
 		],
 	},
 	ssr: { resolve: { conditions: ["source"] } },

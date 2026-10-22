@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { stripBom } from "../utils/text.ts";
 
-export interface PiManifest {
+export interface GcodeManifest {
 	extensions?: string[];
 	skills?: string[];
 	prompts?: string[];
@@ -14,16 +14,16 @@ function isObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export function readPiManifest(packageJsonPath: string): PiManifest | null {
+export function readGcodeManifest(packageJsonPath: string): GcodeManifest | null {
 	try {
 		const pkg: unknown = JSON.parse(stripBom(readFileSync(packageJsonPath, "utf-8")));
-		if (!isObject(pkg) || !isObject(pkg.garminCodeMini)) {
+		if (!isObject(pkg) || !isObject(pkg.gcode)) {
 			return null;
 		}
 
-		const manifest: PiManifest = {};
+		const manifest: GcodeManifest = {};
 		for (const field of RESOURCE_FIELDS) {
-			const entries = pkg.garminCodeMini[field];
+			const entries = pkg.gcode[field];
 			if (Array.isArray(entries) && entries.every((entry) => typeof entry === "string")) {
 				manifest[field] = entries;
 			}

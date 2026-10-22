@@ -1,6 +1,6 @@
-# @garmin-code-mini/telemetry
+# @gcode/telemetry
 
-Vendor-neutral telemetry contracts and typed schema utilities for garmin-code-mini packages.
+Vendor-neutral telemetry contracts and typed schema utilities for gcode packages.
 
 This package provides:
 
@@ -12,7 +12,7 @@ This package provides:
 - serializable schema definitions with inferred TypeScript types;
 - no exporter, global current-span state, or dependency on a telemetry backend.
 
-Applications can use the in-memory reference or provide an adapter for OpenTelemetry, Sentry, logs, or another backend. garmin-code-mini packages pass telemetry contexts explicitly and define their domain schemas separately.
+Applications can use the in-memory reference or provide an adapter for OpenTelemetry, Sentry, logs, or another backend. gcode packages pass telemetry contexts explicitly and define their domain schemas separately.
 
 ## Table of Contents
 
@@ -29,7 +29,7 @@ Applications can use the in-memory reference or provide an adapter for OpenTelem
 - [Typed Schemas](#typed-schemas)
   - [Start and Completion Attributes](#start-and-completion-attributes)
 - [Schema Metadata](#schema-metadata)
-- [garmin-code-mini Package Integration](#garmin-code-mini-package-integration)
+- [gcode Package Integration](#gcode-package-integration)
 - [Security and Portability](#security-and-portability)
 - [API Reference](#api-reference)
 - [Development](#development)
@@ -38,7 +38,7 @@ Applications can use the in-memory reference or provide an adapter for OpenTelem
 ## Installation
 
 ```bash
-npm install @garmin-code-mini/telemetry
+npm install @gcode/telemetry
 ```
 
 ## Telemetry Concepts
@@ -68,13 +68,13 @@ A span is diagnostic data, not business state. An adapter translates these gener
 
 ## Core Context API
 
-A `TelemetryContext` starts a span around a callback. The callback receives a `TelemetrySpan`, which is also the explicit parent context for child spans. Contexts optionally expose their adapter's `metrics?: TelemetryMetrics` and `propagation?: TelemetryPropagation` capabilities; child spans and extracted parents carry the same capabilities. A `TelemetryContext` adapter starts root spans; hosts retain this adapter. Invocation contexts and garmin-code-mini-ai request options carry a `TelemetrySpan`, never the adapter. A tracing adapter that only implements `startSpan()` is still valid.
+A `TelemetryContext` starts a span around a callback. The callback receives a `TelemetrySpan`, which is also the explicit parent context for child spans. Contexts optionally expose their adapter's `metrics?: TelemetryMetrics` and `propagation?: TelemetryPropagation` capabilities; child spans and extracted parents carry the same capabilities. A `TelemetryContext` adapter starts root spans; hosts retain this adapter. Invocation contexts and gcode-ai request options carry a `TelemetrySpan`, never the adapter. A tracing adapter that only implements `startSpan()` is still valid.
 
 ```typescript
 import {
   NOOP_TELEMETRY_CONTEXT,
   type TelemetryContext,
-} from '@garmin-code-mini/telemetry';
+} from '@gcode/telemetry';
 
 async function loadAccount(
   accountId: string,
@@ -136,7 +136,7 @@ The callback and recording contract is:
 - make recording methods synchronous;
 - ignore calls made after settlement.
 
-Adapters may activate backend-native ambient context internally for automatic instrumentation, but garmin-code-mini code always propagates the parent through `TelemetryContext` arguments. Exporter buffering, flushing, sampling, backend IDs, and backend-specific context objects belong to the adapter. Use the [adapter conformance suite](#adapter-conformance) to check these observable semantics.
+Adapters may activate backend-native ambient context internally for automatic instrumentation, but gcode code always propagates the parent through `TelemetryContext` arguments. Exporter buffering, flushing, sampling, backend IDs, and backend-specific context objects belong to the adapter. Use the [adapter conformance suite](#adapter-conformance) to check these observable semantics.
 
 ## Propagation and Span Links
 
@@ -242,7 +242,7 @@ Metric definitions use `kind: 'counter' | 'upDownCounter' | 'histogram'`; only h
 Use `NOOP_TELEMETRY_CONTEXT` when telemetry is optional:
 
 ```typescript
-import { NOOP_TELEMETRY_CONTEXT } from '@garmin-code-mini/telemetry';
+import { NOOP_TELEMETRY_CONTEXT } from '@gcode/telemetry';
 
 const result = await NOOP_TELEMETRY_CONTEXT.startSpan(
   { name: 'example.operation' },
@@ -263,7 +263,7 @@ The no-op context:
 `InMemoryTelemetryContext` is the backend-neutral reference implementation. It is useful for tests, local diagnostics, and applications that intentionally want process-local capture without an exporter:
 
 ```typescript
-import { InMemoryTelemetryContext } from '@garmin-code-mini/telemetry';
+import { InMemoryTelemetryContext } from '@gcode/telemetry';
 
 const telemetry = new InMemoryTelemetryContext();
 
@@ -286,7 +286,7 @@ The adapter is safe to use as an ordinary `TelemetryContext`, but storage is unb
 
 ## Stored Telemetry
 
-`TelemetryStore` separates querying from recording. Both `InMemoryTelemetryContext` and `@garmin-code-mini/chord/telemetry-sqlite` implement it:
+`TelemetryStore` separates querying from recording. Both `InMemoryTelemetryContext` and `@gcode/chord/telemetry-sqlite` implement it:
 
 - `findTraces(query?)` returns complete locally stored traces, newest trace start first. Filters include the earliest stored span's `name`, inclusive `startMin`/`startMax`, `errors: true`, and scalar `attributes`. All requested attributes must match one span, anywhere in the trace. Pages default to 20 traces; pass the returned opaque `cursor` with the same filters to continue. Equal start times are ordered by trace ID.
 - `getTrace(traceId)` returns a trace or `undefined`.
@@ -299,7 +299,7 @@ Only settled spans are returned. A trace ID is the root's globally unique span I
 Rendering is a separate subpath, kept out of the root entry graph:
 
 ```typescript
-import { renderTrace } from '@garmin-code-mini/telemetry/render';
+import { renderTrace } from '@gcode/telemetry/render';
 
 const page = await telemetry.findTraces({ errors: true, limit: 10 });
 for (const trace of page.traces) console.log(renderTrace(trace.spans));
@@ -309,13 +309,13 @@ for (const trace of page.traces) console.log(renderTrace(trace.spans));
 
 ## Adapter Conformance
 
-`@garmin-code-mini/telemetry/testing` exports a runner-independent conformance suite modeled as grouped cases. A fixture supplies a fresh context and converts its backend's finished spans into normalized `RecordedTelemetrySpan` snapshots:
+`@gcode/telemetry/testing` exports a runner-independent conformance suite modeled as grouped cases. A fixture supplies a fresh context and converts its backend's finished spans into normalized `RecordedTelemetrySpan` snapshots:
 
 ```typescript
 import {
   createTelemetryAdapterConformance,
   type TelemetryAdapterFixture,
-} from '@garmin-code-mini/telemetry/testing';
+} from '@gcode/telemetry/testing';
 import { describe, it } from 'vitest';
 
 const conformance = createTelemetryAdapterConformance(async () => {
@@ -348,7 +348,7 @@ The low-level span API intentionally accepts open names and attribute bags so ad
 import {
   createTypedSpanStarter,
   defineTelemetrySchema,
-} from '@garmin-code-mini/telemetry';
+} from '@gcode/telemetry';
 
 export const EXAMPLE_TELEMETRY_SCHEMA = defineTelemetrySchema({
   version: 1,
@@ -455,7 +455,7 @@ Attributes do not end the span. Returning, resolving, throwing, or rejecting fro
 A starter can compose multiple independently versioned schemas:
 
 ```typescript
-import { AGENT_TELEMETRY_SCHEMAS } from '@garmin-code-mini/agent-core';
+import { AGENT_TELEMETRY_SCHEMAS } from '@gcode/agent-core';
 
 const startAgentSpan = createTypedSpanStarter(
   telemetryContext,
@@ -494,21 +494,21 @@ Parent metadata is descriptive schema data:
 
 Adapters do not need to understand schema objects. Instrumentation helpers and tests use them to keep emitted names and attributes consistent.
 
-## garmin-code-mini Package Integration
+## gcode Package Integration
 
 Package ownership is intentionally split:
 
-- `@garmin-code-mini/telemetry` owns the vendor-neutral contract, no-op and in-memory reference contexts, schema utilities, and adapter conformance suite;
-- `@garmin-code-mini/ai` accepts a parent `TelemetrySpan` through `telemetry` in provider request options and exports `AI_TELEMETRY_SCHEMA` from its root and `./models` entry points;
-- `@garmin-code-mini/durable` exports `DURABLE_TELEMETRY_SCHEMA` for short task-handler and submission spans, events, and metrics;
-- `@garmin-code-mini/agent-core` retains its existing agent-loop and session instrumentation and schemas.
+- `@gcode/telemetry` owns the vendor-neutral contract, no-op and in-memory reference contexts, schema utilities, and adapter conformance suite;
+- `@gcode/ai` accepts a parent `TelemetrySpan` through `telemetry` in provider request options and exports `AI_TELEMETRY_SCHEMA` from its root and `./models` entry points;
+- `@gcode/durable` exports `DURABLE_TELEMETRY_SCHEMA` for short task-handler and submission spans, events, and metrics;
+- `@gcode/agent-core` retains its existing agent-loop and session instrumentation and schemas.
 
 ```typescript
-import { AI_TELEMETRY_SCHEMA } from '@garmin-code-mini/ai/models';
-import { DURABLE_TELEMETRY_SCHEMA } from '@garmin-code-mini/durable';
+import { AI_TELEMETRY_SCHEMA } from '@gcode/ai/models';
+import { DURABLE_TELEMETRY_SCHEMA } from '@gcode/durable';
 ```
 
-The AI and Durable schemas use garmin-code-mini-owned `garmin-code-mini.ai.*` and `garmin-code-mini.durable.*` names. Adapters may translate them to backend conventions without changing the emitted garmin-code-mini vocabulary.
+The AI and Durable schemas use gcode-owned `gcode.ai.*` and `gcode.durable.*` names. Adapters may translate them to backend conventions without changing the emitted gcode vocabulary.
 
 ## Security and Portability
 

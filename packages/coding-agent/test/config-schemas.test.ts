@@ -10,7 +10,7 @@ import { SettingsManager } from "../src/core/settings-manager.ts";
 import { SettingsSchema } from "../src/core/settings-schema.ts";
 import { validateThemeJson } from "../src/modes/interactive/theme/theme-schema.ts";
 
-const schemaBaseUrl = "https://garmin-code-mini.dev/schemas";
+const schemaBaseUrl = "https://gcode.dev/schemas";
 const temporaryDirectories: string[] = [];
 
 afterEach(() => {
@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 function createTemporaryDirectory(): string {
-	const directory = mkdtempSync(join(tmpdir(), "garmin-code-mini-config-schema-test-"));
+	const directory = mkdtempSync(join(tmpdir(), "gcode-config-schema-test-"));
 	temporaryDirectories.push(directory);
 	return directory;
 }
@@ -51,8 +51,8 @@ describe("generated configuration schemas", () => {
 		const accent = schema.properties.colors.properties.accent;
 		const colorValue = accent.$ref ? schema.$defs.ColorValue : accent;
 		expect(schema).toMatchObject({
-			title: "garmin-code-mini Coding Agent Theme",
-			description: "Theme schema for garmin-code-mini coding agent",
+			title: "gcode Coding Agent Theme",
+			description: "Theme schema for gcode coding agent",
 			properties: {
 				colors: {
 					description: expect.stringContaining("use compatible fallbacks"),

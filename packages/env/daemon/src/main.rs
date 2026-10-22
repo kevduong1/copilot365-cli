@@ -1,5 +1,5 @@
-//! pi-env: a small daemon that gives a Pi Durable host an execution environment on this machine over stdin/stdout
-//! (docs/protocol.md). Started as `pi-env serve --token <hex>`, usually through `ssh`.
+//! gcode-env: a small daemon that gives a Gcode Durable host an execution environment on this machine over stdin/stdout
+//! (docs/protocol.md). Started as `gcode-env serve --token <hex>`, usually through `ssh`.
 
 mod decode;
 mod errors;
@@ -532,19 +532,19 @@ fn main() {
                 .position(|arg| arg == "--token")
                 .and_then(|index| args.get(index + 1));
             let Some(token) = token else {
-                eprintln!("usage: pi-env serve --token <hex>");
+                eprintln!("usage: gcode-env serve --token <hex>");
                 std::process::exit(2);
             };
             if let Err(error) = serve(token) {
-                eprintln!("pi-env: {error}");
+                eprintln!("gcode-env: {error}");
                 std::process::exit(1);
             }
             // Request threads may still be blocked (a FIFO open); nothing is left to answer them.
             std::process::exit(0);
         }
-        Some("--version") => println!("pi-env {VERSION}"),
+        Some("--version") => println!("gcode-env {VERSION}"),
         _ => {
-            eprintln!("usage: pi-env serve --token <hex>");
+            eprintln!("usage: gcode-env serve --token <hex>");
             std::process::exit(2);
         }
     }

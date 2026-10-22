@@ -1,13 +1,13 @@
-import type { Context } from "@garmin-code-mini/chord";
+import type { Context } from "@gcode/chord";
 import {
 	BACKGROUND_CONTEXT,
 	createContextKey,
 	withAbortSignal,
 	withCancel,
 	withContextValue,
-} from "@garmin-code-mini/chord/context";
-import { applyImmutable } from "@garmin-code-mini/chord/delta";
-import { defineDoc } from "@garmin-code-mini/durable";
+} from "@gcode/chord/context";
+import { applyImmutable } from "@gcode/chord/delta";
+import { defineDoc } from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { context, documentChanges, flush, openTestSession } from "./session-support.ts";
 

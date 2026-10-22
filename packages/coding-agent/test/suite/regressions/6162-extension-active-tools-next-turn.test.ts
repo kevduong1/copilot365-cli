@@ -4,7 +4,7 @@ import {
 	getCurrentSystemPrompt,
 	getCurrentTools,
 	type TranscriptContext,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import type { ExtensionAPI, ExtensionFactory } from "../../../src/index.ts";
@@ -17,19 +17,19 @@ function getProviderToolNames(context: TranscriptContext): string[] {
 }
 
 /** Register `switch_tools`, which swaps the active set to `after_switch` when executed. */
-function registerSwitchTools(garminCodeMini: ExtensionAPI): void {
-	garminCodeMini.registerTool({
+function registerSwitchTools(gcode: ExtensionAPI): void {
+	gcode.registerTool({
 		name: "switch_tools",
 		label: "Switch Tools",
 		description: "Switch the active extension tool set",
 		promptSnippet: "Switch to the next extension tool",
 		parameters: Type.Object({}),
 		execute: async () => {
-			garminCodeMini.setActiveTools(["after_switch"]);
+			gcode.setActiveTools(["after_switch"]);
 			return { content: [{ type: "text", text: "switched" }], details: {} };
 		},
 	});
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		name: "after_switch",
 		label: "After Switch",
 		description: "Tool that should be available after switching",
@@ -41,7 +41,7 @@ function registerSwitchTools(garminCodeMini: ExtensionAPI): void {
 
 describe("extension active tools next-turn refresh", () => {
 	// Regression #6162
-	it("applies garminCodeMini.setActiveTools before the next provider request in the same run", async () => {
+	it("applies gcode.setActiveTools before the next provider request in the same run", async () => {
 		const harness = await createHarness({ extensionFactories: [registerSwitchTools] });
 
 		try {
@@ -101,12 +101,12 @@ describe("extension active tools next-turn refresh", () => {
 
 	it("preserves before_agent_start system prompt overrides when tools change mid-run", async () => {
 		const extensionFactories: ExtensionFactory[] = [
-			(garminCodeMini) => {
-				garminCodeMini.on("before_agent_start", async (event) => ({
+			(gcode) => {
+				gcode.on("before_agent_start", async (event) => ({
 					systemPrompt: `${event.systemPrompt}\n\nkeep this run override`,
 				}));
 
-				registerSwitchTools(garminCodeMini);
+				registerSwitchTools(gcode);
 			},
 		];
 		const harness = await createHarness({

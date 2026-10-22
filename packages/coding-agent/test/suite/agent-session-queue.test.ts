@@ -1,6 +1,6 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import { fauxAssistantMessage, fauxToolCall } from "@garmin-code-mini/ai";
-import type { ExtensionAPI, InputEvent } from "garmin-code-mini";
+import type { AgentTool } from "@gcode/agent-core";
+import { fauxAssistantMessage, fauxToolCall } from "@gcode/ai";
+import type { ExtensionAPI, InputEvent } from "gcode";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, getAssistantTexts, getMessageText, getUserTexts, type Harness } from "./harness.ts";
@@ -10,7 +10,7 @@ async function createWaitingHarness(
 		tools?: AgentTool[];
 		extensionFactories?: Harness["session"]["extensionRunner"] extends never
 			? never
-			: Array<(garminCodeMini: ExtensionAPI) => void>;
+			: Array<(gcode: ExtensionAPI) => void>;
 	} = {},
 ): Promise<{
 	harness: Harness;
@@ -70,8 +70,8 @@ describe("AgentSession queue characterization", () => {
 		const commandRuns: string[] = [];
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.registerCommand("testcmd", {
+				(gcode) => {
+					gcode.registerCommand("testcmd", {
 						description: "Test command",
 						handler: async (args) => {
 							commandRuns.push(args);
@@ -93,8 +93,8 @@ describe("AgentSession queue characterization", () => {
 		let extensionApi: ExtensionAPI | undefined;
 		const waiting = await createWaitingHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					extensionApi = garminCodeMini;
+				(gcode) => {
+					extensionApi = gcode;
 				},
 			],
 		});
@@ -160,8 +160,8 @@ describe("AgentSession queue characterization", () => {
 		const inputEvents: Array<Pick<InputEvent, "text" | "source" | "streamingBehavior">> = [];
 		const waiting = await createWaitingHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("input", (event) => {
+				(gcode) => {
+					gcode.on("input", (event) => {
 						inputEvents.push({
 							text: event.text,
 							source: event.source,
@@ -440,8 +440,8 @@ describe("AgentSession queue characterization", () => {
 	it("throws when queueing an extension command with steer", async () => {
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.registerCommand("testcmd", {
+				(gcode) => {
+					gcode.registerCommand("testcmd", {
 						description: "Test command",
 						handler: async () => {},
 					});
@@ -458,8 +458,8 @@ describe("AgentSession queue characterization", () => {
 	it("throws when queueing an extension command with followUp", async () => {
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.registerCommand("testcmd", {
+				(gcode) => {
+					gcode.registerCommand("testcmd", {
 						description: "Test command",
 						handler: async () => {},
 					});
@@ -477,11 +477,11 @@ describe("AgentSession queue characterization", () => {
 		let sent = false;
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini: ExtensionAPI) => {
-					garminCodeMini.on("agent_end", async () => {
+				(gcode: ExtensionAPI) => {
+					gcode.on("agent_end", async () => {
 						if (sent) return;
 						sent = true;
-						garminCodeMini.sendUserMessage("conflict report", { deliverAs: "followUp" });
+						gcode.sendUserMessage("conflict report", { deliverAs: "followUp" });
 					});
 				},
 			],

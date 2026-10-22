@@ -5,8 +5,8 @@
  * and provides a transformer to convert them to LLM-compatible messages.
  */
 
-import type { AgentMessage } from "@garmin-code-mini/agent-core";
-import type { ImageContent, Message, TextContent } from "@garmin-code-mini/ai";
+import type { AgentMessage } from "@gcode/agent-core";
+import type { ImageContent, Message, TextContent } from "@gcode/ai";
 
 export const COMPACTION_SUMMARY_PREFIX = `The conversation history before this point was compacted into the following summary:
 
@@ -67,7 +67,7 @@ export interface CompactionSummaryMessage {
 }
 
 // Extend CustomAgentMessages via declaration merging
-declare module "@garmin-code-mini/agent-core" {
+declare module "@gcode/agent-core" {
 	interface CustomAgentMessages {
 		bashExecution: BashExecutionMessage;
 		custom: CustomMessage;

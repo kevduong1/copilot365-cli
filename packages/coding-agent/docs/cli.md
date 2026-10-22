@@ -1,14 +1,14 @@
 # Command line
 
-Run `garmin-code-mini --help` for available options, including flags registered by local extensions. From a source checkout, use `./garmin-code-mini`.
+Run `gcode --help` for available options, including flags registered by local extensions. From a source checkout, use `./gcode`.
 
 ## Invocation and output
 
 ```bash
-garmin-code-mini
-garmin-code-mini --print "Explain this repository"
-git diff | garmin-code-mini --print "Review this change"
-garmin-code-mini --mode json "Inspect this repository" > events.jsonl
+gcode
+gcode --print "Explain this repository"
+git diff | gcode --print "Review this change"
+gcode --mode json "Inspect this repository" > events.jsonl
 ```
 
 Interactive mode uses the terminal UI. `--print` processes prompts and exits. `--mode json` writes JSONL events; `--mode rpc` reads commands from stdin and writes protocol responses to stdout. See [CLI integration](cli-integration.md), [JSON mode](json.md), and [RPC](rpc.md).
@@ -17,7 +17,7 @@ Messages can include `@path` attachments. Use `--` to end option parsing.
 
 ## Models
 
-Set `GARMIN_CODE_MINI_BASE_URL` to your local OpenAI-compatible endpoint. It defaults to `http://127.0.0.1:8080/v1`. Set `GARMIN_CODE_MINI_MODEL` to the model ID accepted by your server; the default is `local-model`. `GARMIN_CODE_MINI_API_KEY` supplies an optional key.
+Set `GCODE_BASE_URL` to your local OpenAI-compatible endpoint. It defaults to `http://127.0.0.1:8080/v1`. Set `GCODE_MODEL` to the model ID accepted by your server; the default is `local-model`. `GCODE_API_KEY` supplies an optional key.
 
 | Option | Behavior |
 | --- | --- |
@@ -38,7 +38,7 @@ See [Local models](models.md).
 | `--session <path or id>` | Open a specific session |
 | `--session-id <id>` | Open or create the exact project session ID |
 | `--fork <path or id>` | Fork an existing session |
-| `--session-dir <dir>` | Override storage and lookup, taking precedence over `GARMIN_CODE_MINI_SESSION_DIR` |
+| `--session-dir <dir>` | Override storage and lookup, taking precedence over `GCODE_SESSION_DIR` |
 | `--no-session` | Use an in-memory session |
 | `--name <name>`, `-n` | Name the session |
 | `--export <input> [output]` | Export a saved session to local HTML |
@@ -52,8 +52,8 @@ The default tools are `read`, `bash`, `edit`, and `write`. Additional built-in t
 `--tools <names>` sets an allowlist; a list containing only `+name` and `-name` entries modifies the defaults. `--exclude-tools <patterns>` disables matching tools. `--no-tools` disables all tools; `--no-builtin-tools` retains extension tools.
 
 ```bash
-garmin-code-mini --tools read,grep,find,ls -p "Review this project"
-garmin-code-mini --tools +codemode
+gcode --tools read,grep,find,ls -p "Review this project"
+gcode --tools +codemode
 ```
 
 ### Enable codemode
@@ -65,10 +65,10 @@ Use `--tools +codemode` for a run, or add `"defaultTools": ["+codemode"]` to set
 `--extension <path>`, `--skill <path>`, `--prompt-template <path>`, and `--theme <path>` load local resources. These options can be repeated. Their corresponding `--no-extensions`, `--no-skills`, `--no-prompt-templates`, and `--no-themes` flags disable discovery. `--no-context-files` disables instruction-file discovery.
 
 ```bash
-garmin-code-mini install ./my-extension
-garmin-code-mini remove ./my-extension
-garmin-code-mini list
-garmin-code-mini config
+gcode install ./my-extension
+gcode remove ./my-extension
+gcode list
+gcode config
 ```
 
 Add `-l` for project package settings. Remote package installation has been removed. See [Packages](packages.md).

@@ -1,7 +1,7 @@
 import { runInDurableObject } from "cloudflare:test";
 import { env } from "cloudflare:workers";
-import { DurableObjectSqliteDatabase } from "@garmin-code-mini/chord/sqlite/cloudflare";
-import { registerStorageConformance } from "@garmin-code-mini/durable/testing";
+import { DurableObjectSqliteDatabase } from "@gcode/chord/sqlite/cloudflare";
+import { registerStorageConformance } from "@gcode/durable/testing";
 import { describe, expect, it } from "vitest";
 import { openDurableObjectSqliteStorage } from "../src/storage/sqlite/cloudflare.ts";
 import { applySqliteMigrationsForSchema, createSqliteMigrations } from "../src/storage/sqlite/migrations.ts";

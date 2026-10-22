@@ -1,4 +1,4 @@
-import { type Component, Container, getKeybindings, Spacer, Text, truncateToWidth } from "@garmin-code-mini/tui";
+import { type Component, Container, getKeybindings, Spacer, Text, truncateToWidth } from "@gcode/tui";
 import { theme } from "../theme/theme.ts";
 import { DynamicBorder } from "./dynamic-border.ts";
 

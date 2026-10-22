@@ -5,7 +5,7 @@ import {
 	type Model,
 	type ToolResultMessage,
 	type UserMessage,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import { agentLoop, agentLoopContinue, runAgentLoop, runToolCall } from "../src/agent-loop.ts";

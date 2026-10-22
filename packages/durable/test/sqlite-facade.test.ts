@@ -1,11 +1,11 @@
 import { DatabaseSync, type StatementSync } from "node:sqlite";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import { DurableObjectSqliteDatabase as ChordDurableObjectSqliteDatabase } from "@garmin-code-mini/chord/sqlite/cloudflare";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import { DurableObjectSqliteDatabase as ChordDurableObjectSqliteDatabase } from "@gcode/chord/sqlite/cloudflare";
 import {
 	NodeSqliteDatabase as ChordNodeSqliteDatabase,
 	openNodeSqliteDatabase as chordOpenNodeSqliteDatabase,
-} from "@garmin-code-mini/chord/sqlite/node";
-import { DurableObjectSqliteDatabase } from "@garmin-code-mini/durable/storage/sqlite/cloudflare";
+} from "@gcode/chord/sqlite/node";
+import { DurableObjectSqliteDatabase } from "@gcode/durable/storage/sqlite/cloudflare";
 import { describe, expect, it } from "vitest";
 import { idFromNumber } from "../src/ids.ts";
 import type { SqliteDatabase, SqliteExecutor, SqliteValue } from "../src/storage/sqlite/index.ts";

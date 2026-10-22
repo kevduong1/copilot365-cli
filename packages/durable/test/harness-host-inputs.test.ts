@@ -7,7 +7,7 @@ import {
 	type Models,
 	type SimpleStreamOptions,
 	Type,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import {
 	type Conversation,
 	createRegistry,
@@ -18,7 +18,7 @@ import {
 	type HarnessSettings,
 	MemoryStorage,
 	type Registry,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { allEntries, textOf } from "./chat-support.ts";
 import { context } from "./session-support.ts";

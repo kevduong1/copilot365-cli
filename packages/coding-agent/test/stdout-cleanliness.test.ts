@@ -24,7 +24,7 @@ afterEach(() => {
 });
 
 function createTempDir(): string {
-	const dir = mkdtempSync(join(tmpdir(), "garmin-code-mini-stdout-clean-"));
+	const dir = mkdtempSync(join(tmpdir(), "gcode-stdout-clean-"));
 	tempDirs.push(dir);
 	return dir;
 }
@@ -33,13 +33,13 @@ async function runCli(args: string[]): Promise<{ stdout: string; stderr: string;
 	const tempRoot = createTempDir();
 	const agentDir = join(tempRoot, "agent");
 	const projectDir = join(tempRoot, "project");
-	const projectConfigDir = join(projectDir, ".garmin-code-mini");
+	const projectConfigDir = join(projectDir, ".gcode");
 	mkdirSync(agentDir, { recursive: true });
 	mkdirSync(projectConfigDir, { recursive: true });
 
 	const localPackage = join(projectDir, "local-package");
 	mkdirSync(localPackage);
-	writeFileSync(join(localPackage, "package.json"), JSON.stringify({ garminCodeMini: { extensions: ["index.ts"] } }));
+	writeFileSync(join(localPackage, "package.json"), JSON.stringify({ gcode: { extensions: ["index.ts"] } }));
 	writeFileSync(join(localPackage, "index.ts"), 'console.log("local extension loaded"); export default function() {}');
 	writeFileSync(join(projectConfigDir, "settings.json"), JSON.stringify({ packages: [localPackage] }));
 

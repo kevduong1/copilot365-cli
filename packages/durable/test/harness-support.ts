@@ -6,8 +6,8 @@ import type {
 	ToolCall,
 	ToolResultMessage,
 	UserMessage,
-} from "@garmin-code-mini/ai";
-import { createModels, Type } from "@garmin-code-mini/ai";
+} from "@gcode/ai";
+import { createModels, Type } from "@gcode/ai";
 import {
 	type AnyTask,
 	createRegistry,
@@ -22,7 +22,7 @@ import {
 	type Storage,
 	section,
 	type ToolRegistration,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { context } from "./session-support.ts";
 
 export function tool(name: string, description = `${name} tool`): ToolRegistration {

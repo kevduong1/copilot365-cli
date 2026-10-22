@@ -6,8 +6,8 @@ import {
 	type AutocompleteProvider,
 	type AutocompleteSuggestions,
 	fuzzyFilter,
-} from "@garmin-code-mini/tui";
-import type { ExtensionAPI } from "garmin-code-mini";
+} from "@gcode/tui";
+import type { ExtensionAPI } from "gcode";
 
 type GitHubIssue = {
 	number: number;
@@ -39,8 +39,8 @@ function parseGitHubRepo(remoteUrl: string): string | undefined {
 	return undefined;
 }
 
-async function resolveGitHubRepo(garminCodeMini: ExtensionAPI, cwd: string): Promise<RepoResolution> {
-	const result = await garminCodeMini.exec("git", ["remote", "-v"], { cwd, timeout: 5_000 });
+async function resolveGitHubRepo(gcode: ExtensionAPI, cwd: string): Promise<RepoResolution> {
+	const result = await gcode.exec("git", ["remote", "-v"], { cwd, timeout: 5_000 });
 	if (result.code !== 0) {
 		return { ok: false, error: "github-issue-autocomplete: cwd is not a git repository" };
 	}
@@ -127,9 +127,9 @@ function createIssueAutocompleteProvider(
 	};
 }
 
-export default function (garminCodeMini: ExtensionAPI): void {
-	garminCodeMini.on("session_start", async (_event, ctx) => {
-		const resolvedRepo = await resolveGitHubRepo(garminCodeMini, ctx.cwd);
+export default function (gcode: ExtensionAPI): void {
+	gcode.on("session_start", async (_event, ctx) => {
+		const resolvedRepo = await resolveGitHubRepo(gcode, ctx.cwd);
 		if (!resolvedRepo.ok) {
 			ctx.ui.notify(resolvedRepo.error, "error");
 			return;
@@ -141,7 +141,7 @@ export default function (garminCodeMini: ExtensionAPI): void {
 
 		const getIssues = async (): Promise<GitHubIssue[] | undefined> => {
 			issuesPromise ||= (async () => {
-				const result = await garminCodeMini.exec(
+				const result = await gcode.exec(
 					"gh",
 					[
 						"issue",

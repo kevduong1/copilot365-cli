@@ -1,13 +1,10 @@
-import {
-	DurableObjectSqliteDatabase,
-	type DurableObjectSqliteStorage,
-} from "@garmin-code-mini/chord/sqlite/cloudflare";
+import { DurableObjectSqliteDatabase, type DurableObjectSqliteStorage } from "@gcode/chord/sqlite/cloudflare";
 import { SqliteStorage, type SqliteStorageOptions } from "./storage.ts";
 
 export {
 	DurableObjectSqliteDatabase,
 	type DurableObjectSqliteStorage,
-} from "@garmin-code-mini/chord/sqlite/cloudflare";
+} from "@gcode/chord/sqlite/cloudflare";
 
 /**
  * Open durable storage on a SQLite-backed Durable Object, optionally under a table prefix. Calls given the same

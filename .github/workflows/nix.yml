@@ -60,9 +60,9 @@ jobs:
 
       - name: Smoke-test
         run: |
-          ./result/bin/garmin-code-mini --version
-          ./result/bin/garmin-code-mini --help > /dev/null
+          ./result/bin/gcode --version
+          ./result/bin/gcode --help > /dev/null
           if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-            test "$(./result/bin/garmin-code-mini --version)" = "${GITHUB_REF_NAME#v}"
+            test "$(./result/bin/gcode --version)" = "${GITHUB_REF_NAME#v}"
           fi
 

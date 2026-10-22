@@ -6,9 +6,9 @@ import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { extname, join, resolve } from "node:path";
 
-const WORKER_MARKER = "GARMIN_CODE_MINI_CODEMODE_WORKER_OK";
-const SUCCESS_MARKER = "GARMIN_CODE_MINI_CODEMODE_BINARY_SMOKE_OK";
-const FAILURE_MARKER = "GARMIN_CODE_MINI_CODEMODE_BINARY_SMOKE_FAILED";
+const WORKER_MARKER = "GCODE_CODEMODE_WORKER_OK";
+const SUCCESS_MARKER = "GCODE_CODEMODE_BINARY_SMOKE_OK";
+const FAILURE_MARKER = "GCODE_CODEMODE_BINARY_SMOKE_FAILED";
 const TIMEOUT_MS = 30_000;
 
 function completionChunk(id, delta, finishReason = null, usage) {
@@ -51,10 +51,10 @@ function toolResultContainsMarker(body) {
 async function main() {
 	const binaryArg = process.argv[2];
 	if (!binaryArg || process.argv.length !== 3) {
-		throw new Error("Usage: node scripts/smoke-test-codemode-binary.mjs <garmin-code-mini-binary>");
+		throw new Error("Usage: node scripts/smoke-test-codemode-binary.mjs <gcode-binary>");
 	}
 	const binary = resolve(binaryArg);
-	const tempDir = await mkdtemp(join(tmpdir(), "garmin-code-mini-codemode-binary-smoke-"));
+	const tempDir = await mkdtemp(join(tmpdir(), "gcode-codemode-binary-smoke-"));
 	let requestCount = 0;
 	const server = createServer(async (request, response) => {
 		if (request.method !== "POST" || !request.url?.endsWith("/chat/completions")) {
@@ -133,8 +133,8 @@ async function main() {
 			cwd: tempDir,
 			env: {
 				...process.env,
-				GARMIN_CODE_MINI_AGENT_DIR: tempDir,
-				GARMIN_CODE_MINI_OFFLINE: "1",
+				GCODE_AGENT_DIR: tempDir,
+				GCODE_OFFLINE: "1",
 			},
 			stdio: ["ignore", "pipe", "pipe"],
 		});

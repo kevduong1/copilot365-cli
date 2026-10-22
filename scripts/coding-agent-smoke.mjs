@@ -3,12 +3,12 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-export const codingAgentName = "garmin-code-mini";
+export const codingAgentName = "gcode";
 
 export function smokeTestCodingAgent(directory, runtime = process.execPath) {
 	const packageDir = join(directory, "node_modules", codingAgentName);
 	const manifest = JSON.parse(readFileSync(join(packageDir, "package.json"), "utf8"));
-	const home = mkdtempSync(join(tmpdir(), "garmin-code-mini-coding-agent-smoke-home-"));
+	const home = mkdtempSync(join(tmpdir(), "gcode-coding-agent-smoke-home-"));
 	const entry = join(directory, "coding-agent-smoke.mjs");
 	const env = {
 		PATH: process.env.PATH,
@@ -18,7 +18,7 @@ export function smokeTestCodingAgent(directory, runtime = process.execPath) {
 		LOCALAPPDATA: home,
 		XDG_CONFIG_HOME: home,
 		XDG_CACHE_HOME: home,
-		GARMIN_CODE_MINI_AGENT_DIR: join(home, ".garmin-code-mini", "agent"),
+		GCODE_AGENT_DIR: join(home, ".gcode", "agent"),
 	};
 	for (const name of ["SystemRoot", "SYSTEMROOT", "WINDIR", "COMSPEC", "PATHEXT"]) {
 		if (process.env[name]) env[name] = process.env[name];
@@ -31,7 +31,7 @@ assert.equal(typeof SessionManager.inMemory, "function");
 assert.equal(typeof ModelRuntime.create, "function");
 `);
 		execFileSync(runtime, [entry], { cwd: directory, env, stdio: ["inherit", "pipe", "pipe"], timeout: 30_000 });
-		for (const cli of new Set([manifest.bin["garmin-code-mini"], "dist/cli.js"])) {
+		for (const cli of new Set([manifest.bin["gcode"], "dist/cli.js"])) {
 			const output = execFileSync(runtime, [join(packageDir, cli), "--version"], {
 				cwd: directory,
 				encoding: "utf8",

@@ -36,7 +36,7 @@ function requireSuccess(command: string, args: readonly string[]): void {
 }
 
 export function buildImages(): BuiltImages {
-	const prefix = `garmin-code-mini-evals-${createHash("sha256").update(repositoryRoot).digest("hex").slice(0, 12)}`;
+	const prefix = `gcode-evals-${createHash("sha256").update(repositoryRoot).digest("hex").slice(0, 12)}`;
 	const images = {
 		without_docs: { name: `${prefix}-without-docs:local`, id: "" },
 		with_docs: { name: `${prefix}-with-docs:local`, id: "" },
@@ -66,9 +66,7 @@ function environment(name: string, value: string): string[] {
 
 export function requireEvalAuthFile(provider: string): string {
 	const path = join(
-		process.env.GARMIN_CODE_MINI_AGENT_DIR
-			? resolve(process.env.GARMIN_CODE_MINI_AGENT_DIR)
-			: join(homedir(), ".garmin-code-mini", "agent"),
+		process.env.GCODE_AGENT_DIR ? resolve(process.env.GCODE_AGENT_DIR) : join(homedir(), ".gcode", "agent"),
 		"auth.json",
 	);
 	if (!existsSync(path) || !statSync(path).isFile())
@@ -107,23 +105,20 @@ function dockerArgs(
 		"/repo/node_modules/.vite-temp:rw,exec,mode=1777",
 		"--mount",
 		`type=bind,source=${outputDirectory},target=/artifacts`,
-		...environment("GARMIN_CODE_MINI_EVAL_ARTIFACT_DIR", "/artifacts"),
-		...environment("GARMIN_CODE_MINI_EVAL_RUNS_PER_VARIANT", String(context.runsPerVariant)),
-		...environment("GARMIN_CODE_MINI_EVAL_SANDBOX_UID", "65532"),
-		...environment("GARMIN_CODE_MINI_EVAL_SANDBOX_GID", "65532"),
-		...environment("GARMIN_CODE_MINI_PROVIDER", context.provider),
-		...environment("GARMIN_CODE_MINI_MODEL", context.model),
+		...environment("GCODE_EVAL_ARTIFACT_DIR", "/artifacts"),
+		...environment("GCODE_EVAL_RUNS_PER_VARIANT", String(context.runsPerVariant)),
+		...environment("GCODE_EVAL_SANDBOX_UID", "65532"),
+		...environment("GCODE_EVAL_SANDBOX_GID", "65532"),
+		...environment("GCODE_PROVIDER", context.provider),
+		...environment("GCODE_MODEL", context.model),
 	];
 	if (typeof process.getuid === "function" && typeof process.getgid === "function") {
 		args.push(
-			...environment("GARMIN_CODE_MINI_EVAL_ARTIFACT_UID", String(process.getuid())),
-			...environment("GARMIN_CODE_MINI_EVAL_ARTIFACT_GID", String(process.getgid())),
+			...environment("GCODE_EVAL_ARTIFACT_UID", String(process.getuid())),
+			...environment("GCODE_EVAL_ARTIFACT_GID", String(process.getgid())),
 		);
 	}
-	args.push(
-		"--mount",
-		`type=bind,source=${context.authPath},target=/run/garmin-code-mini-eval-secrets/auth.json,readonly`,
-	);
+	args.push("--mount", `type=bind,source=${context.authPath},target=/run/gcode-eval-secrets/auth.json,readonly`);
 	args.push(context.images[variant].name, ...entrypointArgs);
 	return args;
 }

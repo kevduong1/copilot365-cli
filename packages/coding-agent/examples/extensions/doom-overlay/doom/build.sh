@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build DOOM for garmin-code-mini-doom using doomgeneric and Emscripten
+# Build DOOM for gcode-doom using doomgeneric and Emscripten
 
 set -e
 
@@ -8,7 +8,7 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 DOOM_DIR="$PROJECT_ROOT/doom"
 BUILD_DIR="$PROJECT_ROOT/doom/build"
 
-echo "=== garmin-code-mini-doom Build Script ==="
+echo "=== gcode-doom Build Script ==="
 
 # Check for emcc
 if ! command -v emcc &> /dev/null; then

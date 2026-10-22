@@ -10,9 +10,9 @@ import type { ExtensionFactory } from "../../core/extensions/types.ts";
 import { createToolSearchToolDefinition } from "./tool.ts";
 
 export function createToolSearchExtension(): ExtensionFactory {
-	return (garminCodeMini) => {
-		garminCodeMini.registerTool({
-			...createToolSearchToolDefinition({ tools: garminCodeMini }),
+	return (gcode) => {
+		gcode.registerTool({
+			...createToolSearchToolDefinition({ tools: gcode }),
 			defaultActive: false,
 		});
 	};

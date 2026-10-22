@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import type { EvalTask } from "../src/plan.ts";
-import { classifyCaseStatus, GARMIN_CODE_MINI_SESSION_SNAPSHOT_ARTIFACT, readTaskObservation } from "../src/report.ts";
+import { classifyCaseStatus, GCODE_SESSION_SNAPSHOT_ARTIFACT, readTaskObservation } from "../src/report.ts";
 
 const temporaryDirectories: string[] = [];
 afterEach(async () => {
@@ -27,7 +27,7 @@ type ReportAssertion = {
 };
 
 async function writeTaskReport(assertion: ReportAssertion = {}) {
-	const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-eval-report-test-"));
+	const directory = await mkdtemp(join(tmpdir(), "gcode-eval-report-test-"));
 	temporaryDirectories.push(directory);
 	const reportPath = join(directory, "vitest.json");
 	const status = assertion.status ?? "passed";
@@ -92,7 +92,7 @@ function scoredMeta(overrides?: {
 				timings: { totalMs: 1234 },
 				artifacts: overrides?.artifacts ?? {
 					runId: "run-1",
-					[GARMIN_CODE_MINI_SESSION_SNAPSHOT_ARTIFACT]: SESSION,
+					[GCODE_SESSION_SNAPSHOT_ARTIFACT]: SESSION,
 				},
 				errors: overrides?.errors ?? [],
 			},

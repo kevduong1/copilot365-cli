@@ -1,8 +1,8 @@
 /**
- * TUI config selector for `garmin-code-mini config` command
+ * TUI config selector for `gcode config` command
  */
 
-import { ProcessTerminal, type TUI, TuiMainScreen } from "@garmin-code-mini/tui";
+import { ProcessTerminal, type TUI, TuiMainScreen } from "@gcode/tui";
 import type { SettingsManager } from "../core/settings-manager.ts";
 import { ConfigSelectorComponent, type ScopedResolvedPaths } from "../modes/interactive/components/config-selector.ts";
 import { initTheme, stopThemeWatcher } from "../modes/interactive/theme/theme.ts";

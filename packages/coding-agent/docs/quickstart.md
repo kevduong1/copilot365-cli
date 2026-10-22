@@ -1,6 +1,6 @@
 # Quickstart
 
-Garmin Code Mini runs in your terminal and uses your local OpenAI-compatible model server.
+Gcode runs in your terminal and uses your local OpenAI-compatible model server.
 
 ## Install and start
 
@@ -8,14 +8,14 @@ Use Node.js 22.19 or newer. From the checkout:
 
 ```bash
 npm install --ignore-scripts
-export GARMIN_CODE_MINI_BASE_URL=http://127.0.0.1:8080/v1
-export GARMIN_CODE_MINI_MODEL=local-model
-./garmin-code-mini
+export GCODE_BASE_URL=http://127.0.0.1:8080/v1
+export GCODE_MODEL=local-model
+./gcode
 ```
 
-Start the model server separately. Use the model ID your server accepts. Set `GARMIN_CODE_MINI_API_KEY` only if your server requires authentication.
+Start the model server separately. Use the model ID your server accepts. Set `GCODE_API_KEY` only if your server requires authentication.
 
-Add this checkout to your `PATH` to use `garmin-code-mini` from another directory. The command preserves your working directory.
+Add this checkout to your `PATH` to use `gcode` from another directory. The command preserves your working directory.
 
 ## Give the agent a task
 
@@ -27,10 +27,10 @@ Type `@` to attach a file. Review the response and changed files when the task f
 
 ## Continue later
 
-Sessions are saved under `~/.garmin-code-mini/agent/sessions`, grouped by working directory.
+Sessions are saved under `~/.gcode/agent/sessions`, grouped by working directory.
 
 ```bash
-garmin-code-mini --continue
+gcode --continue
 ```
 
 Use `/resume` to choose another session, `/model` to select a configured model, `/settings` to adjust the interface, and `/hotkeys` for keyboard shortcuts.

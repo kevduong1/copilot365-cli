@@ -7,8 +7,8 @@
  */
 
 import { basename, dirname, isAbsolute, relative, resolve as resolvePath, sep } from "node:path";
-import type { ImageContent, TextContent } from "@garmin-code-mini/ai";
-import { Text } from "@garmin-code-mini/tui";
+import type { ImageContent, TextContent } from "@gcode/ai";
+import { Text } from "@gcode/tui";
 import { getReadmePath } from "../../../config.ts";
 import { keyHint, keyText } from "../../../modes/interactive/components/keybinding-hints.ts";
 import { getLanguageFromPath, highlightCode, type Theme } from "../../../modes/interactive/theme/theme.ts";

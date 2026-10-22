@@ -1,5 +1,5 @@
 {
-	"name": "garmin-code-mini-monorepo",
+	"name": "gcode-monorepo",
 	"private": true,
 	"type": "module",
 	"workspaces": [
@@ -25,7 +25,7 @@
 		"check:ts-imports": "node scripts/check-ts-relative-imports.mjs",
 		"check:entry-graphs": "node scripts/check-entry-graphs.mjs",
 		"generate:models": "npm --prefix packages/ai run generate-models",
-		"eval": "npm run eval --workspace=@garmin-code-mini/evals --",
+		"eval": "npm run eval --workspace=@gcode/evals --",
 		"profile:tui": "node scripts/profile-coding-agent-node.mjs --mode tui",
 		"profile:rpc": "node scripts/profile-coding-agent-node.mjs --mode rpc",
 		"test": "npm run test:scripts && npm run test --workspaces --if-present",

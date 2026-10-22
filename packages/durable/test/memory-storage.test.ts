@@ -1,5 +1,5 @@
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import { registerStorageConformance } from "@garmin-code-mini/durable/testing";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import { registerStorageConformance } from "@gcode/durable/testing";
 import { describe, expect, it } from "vitest";
 import { idFromNumber, seqFromNumber } from "../src/ids.ts";
 import { MemoryStorage } from "../src/storage/memory.ts";

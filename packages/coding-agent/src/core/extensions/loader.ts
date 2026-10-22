@@ -7,15 +7,15 @@ import * as fs from "node:fs";
 import { createRequire } from "node:module";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Provider } from "@garmin-code-mini/ai";
-import type { KeyId } from "@garmin-code-mini/tui";
+import type { Provider } from "@gcode/ai";
+import type { KeyId } from "@gcode/tui";
 import type { createJiti } from "jiti";
 import { CONFIG_DIR_NAME, getAgentDir, isBunBinary, isBundledNode } from "../../config.ts";
 import { resolvePath } from "../../utils/paths.ts";
 import { createEventBus, type EventBus } from "../event-bus.ts";
 import type { ExecOptions } from "../exec.ts";
 import { execCommand } from "../exec.ts";
-import { readPiManifest } from "../garmin-code-mini-manifest.ts";
+import { readGcodeManifest } from "../gcode-manifest.ts";
 import { type McpServerConfig, McpServerRegistry, mcpNamespace, validateMcpServerConfig } from "../mcp-servers.ts";
 import { createSyntheticSourceInfo, getSyntheticPathSource, isSyntheticPath } from "../source-info.ts";
 import { time } from "../timings.ts";
@@ -86,28 +86,25 @@ function getAliases(): Record<string, string> {
 	};
 
 	const piCodingAgentEntry = packageIndex;
-	const piAgentCoreEntry = resolveWorkspaceOrImport("agent/dist/index.js", "@garmin-code-mini/agent-core");
-	const piTuiEntry = resolveWorkspaceOrImport("tui/dist/index.js", "@garmin-code-mini/tui");
-	// Extensions resolve the garmin-code-mini-ai root to the compat entrypoint (a strict
+	const piAgentCoreEntry = resolveWorkspaceOrImport("agent/dist/index.js", "@gcode/agent-core");
+	const piTuiEntry = resolveWorkspaceOrImport("tui/dist/index.js", "@gcode/tui");
+	// Extensions resolve the gcode-ai root to the compat entrypoint (a strict
 	// superset of the core entrypoint): existing extensions using the old
 	// global API keep working at runtime until compat is removed.
-	const piAiCompatEntry = resolveWorkspaceOrImport("ai/dist/compat.js", "@garmin-code-mini/ai/compat");
-	const piAiModelsEntry = resolveWorkspaceOrImport("ai/dist/models.js", "@garmin-code-mini/ai/models");
-	const piAiOauthEntry = resolveWorkspaceOrImport("ai/dist/oauth.js", "@garmin-code-mini/ai/oauth");
-	const piAiProvidersEntry = resolveWorkspaceOrImport(
-		"ai/dist/providers/all.js",
-		"@garmin-code-mini/ai/providers/all",
-	);
+	const piAiCompatEntry = resolveWorkspaceOrImport("ai/dist/compat.js", "@gcode/ai/compat");
+	const piAiModelsEntry = resolveWorkspaceOrImport("ai/dist/models.js", "@gcode/ai/models");
+	const piAiOauthEntry = resolveWorkspaceOrImport("ai/dist/oauth.js", "@gcode/ai/oauth");
+	const piAiProvidersEntry = resolveWorkspaceOrImport("ai/dist/providers/all.js", "@gcode/ai/providers/all");
 
 	_aliases = {
-		"garmin-code-mini": piCodingAgentEntry,
-		"@garmin-code-mini/agent-core": piAgentCoreEntry,
-		"@garmin-code-mini/tui": piTuiEntry,
-		"@garmin-code-mini/ai/providers/all": piAiProvidersEntry,
-		"@garmin-code-mini/ai/compat": piAiCompatEntry,
-		"@garmin-code-mini/ai/models": piAiModelsEntry,
-		"@garmin-code-mini/ai/oauth": piAiOauthEntry,
-		"@garmin-code-mini/ai": piAiCompatEntry,
+		gcode: piCodingAgentEntry,
+		"@gcode/agent-core": piAgentCoreEntry,
+		"@gcode/tui": piTuiEntry,
+		"@gcode/ai/providers/all": piAiProvidersEntry,
+		"@gcode/ai/compat": piAiCompatEntry,
+		"@gcode/ai/models": piAiModelsEntry,
+		"@gcode/ai/oauth": piAiOauthEntry,
+		"@gcode/ai": piAiCompatEntry,
 		typebox: typeboxEntry,
 		"typebox/compile": typeboxCompileEntry,
 		"typebox/value": typeboxValueEntry,
@@ -189,7 +186,7 @@ export function createExtensionRuntime(): ExtensionRuntime {
 			if (state.staleMessage) return;
 			state.staleMessage =
 				message ??
-				"This extension ctx is stale after session replacement or reload. Do not use a captured garmin-code-mini or command ctx after ctx.newSession(), ctx.fork(), ctx.switchSession(), or ctx.reload(). For newSession, fork, and switchSession, move post-replacement work into withSession and use the ctx passed to withSession. For reload, do not use the old ctx after await ctx.reload().";
+				"This extension ctx is stale after session replacement or reload. Do not use a captured gcode or command ctx after ctx.newSession(), ctx.fork(), ctx.switchSession(), or ctx.reload(). For newSession, fork, and switchSession, move post-replacement work into withSession and use the ctx passed to withSession. For reload, do not use the old ctx after await ctx.reload().";
 			for (const unsubscribe of eventBusUnsubscribers) unsubscribe();
 			eventBusUnsubscribers.clear();
 		},
@@ -299,7 +296,7 @@ function createExtensionAPI(
 			assertActive();
 			if (typeof name !== "string" || name.length === 0) {
 				throw new Error(
-					`Command registered by extension "${extension.path}" must have a non-empty string name. Use garminCodeMini.registerCommand("name", { description, handler }).`,
+					`Command registered by extension "${extension.path}" must have a non-empty string name. Use gcode.registerCommand("name", { description, handler }).`,
 				);
 			}
 			if (typeof options?.handler !== "function") {
@@ -736,16 +733,16 @@ function isExtensionFile(name: string): boolean {
  * Resolve extension entry points from a directory.
  *
  * Checks for:
- * 1. package.json with "garmin-code-mini.extensions" field -> returns declared paths
+ * 1. package.json with "gcode.extensions" field -> returns declared paths
  * 2. index.ts or index.js -> returns the index file
  *
  * Returns resolved paths or null if no entry points found.
  */
 function resolveExtensionEntries(dir: string): string[] | null {
-	// Check for package.json with "garminCodeMini" field first
+	// Check for package.json with "gcode" field first
 	const packageJsonPath = path.join(dir, "package.json");
 	if (fs.existsSync(packageJsonPath)) {
-		const manifest = readPiManifest(packageJsonPath);
+		const manifest = readGcodeManifest(packageJsonPath);
 		if (manifest?.extensions?.length) {
 			const entries: string[] = [];
 			for (const extPath of manifest.extensions) {
@@ -779,7 +776,7 @@ function resolveExtensionEntries(dir: string): string[] | null {
  * Discovery rules:
  * 1. Direct files: `extensions/*.ts` or `*.js` → load
  * 2. Subdirectory with index: `extensions/* /index.ts` or `index.js` → load
- * 3. Subdirectory with package.json: `extensions/* /package.json` with "garminCodeMini" field → load what it declares
+ * 3. Subdirectory with package.json: `extensions/* /package.json` with "gcode" field → load what it declares
  *
  * No recursion beyond one level. Complex packages must use package.json manifest.
  */
@@ -853,7 +850,7 @@ export async function discoverAndLoadExtensions(
 	for (const p of configuredPaths) {
 		const resolved = resolvePath(p, resolvedCwd, { normalizeUnicodeSpaces: true });
 		if (fs.existsSync(resolved) && fs.statSync(resolved).isDirectory()) {
-			// Check for package.json with garmin-code-mini manifest or index.ts
+			// Check for package.json with gcode manifest or index.ts
 			const entries = resolveExtensionEntries(resolved);
 			if (entries) {
 				addPaths(entries);

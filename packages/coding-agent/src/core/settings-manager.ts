@@ -1,6 +1,6 @@
-import type { ThinkingLevel } from "@garmin-code-mini/agent-core";
-import type { Model } from "@garmin-code-mini/ai";
-import type { ScrollViewScrollbar, TerminalCapabilities, WheelScrollLines } from "@garmin-code-mini/tui";
+import type { ThinkingLevel } from "@gcode/agent-core";
+import type { Model } from "@gcode/ai";
+import type { ScrollViewScrollbar, TerminalCapabilities, WheelScrollLines } from "@gcode/tui";
 import { randomUUID } from "crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, join } from "path";
@@ -1227,7 +1227,7 @@ export class SettingsManager {
 		if (this.settings.terminal?.clearOnShrink !== undefined) {
 			return this.settings.terminal.clearOnShrink;
 		}
-		if (process.env.GARMIN_CODE_MINI_CLEAR_ON_SHRINK === "1") return true;
+		if (process.env.GCODE_CLEAR_ON_SHRINK === "1") return true;
 		return SETTINGS_DEFAULTS.terminal.clearOnShrink;
 	}
 
@@ -1376,7 +1376,7 @@ export class SettingsManager {
 	}
 
 	getShowHardwareCursor(): boolean {
-		return this.settings.showHardwareCursor ?? process.env.GARMIN_CODE_MINI_HARDWARE_CURSOR === "1";
+		return this.settings.showHardwareCursor ?? process.env.GCODE_HARDWARE_CURSOR === "1";
 	}
 
 	setShowHardwareCursor(enabled: boolean): void {

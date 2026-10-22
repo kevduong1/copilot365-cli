@@ -2,12 +2,12 @@ import { spawn } from "node:child_process";
 import { mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { Context } from "@garmin-code-mini/chord";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import type { ToolExecutionApi } from "@garmin-code-mini/durable";
-import type { ExecutionEnv, FileError, Result } from "@garmin-code-mini/durable/env";
-import { NodeExecutionEnv } from "@garmin-code-mini/durable/env/node";
-import { createBashTool, createReadTool } from "@garmin-code-mini/durable/tools";
+import type { Context } from "@gcode/chord";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import type { ToolExecutionApi } from "@gcode/durable";
+import type { ExecutionEnv, FileError, Result } from "@gcode/durable/env";
+import { NodeExecutionEnv } from "@gcode/durable/env/node";
+import { createBashTool, createReadTool } from "@gcode/durable/tools";
 import { afterAll, describe, expect, it } from "vitest";
 import { Connection } from "../src/connection.ts";
 import { RemoteExecutionEnv } from "../src/remote-env.ts";
@@ -22,12 +22,12 @@ afterAll(() => {
 });
 
 function pair(): { local: ExecutionEnv; remote: ExecutionEnv; roots: [string, string] } {
-	const localRoot = mkdtempSync(join(tmpdir(), "garmin-code-mini-env-local-"));
-	const remoteRoot = mkdtempSync(join(tmpdir(), "garmin-code-mini-env-remote-"));
+	const localRoot = mkdtempSync(join(tmpdir(), "gcode-env-local-"));
+	const remoteRoot = mkdtempSync(join(tmpdir(), "gcode-env-remote-"));
 	dirs.push(localRoot, remoteRoot);
 	return {
 		local: new NodeExecutionEnv({ cwd: localRoot }),
-		remote: new RemoteExecutionEnv({ connection, id: "garmin-code-mini-env:test", cwd: remoteRoot }),
+		remote: new RemoteExecutionEnv({ connection, id: "gcode-env:test", cwd: remoteRoot }),
 		roots: [localRoot, remoteRoot],
 	};
 }

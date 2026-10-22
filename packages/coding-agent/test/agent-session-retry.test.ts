@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Agent, type AgentEvent, type AgentTool } from "@garmin-code-mini/agent-core";
-import { type AssistantMessage, createAssistantMessageEventStream, getModel } from "@garmin-code-mini/ai/compat";
+import { Agent, type AgentEvent, type AgentTool } from "@gcode/agent-core";
+import { type AssistantMessage, createAssistantMessageEventStream, getModel } from "@gcode/ai/compat";
 import { Type } from "typebox";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AgentSession } from "../src/core/agent-session.ts";
@@ -42,7 +42,7 @@ describe("AgentSession retry", () => {
 	let tempDir: string;
 
 	beforeEach(async () => {
-		tempDir = join(tmpdir(), `garmin-code-mini-retry-test-${Date.now()}`);
+		tempDir = join(tmpdir(), `gcode-retry-test-${Date.now()}`);
 		mkdirSync(tempDir, { recursive: true });
 	});
 

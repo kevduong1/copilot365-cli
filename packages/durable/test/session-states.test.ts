@@ -1,4 +1,4 @@
-import { defineDoc, defineDocFamily } from "@garmin-code-mini/durable";
+import { defineDoc, defineDocFamily } from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { context, createConversation, documentChanges, flush, openTestSession } from "./session-support.ts";
 

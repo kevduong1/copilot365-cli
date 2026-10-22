@@ -2,8 +2,8 @@
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/08-harness-conversations.ts
 
-import { createModels } from "@garmin-code-mini/ai/models";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { createRegistry, defineEntry, Harness, MemoryStorage } from "../../src/index.ts";
 
 const context = BACKGROUND_CONTEXT;

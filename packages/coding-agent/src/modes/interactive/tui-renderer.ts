@@ -1,5 +1,5 @@
-import type { Terminal, WheelScrollLines } from "@garmin-code-mini/tui";
-import { ProcessTerminal, type TUI, TuiAltScreen, TuiMainScreen } from "@garmin-code-mini/tui";
+import type { Terminal, WheelScrollLines } from "@gcode/tui";
+import { ProcessTerminal, type TUI, TuiAltScreen, TuiMainScreen } from "@gcode/tui";
 import { copyToClipboard } from "../../utils/clipboard.ts";
 import { openBrowser } from "../../utils/open-browser.ts";
 import { keyDisplayText } from "./components/keybinding-hints.ts";

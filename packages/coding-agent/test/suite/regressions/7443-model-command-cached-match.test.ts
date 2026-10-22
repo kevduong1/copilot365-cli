@@ -1,4 +1,4 @@
-import type { Api, Model } from "@garmin-code-mini/ai";
+import type { Api, Model } from "@gcode/ai";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { InteractiveMode } from "../../../src/modes/interactive/interactive-mode.ts";
 import { createHarness, type Harness } from "../harness.ts";

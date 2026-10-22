@@ -7,7 +7,7 @@ import { installConsumer, packageConsumerDirectoryName, smokeTestNpmConsumer } f
 import { produceArtifactSet } from "./package-artifacts.mjs";
 import { codingAgentName, smokeTestCodingAgent } from "./coding-agent-smoke.mjs";
 
-const root = mkdtempSync(join(tmpdir(), "garmin-code-mini-package-install-"));
+const root = mkdtempSync(join(tmpdir(), "gcode-package-install-"));
 try {
 	const artifactSet = produceArtifactSet({ build: false, outDir: join(root, "artifacts"), repoRoot: process.cwd() });
 	for (const pkg of artifactSet.packages) {

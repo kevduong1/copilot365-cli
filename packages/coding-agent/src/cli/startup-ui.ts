@@ -1,10 +1,4 @@
-import {
-	ProcessTerminal,
-	setCapabilityOverrides,
-	setKeybindings,
-	type TUI,
-	TuiMainScreen,
-} from "@garmin-code-mini/tui";
+import { ProcessTerminal, setCapabilityOverrides, setKeybindings, type TUI, TuiMainScreen } from "@gcode/tui";
 import { getAgentDir } from "../config.ts";
 import { KeybindingsManager } from "../core/keybindings.ts";
 import { DefaultPackageManager, type ResolvedResource } from "../core/package-manager.ts";

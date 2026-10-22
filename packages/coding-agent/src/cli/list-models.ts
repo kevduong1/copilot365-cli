@@ -2,8 +2,8 @@
  * List available models with optional fuzzy search
  */
 
-import type { Api, Model } from "@garmin-code-mini/ai";
-import { fuzzyFilter } from "@garmin-code-mini/tui";
+import type { Api, Model } from "@gcode/ai";
+import { fuzzyFilter } from "@gcode/tui";
 import chalk from "chalk";
 import { formatNoModelsAvailableMessage } from "../core/auth-guidance.ts";
 import type { ModelRuntime } from "../core/model-runtime.ts";

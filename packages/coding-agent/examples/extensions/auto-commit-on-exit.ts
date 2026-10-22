@@ -5,12 +5,12 @@
  * Uses the last assistant message to generate a commit message.
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("session_shutdown", async (_event, ctx) => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("session_shutdown", async (_event, ctx) => {
 		// Check for uncommitted changes
-		const { stdout: status, code } = await garminCodeMini.exec("git", ["status", "--porcelain"]);
+		const { stdout: status, code } = await gcode.exec("git", ["status", "--porcelain"]);
 
 		if (code !== 0 || status.trim().length === 0) {
 			// Not a git repo or no changes
@@ -36,11 +36,11 @@ export default function (garminCodeMini: ExtensionAPI) {
 
 		// Generate a simple commit message
 		const firstLine = lastAssistantText.split("\n")[0] || "Work in progress";
-		const commitMessage = `[garmin-code-mini] ${firstLine.slice(0, 50)}${firstLine.length > 50 ? "..." : ""}`;
+		const commitMessage = `[gcode] ${firstLine.slice(0, 50)}${firstLine.length > 50 ? "..." : ""}`;
 
 		// Stage and commit
-		await garminCodeMini.exec("git", ["add", "-A"]);
-		const { code: commitCode } = await garminCodeMini.exec("git", ["commit", "-m", commitMessage]);
+		await gcode.exec("git", ["add", "-A"]);
+		const { code: commitCode } = await gcode.exec("git", ["commit", "-m", commitMessage]);
 
 		if (commitCode === 0 && ctx.hasUI) {
 			ctx.ui.notify(`Auto-committed: ${commitMessage}`, "info");

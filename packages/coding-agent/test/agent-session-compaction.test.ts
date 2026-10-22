@@ -11,8 +11,8 @@ import { createModelRegistry, getModelRuntime } from "./model-runtime-test-utils
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Agent } from "@garmin-code-mini/agent-core";
-import { getModel, streamSimple } from "@garmin-code-mini/ai/compat";
+import { Agent } from "@gcode/agent-core";
+import { getModel, streamSimple } from "@gcode/ai/compat";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AgentSession, type AgentSessionEvent } from "../src/core/agent-session.ts";
 import { AuthStorage } from "../src/core/auth-storage.ts";
@@ -29,7 +29,7 @@ describe.skipIf(!API_KEY)("AgentSession compaction e2e", () => {
 
 	beforeEach(async () => {
 		// Create temp directory for session files
-		tempDir = join(tmpdir(), `garmin-code-mini-compaction-test-${Date.now()}`);
+		tempDir = join(tmpdir(), `gcode-compaction-test-${Date.now()}`);
 		mkdirSync(tempDir, { recursive: true });
 
 		// Track events

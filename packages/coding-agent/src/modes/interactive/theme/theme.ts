@@ -1,6 +1,6 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { ThinkingLevel } from "@garmin-code-mini/agent-core";
+import type { ThinkingLevel } from "@gcode/agent-core";
 import {
 	backgroundAnsi,
 	type Color,
@@ -21,7 +21,7 @@ import {
 	type TerminalColorMode,
 	type TerminalColors,
 	type TextAttributes,
-} from "@garmin-code-mini/tui";
+} from "@gcode/tui";
 import chalk from "chalk";
 import { getCustomThemesDir, getThemesDir } from "../../../config.ts";
 import type { SourceInfo } from "../../../core/source-info.ts";
@@ -645,8 +645,8 @@ export function getTerminalTheme(): TerminalTheme {
 // ============================================================================
 
 // Use globalThis to share theme across module loaders (node + jiti in dev mode)
-const THEME_KEY = Symbol.for("garmin-code-mini:theme");
-const THEME_KEY_OLD = Symbol.for("garmin-code-mini:theme");
+const THEME_KEY = Symbol.for("gcode:theme");
+const THEME_KEY_OLD = Symbol.for("gcode:theme");
 
 // Export theme as a getter that reads from globalThis
 // This ensures all module instances (node, jiti) see the same theme

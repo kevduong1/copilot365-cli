@@ -1,7 +1,7 @@
 import { globSync } from "node:fs";
 import { resolve } from "node:path";
-import { Type } from "@garmin-code-mini/ai";
-import { defineTool } from "garmin-code-mini";
+import { Type } from "@gcode/ai";
+import { defineTool } from "gcode";
 import { expect } from "vitest";
 import { describeEval, toolCalls } from "vitest-evals";
 import { createPiCodingAgentHarness } from "../src/harness.ts";
@@ -43,7 +43,7 @@ const harness = createPiCodingAgentHarness({
 describeEval("Audit documentation against implementation", { harness }, (it) => {
 	it.for(pages)("$path matches the implementation", async ({ path }, { run }) => {
 		const documentationPath = resolve(docsRoot, path);
-		const result = await run(`Audit this garmin-code-mini documentation page against the repository implementation.
+		const result = await run(`Audit this gcode documentation page against the repository implementation.
 
 Documentation page: ${documentationPath}
 Repository root: ${repositoryRoot}

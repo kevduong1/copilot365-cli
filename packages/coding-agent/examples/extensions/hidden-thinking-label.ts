@@ -5,7 +5,7 @@
  * when thinking blocks are hidden.
  *
  * Usage:
- *   garmin-code-mini --extension examples/extensions/hidden-thinking-label.ts
+ *   gcode --extension examples/extensions/hidden-thinking-label.ts
  *
  * Test:
  *   1. Load this extension
@@ -18,22 +18,22 @@
  *   /thinking-label          Reset to the default label
  */
 
-import type { ExtensionAPI, ExtensionContext } from "garmin-code-mini";
+import type { ExtensionAPI, ExtensionContext } from "gcode";
 
 const DEFAULT_LABEL = "Pondering...";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	let label = DEFAULT_LABEL;
 
 	const applyLabel = (ctx: ExtensionContext) => {
 		ctx.ui.setHiddenThinkingLabel(label);
 	};
 
-	garminCodeMini.on("session_start", async (_event, ctx) => {
+	gcode.on("session_start", async (_event, ctx) => {
 		applyLabel(ctx);
 	});
 
-	garminCodeMini.registerCommand("thinking-label", {
+	gcode.registerCommand("thinking-label", {
 		description: "Set the hidden thinking label. Use without args to reset.",
 		handler: async (args, ctx) => {
 			const nextLabel = args.trim();

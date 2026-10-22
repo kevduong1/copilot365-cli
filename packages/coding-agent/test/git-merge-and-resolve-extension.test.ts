@@ -56,7 +56,7 @@ describe("git-merge-and-resolve example", () => {
 	});
 
 	function createTempDir() {
-		tempDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-merge-test-"));
+		tempDir = mkdtempSync(join(tmpdir(), "gcode-merge-test-"));
 		return tempDir;
 	}
 

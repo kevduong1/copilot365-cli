@@ -1,5 +1,5 @@
-import type { Usage } from "@garmin-code-mini/ai";
-import { Container } from "@garmin-code-mini/tui";
+import type { Usage } from "@gcode/ai";
+import { Container } from "@gcode/tui";
 import { describe, expect, test, vi } from "vitest";
 import type { SessionEntry } from "../src/core/session-manager.ts";
 import { InteractiveMode } from "../src/modes/interactive/interactive-mode.ts";

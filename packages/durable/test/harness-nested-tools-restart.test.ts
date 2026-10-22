@@ -8,8 +8,8 @@ import {
 	fauxToolCall,
 	type ToolResultMessage,
 	Type,
-} from "@garmin-code-mini/ai";
-import type { Context } from "@garmin-code-mini/chord";
+} from "@gcode/ai";
+import type { Context } from "@gcode/chord";
 import {
 	type AgentEvent,
 	defineExtension,
@@ -24,7 +24,7 @@ import {
 	ToolTask,
 	type ToolTaskInput,
 	watchEvents,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { afterEach, describe, expect, it } from "vitest";
 import { openNodeSqliteStorage } from "../src/storage/sqlite/node.ts";
 import { allEntries, type ChatSetup, chatSetup, openChat } from "./chat-support.ts";
@@ -56,7 +56,7 @@ afterEach(async () => {
 });
 
 async function sqlitePath(): Promise<string> {
-	const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-nested-restart-"));
+	const directory = await mkdtemp(join(tmpdir(), "gcode-durable-nested-restart-"));
 	directories.add(directory);
 	return join(directory, "session.sqlite");
 }
@@ -503,7 +503,7 @@ describe("nested tool calls across a restart", () => {
 				if ((change.value.input as ToolTaskInput).kind !== "model" || change.value.state.status !== "terminal")
 					continue;
 				const live = publication.changes.find(
-					(each) => each.type === "document" && each.record.kind === "garmin-code-mini.live",
+					(each) => each.type === "document" && each.record.kind === "gcode.live",
 				);
 				const value = live?.type === "document" ? (live.value as { nestedTools?: unknown[] } | null) : undefined;
 				slotsAfterCaller = value?.nestedTools?.length ?? 0;

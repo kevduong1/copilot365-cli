@@ -4,24 +4,24 @@
  * Adjusts command, cwd, and env before execution.
  *
  * Usage:
- *   garmin-code-mini -e ./bash-spawn-hook.ts
+ *   gcode -e ./bash-spawn-hook.ts
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
-import { createBashTool } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
+import { createBashTool } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	const cwd = process.cwd();
 
 	const bashTool = createBashTool(cwd, {
 		spawnHook: ({ command, cwd, env }) => ({
 			command: `source ~/.profile\n${command}`,
 			cwd,
-			env: { ...env, GARMIN_CODE_MINI_SPAWN_HOOK: "1" },
+			env: { ...env, GCODE_SPAWN_HOOK: "1" },
 		}),
 	});
 
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...bashTool,
 		execute: async (id, params, signal, onUpdate, _ctx) => {
 			return bashTool.execute(id, params, signal, onUpdate);

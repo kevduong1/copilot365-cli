@@ -3,12 +3,12 @@
 	"compilerOptions": {
 		"outDir": "./dist",
 		"paths": {
-			"@garmin-code-mini/agent-core": ["../agent/dist/index.d.ts"],
-			"@garmin-code-mini/agent-core/*": ["../agent/dist/*.d.ts"],
-			"@garmin-code-mini/ai": ["../ai/dist/index.d.ts"],
-			"@garmin-code-mini/ai/*": ["../ai/dist/*.d.ts", "../ai/dist/providers/*.d.ts"],
-			"@garmin-code-mini/tui": ["../tui/dist/index.d.ts"],
-			"@garmin-code-mini/tui/*": ["../tui/dist/*.d.ts", "../tui/dist/components/*.d.ts"]
+			"@gcode/agent-core": ["../agent/dist/index.d.ts"],
+			"@gcode/agent-core/*": ["../agent/dist/*.d.ts"],
+			"@gcode/ai": ["../ai/dist/index.d.ts"],
+			"@gcode/ai/*": ["../ai/dist/*.d.ts", "../ai/dist/providers/*.d.ts"],
+			"@gcode/tui": ["../tui/dist/index.d.ts"],
+			"@gcode/tui/*": ["../tui/dist/*.d.ts", "../tui/dist/components/*.d.ts"]
 		},
 		"rootDir": "./src"
 	},

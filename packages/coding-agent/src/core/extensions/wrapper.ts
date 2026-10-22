@@ -5,7 +5,7 @@
  * Tool call and tool result interception is handled by AgentSession via agent-core hooks.
  */
 
-import type { AgentTool } from "@garmin-code-mini/agent-core";
+import type { AgentTool } from "@gcode/agent-core";
 import { wrapToolDefinition } from "../tools/tool-definition-wrapper.ts";
 import type { ExtensionRunner } from "./runner.ts";
 import type { RegisteredTool } from "./types.ts";

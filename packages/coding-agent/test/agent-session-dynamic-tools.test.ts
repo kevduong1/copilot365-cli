@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { getModel } from "@garmin-code-mini/ai/compat";
+import { getModel } from "@gcode/ai/compat";
 import { Type } from "typebox";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { DefaultResourceLoader } from "../src/core/resource-loader.ts";
@@ -15,10 +15,7 @@ describe("AgentSession dynamic tool registration", () => {
 	let agentDir: string;
 
 	beforeEach(() => {
-		tempDir = join(
-			tmpdir(),
-			`garmin-code-mini-dynamic-tool-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-		);
+		tempDir = join(tmpdir(), `gcode-dynamic-tool-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		agentDir = join(tempDir, "agent");
 		mkdirSync(agentDir, { recursive: true });
 	});
@@ -39,8 +36,8 @@ describe("AgentSession dynamic tool registration", () => {
 			agentDir,
 			settingsManager,
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.registerTool(
+				(gcode) => {
+					gcode.registerTool(
 						createBashTool(tempDir, {
 							spawnHook: (ctx) => {
 								sessionEnv = ctx.env;
@@ -48,7 +45,7 @@ describe("AgentSession dynamic tool registration", () => {
 							},
 						}),
 					);
-					garminCodeMini.registerTool({
+					gcode.registerTool({
 						...createBashTool(tempDir, {
 							exposeSessionEnvironment: false,
 							spawnHook: (ctx) => {
@@ -77,24 +74,24 @@ describe("AgentSession dynamic tool registration", () => {
 
 		const bashTool = session.agent.state.tools.find((tool) => tool.name === "bash")!;
 		expect(session.systemPrompt).toContain(
-			"You can inspect GARMIN_CODE_MINI_* environment variables for current model and session details.",
+			"You can inspect GCODE_* environment variables for current model and session details.",
 		);
 		await bashTool.execute("bash-env", { command: "printf ok" });
 		expect(sessionEnv).toMatchObject({
-			GARMIN_CODE_MINI_SESSION_ID: session.sessionId,
-			GARMIN_CODE_MINI_SESSION_FILE: session.sessionFile,
-			GARMIN_CODE_MINI_PROVIDER: model.provider,
-			GARMIN_CODE_MINI_MODEL: model.id,
-			GARMIN_CODE_MINI_REASONING_LEVEL: session.thinkingLevel,
+			GCODE_SESSION_ID: session.sessionId,
+			GCODE_SESSION_FILE: session.sessionFile,
+			GCODE_PROVIDER: model.provider,
+			GCODE_MODEL: model.id,
+			GCODE_REASONING_LEVEL: session.thinkingLevel,
 		});
 
 		const optedOutBashTool = session.agent.state.tools.find((tool) => tool.name === "bash_without_session_env")!;
 		await optedOutBashTool.execute("bash-no-env", { command: "printf ok" });
-		expect(optedOutEnv).not.toHaveProperty("GARMIN_CODE_MINI_SESSION_ID");
-		expect(optedOutEnv).not.toHaveProperty("GARMIN_CODE_MINI_SESSION_FILE");
-		expect(optedOutEnv).not.toHaveProperty("GARMIN_CODE_MINI_PROVIDER");
-		expect(optedOutEnv).not.toHaveProperty("GARMIN_CODE_MINI_MODEL");
-		expect(optedOutEnv).not.toHaveProperty("GARMIN_CODE_MINI_REASONING_LEVEL");
+		expect(optedOutEnv).not.toHaveProperty("GCODE_SESSION_ID");
+		expect(optedOutEnv).not.toHaveProperty("GCODE_SESSION_FILE");
+		expect(optedOutEnv).not.toHaveProperty("GCODE_PROVIDER");
+		expect(optedOutEnv).not.toHaveProperty("GCODE_MODEL");
+		expect(optedOutEnv).not.toHaveProperty("GCODE_REASONING_LEVEL");
 
 		session.dispose();
 	});
@@ -108,9 +105,9 @@ describe("AgentSession dynamic tool registration", () => {
 			agentDir,
 			settingsManager,
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_start", () => {
-						garminCodeMini.registerTool({
+				(gcode) => {
+					gcode.on("session_start", () => {
+						gcode.registerTool({
 							name: "dynamic_tool",
 							label: "Dynamic Tool",
 							description: "Tool registered from session_start",
@@ -220,9 +217,9 @@ describe("AgentSession dynamic tool registration", () => {
 			agentDir,
 			settingsManager,
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_start", () => {
-						garminCodeMini.registerTool({
+				(gcode) => {
+					gcode.on("session_start", () => {
+						gcode.registerTool({
 							name: "hidden_tool",
 							label: "Hidden Tool",
 							description: "Description should not appear in available tools",

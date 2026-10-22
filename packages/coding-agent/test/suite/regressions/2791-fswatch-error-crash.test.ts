@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 /**
- * Regression test for https://github.com/earendil-works/garmin-code-mini/issues/2791
+ * Regression test for https://github.com/earendil-works/gcode/issues/2791
  *
  * fs.watch() returns an FSWatcher (EventEmitter). If the watcher emits an
  * 'error' event after creation and no error handler is attached, Node.js
@@ -22,7 +22,7 @@ describe("issue #2791 fs.watch error event crashes process", () => {
 	let tempRoot: string;
 
 	beforeEach(() => {
-		tempRoot = mkdtempSync(join(tmpdir(), "garmin-code-mini-2791-"));
+		tempRoot = mkdtempSync(join(tmpdir(), "gcode-2791-"));
 		const agentDir = join(tempRoot, "agent");
 		const themesDir = join(agentDir, "themes");
 		mkdirSync(themesDir, { recursive: true });
@@ -51,7 +51,7 @@ describe("issue #2791 fs.watch error event crashes process", () => {
 			`
 import { setTheme, stopThemeWatcher } from "${themeModulePath}";
 
-process.env.GARMIN_CODE_MINI_AGENT_DIR = "${agentDir}";
+process.env.GCODE_AGENT_DIR = "${agentDir}";
 
 setTheme("custom-test", true);
 
@@ -93,7 +93,7 @@ process.exit(0);
 				{
 					timeout: 10000,
 					encoding: "utf-8",
-					env: { ...process.env, GARMIN_CODE_MINI_AGENT_DIR: agentDir },
+					env: { ...process.env, GCODE_AGENT_DIR: agentDir },
 					stdio: ["pipe", "pipe", "pipe"],
 				},
 			);

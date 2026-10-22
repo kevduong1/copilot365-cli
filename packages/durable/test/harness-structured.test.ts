@@ -1,15 +1,8 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import {
-	fauxAssistantMessage,
-	fauxText,
-	fauxToolCall,
-	type Models,
-	type ToolResultMessage,
-	Type,
-} from "@garmin-code-mini/ai";
-import type { Context, JsonValue } from "@garmin-code-mini/chord";
+import { fauxAssistantMessage, fauxText, fauxToolCall, type Models, type ToolResultMessage, Type } from "@gcode/ai";
+import type { Context, JsonValue } from "@gcode/chord";
 import {
 	type AgentEvent,
 	type Conversation,
@@ -33,7 +26,7 @@ import {
 	ToolResultEntry,
 	type Tx,
 	watchEvents,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { afterEach, describe, expect, it } from "vitest";
 import { openNodeSqliteStorage } from "../src/storage/sqlite/node.ts";
 import { allEntries, chatSetup, openChat, waitFor } from "./chat-support.ts";
@@ -183,7 +176,7 @@ async function until(check: () => boolean | Promise<boolean>): Promise<void> {
 const directories = new Set<string>();
 
 async function sqlitePath(): Promise<string> {
-	const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-structured-"));
+	const directory = await mkdtemp(join(tmpdir(), "gcode-durable-structured-"));
 	directories.add(directory);
 	return join(directory, "session.sqlite");
 }
@@ -1224,14 +1217,14 @@ describe("tool rounds", () => {
 		const { harness, root } = await openChat(new MemoryStorage(), setup);
 		expect((await (await root.submit({ type: "input", content: "go" }, context)).wait(context)).status).toBe("done");
 		const tasks = (await harness.commit((tx) => tx.scanTasks({ conversationId: root.id }, 20), context)).items;
-		const [first, second] = tasks.filter((task) => task.kind === "garmin-code-mini.generation");
-		expect(tasks.filter((task) => task.kind === "garmin-code-mini.tool").map((task) => task.owner)).toEqual([
+		const [first, second] = tasks.filter((task) => task.kind === "gcode.generation");
+		expect(tasks.filter((task) => task.kind === "gcode.tool").map((task) => task.owner)).toEqual([
 			first!.id,
 			first!.id,
 		]);
 		expect(first!.owner).toBeUndefined();
 		expect(second!.owner).toBeUndefined();
-		const assistant = (await allEntries(root)).find((entry) => entry.kind === "garmin-code-mini.assistant")!;
+		const assistant = (await allEntries(root)).find((entry) => entry.kind === "gcode.assistant")!;
 		expect(first!.state).toEqual({
 			status: "terminal",
 			outcome: { status: "completed", result: { entryId: assistant.id } },
@@ -1283,10 +1276,7 @@ describe("tool rounds", () => {
 			{ type: "text", text: "<harness>\n[error] Tool two was aborted\n</harness>" },
 		]);
 		const tools = (
-			await harness.commit(
-				(tx) => tx.scanTasks({ conversationId: root.id, kind: "garmin-code-mini.tool" }, 20),
-				context,
-			)
+			await harness.commit((tx) => tx.scanTasks({ conversationId: root.id, kind: "gcode.tool" }, 20), context)
 		).items;
 		expect(tools).toHaveLength(1);
 		await harness.close(context);
@@ -1320,8 +1310,7 @@ describe("tool rounds", () => {
 			events.push(...batch);
 		});
 		await (await root.submit({ type: "input", content: "go" }, context)).wait(context);
-		const first = (await harness.commit((tx) => tx.scanTasks({ kind: "garmin-code-mini.generation" }, 1), context))
-			.items[0]!;
+		const first = (await harness.commit((tx) => tx.scanTasks({ kind: "gcode.generation" }, 1), context)).items[0]!;
 		expect((await state(harness, first.id)).status).toBe("completing");
 		const turns = () => events.filter((event) => event.type.startsWith("turn_")).map((event) => event.type);
 		await waitFor(() => turns().length === 4);
@@ -1400,10 +1389,7 @@ describe("tool rounds", () => {
 		const again = (await reopened.harness.submission(submission.id, context))!;
 		expect(await again.wait(context)).toMatchObject({ status: "unanswered", reason: "faulted" });
 		expect(await reopened.harness.snapshot(LiveDoc, reopened.root.id, context)).toEqual({});
-		expect((await allEntries(reopened.root)).map((entry) => entry.kind)).toEqual([
-			"garmin-code-mini.user",
-			"garmin-code-mini.assistant",
-		]);
+		expect((await allEntries(reopened.root)).map((entry) => entry.kind)).toEqual(["gcode.user", "gcode.assistant"]);
 		await reopened.harness.close(context);
 	});
 });
@@ -1834,8 +1820,7 @@ describe("tool rounds and events", () => {
 		await (await root.submit({ type: "input", content: "go" }, context)).wait(context);
 		const late = await listen(harness, root);
 		open("hooked");
-		const [first] = (await harness.commit((tx) => tx.scanTasks({ kind: "garmin-code-mini.generation" }, 1), context))
-			.items;
+		const [first] = (await harness.commit((tx) => tx.scanTasks({ kind: "gcode.generation" }, 1), context)).items;
 		await harness.waitForTask(first!.id, context);
 		await root.commit((tx) => tx.appendEntry(root.id, { kind: "note" }), context);
 		await waitFor(() => late.events.some((event) => event.type === "entry_appended"));

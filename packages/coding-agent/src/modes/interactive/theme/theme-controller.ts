@@ -1,4 +1,4 @@
-import type { RgbColor, TerminalColors, TUI } from "@garmin-code-mini/tui";
+import type { RgbColor, TerminalColors, TUI } from "@gcode/tui";
 import type { SettingsManager } from "../../../core/settings-manager.ts";
 import {
 	getTerminalTheme,
@@ -170,7 +170,7 @@ export class InteractiveThemeController {
 		return this.currentThemeSetting ?? this.getSettingsManager().getThemeSetting();
 	}
 
-	/** The theme for the current setting and terminal appearance. Without a setting, garmin-code-mini uses the system theme. */
+	/** The theme for the current setting and terminal appearance. Without a setting, gcode uses the system theme. */
 	private resolveThemeName(): string {
 		return resolveThemeSetting(this.getThemeSetting(), getTerminalTheme()) ?? SYSTEM_THEME_NAME;
 	}

@@ -91,7 +91,7 @@ interface InMemoryParent {
 }
 
 function carrierId(carrier: Readonly<TelemetryCarrier>): string {
-	return `${carrier["garmin-code-mini-memory-scope"]}:${carrier["garmin-code-mini-memory-span"]}`;
+	return `${carrier["gcode-memory-scope"]}:${carrier["gcode-memory-span"]}`;
 }
 
 // Identity survives settlement without exposing backend IDs on the generic context contract.
@@ -146,9 +146,9 @@ function createSpan(
 		id,
 		parentId: parent?.localId ?? null,
 		context: {
-			"garmin-code-mini-memory-scope": state.scope,
-			"garmin-code-mini-memory-span": String(id),
-			"garmin-code-mini-memory-trace": parent?.context["garmin-code-mini-memory-trace"] ?? `${state.scope}:${id}`,
+			"gcode-memory-scope": state.scope,
+			"gcode-memory-span": String(id),
+			"gcode-memory-trace": parent?.context["gcode-memory-trace"] ?? `${state.scope}:${id}`,
 		},
 		parentContext: parent ? { ...parent.context } : null,
 		links,
@@ -306,14 +306,14 @@ export class InMemoryTelemetryContext
 
 	/** Missing or non-string carrier identities fall back to this recorder's root context. */
 	extract(carrier: TelemetryCarrier | undefined): TelemetryContext {
-		const scope = carrier?.["garmin-code-mini-memory-scope"];
-		const span = carrier?.["garmin-code-mini-memory-span"];
-		const traceId = carrier?.["garmin-code-mini-memory-trace"];
+		const scope = carrier?.["gcode-memory-scope"];
+		const span = carrier?.["gcode-memory-span"];
+		const traceId = carrier?.["gcode-memory-trace"];
 		if (typeof scope !== "string" || typeof span !== "string" || typeof traceId !== "string") return this;
 		const context = {
-			"garmin-code-mini-memory-scope": scope,
-			"garmin-code-mini-memory-span": span,
-			"garmin-code-mini-memory-trace": traceId,
+			"gcode-memory-scope": scope,
+			"gcode-memory-span": span,
+			"gcode-memory-trace": traceId,
 		};
 		const localId = scope === this.state.scope ? Number(span) : null;
 		const parent: TelemetryContext = {
@@ -343,7 +343,7 @@ export class InMemoryTelemetryContext
 			.filter((span) => span.settled)
 			.map((span) => ({
 				id: carrierId(span.context),
-				traceId: span.context["garmin-code-mini-memory-trace"]!,
+				traceId: span.context["gcode-memory-trace"]!,
 				...(span.parentContext ? { parentId: carrierId(span.parentContext) } : {}),
 				name: span.name,
 				startedMs: span.startedMs,
@@ -355,7 +355,7 @@ export class InMemoryTelemetryContext
 					attributes: copyAttributes(event.attributes),
 				})),
 				links: span.links.map((link) => ({
-					traceId: link.context["garmin-code-mini-memory-trace"]!,
+					traceId: link.context["gcode-memory-trace"]!,
 					spanId: carrierId(link.context),
 					attributes: copyAttributes(link.attributes),
 				})),

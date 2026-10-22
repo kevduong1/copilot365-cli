@@ -10,8 +10,8 @@ describeEval("Answer a basic prompt", { harness }, (it) => {
 		expect(result.output.trim()).toBe("Paris");
 		expect(result.errors).toEqual([]);
 		expect(result.usage).toMatchObject({
-			provider: process.env.GARMIN_CODE_MINI_PROVIDER,
-			model: process.env.GARMIN_CODE_MINI_MODEL,
+			provider: process.env.GCODE_PROVIDER,
+			model: process.env.GCODE_MODEL,
 		});
 		expect(result.usage.totalTokens).toBeGreaterThan(0);
 	});

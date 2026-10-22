@@ -1,5 +1,5 @@
-import { type AssistantMessage, type FauxResponseStep, fauxAssistantMessage, fauxText } from "@garmin-code-mini/ai";
-import { applyImmutable, type Op } from "@garmin-code-mini/chord/delta";
+import { type AssistantMessage, type FauxResponseStep, fauxAssistantMessage, fauxText } from "@gcode/ai";
+import { applyImmutable, type Op } from "@gcode/chord/delta";
 import {
 	AgentDoc,
 	type Conversation,
@@ -11,7 +11,7 @@ import {
 	MemoryStorage,
 	ProviderDoc,
 	UsageDoc,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { allEntries, chatSetup, openChat, waitFor } from "./chat-support.ts";
 import { context } from "./session-support.ts";
@@ -19,13 +19,7 @@ import { aborted, deferred } from "./task-support.ts";
 
 type Frame = { value: ConversationView; ops: readonly Op[] };
 
-const MOUNTED = [
-	"garmin-code-mini.agent",
-	"garmin-code-mini.inbox",
-	"garmin-code-mini.live",
-	"garmin-code-mini.provider",
-	"garmin-code-mini.usage",
-];
+const MOUNTED = ["gcode.agent", "gcode.inbox", "gcode.live", "gcode.provider", "gcode.usage"];
 
 /** Start a watch of `conversation` that records its acquisition revision and every delivered frame. */
 async function record(conversation: Conversation) {
@@ -101,8 +95,8 @@ describe("conversation view", () => {
 		expect(view.conversation).toEqual({ id: root.id });
 		expect(view.entries).toEqual(await allEntries(root));
 		expect(Object.keys(view.docs).sort()).toEqual(MOUNTED);
-		expect(view.docs["garmin-code-mini.live"]).toEqual({});
-		expect(view.docs["garmin-code-mini.inbox"]).toEqual({ items: [] });
+		expect(view.docs["gcode.live"]).toEqual({});
+		expect(view.docs["gcode.inbox"]).toEqual({ items: [] });
 		await harness.close(context);
 	});
 
@@ -119,7 +113,7 @@ describe("conversation view", () => {
 		const touching = touches(harness, root);
 		const submission = await root.submit({ type: "input", content: "hi" }, context);
 		await waitFor(() =>
-			frames.some((frame) => (frame.value.docs["garmin-code-mini.live"] as { generation?: unknown }).generation),
+			frames.some((frame) => (frame.value.docs["gcode.live"] as { generation?: unknown }).generation),
 		);
 		release.resolve();
 		await submission.wait(context);
@@ -132,12 +126,12 @@ describe("conversation view", () => {
 			["entries"],
 			0,
 			0,
-			[expect.objectContaining({ kind: "garmin-code-mini.user" })],
+			[expect.objectContaining({ kind: "gcode.user" })],
 		]);
 		// Document operations keep their exact shape under the mount path.
 		expect(frames.flatMap((frame) => frame.ops)).toContainEqual([
 			"s",
-			["docs", "garmin-code-mini.live", "generation"],
+			["docs", "gcode.live", "generation"],
 			{ attempt: 1 },
 		]);
 		await stop();
@@ -154,9 +148,9 @@ describe("conversation view", () => {
 		await root.commit((tx) => tx.appendEntry(root.id, { kind: "note" }), context);
 		await drained();
 		expect(frames).toHaveLength(2);
-		expect(frames[0]!.ops).toEqual([["s", ["docs", "garmin-code-mini.agent", "thinkingLevel"], "high"]]);
+		expect(frames[0]!.ops).toEqual([["s", ["docs", "gcode.agent", "thinkingLevel"], "high"]]);
 		expect(frames[0]!.value.entries).toBe(initial.entries);
-		expect(frames[0]!.value.docs["garmin-code-mini.live"]).toBe(initial.docs["garmin-code-mini.live"]);
+		expect(frames[0]!.value.docs["gcode.live"]).toBe(initial.docs["gcode.live"]);
 		expect(frames[1]!.value.docs).toBe(frames[0]!.value.docs);
 		await stop();
 		await harness.close(context);
@@ -174,7 +168,7 @@ describe("conversation view", () => {
 		await root.reset(undefined, context);
 		await drained();
 		const kinds = frames.map((frame) => frame.value.entries.map((entry) => entry.kind));
-		expect(kinds).toEqual([["summary", "b", "c"], ["summary", "b", "c", "d"], ["garmin-code-mini.reset"]]);
+		expect(kinds).toEqual([["summary", "b", "c"], ["summary", "b", "c", "d"], ["gcode.reset"]]);
 		expect(frames[0]!.ops).toEqual([["p", ["entries"], 0, 1, [summary]]]);
 		expect(replay(initial, frames)).toEqual(await committed(harness, root, initial.conversation));
 		await stop();
@@ -234,10 +228,10 @@ describe("conversation view", () => {
 		}, context);
 		await drained();
 		expect(frames.map((frame) => frame.ops)).toEqual([
-			[["d", ["docs", "garmin-code-mini.live"]]],
-			[["s", ["docs", "garmin-code-mini.live"], { tools: [] }]],
+			[["d", ["docs", "gcode.live"]]],
+			[["s", ["docs", "gcode.live"], { tools: [] }]],
 		]);
-		expect(frames[0]!.value.docs["garmin-code-mini.live"]).toBeUndefined();
+		expect(frames[0]!.value.docs["gcode.live"]).toBeUndefined();
 		await stop();
 		await harness.close(context);
 	});

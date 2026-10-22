@@ -35,7 +35,7 @@ describe("HTML export CJK emphasis", () => {
 
 	beforeAll(async () => {
 		initTheme("dark");
-		tempDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-export-cjk-"));
+		tempDir = mkdtempSync(join(tmpdir(), "gcode-export-cjk-"));
 		const header = {
 			type: "session",
 			version: CURRENT_SESSION_VERSION,

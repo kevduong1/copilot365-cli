@@ -1,6 +1,6 @@
-import type { Message, SystemMessage, Tool, ToolReference } from "@garmin-code-mini/ai";
-import { declarationsEqual, getCurrentTools, toToolDeclaration } from "@garmin-code-mini/ai/utils/transcript";
-import type { Context } from "@garmin-code-mini/chord";
+import type { Message, SystemMessage, Tool, ToolReference } from "@gcode/ai";
+import { declarationsEqual, getCurrentTools, toToolDeclaration } from "@gcode/ai/utils/transcript";
+import type { Context } from "@gcode/chord";
 import { SystemEntry } from "../entries.ts";
 import type { ContextEdit, TypedEntryDraft } from "../types.ts";
 import type { ContextView, PromptInput, PromptSection, ToolRegistration } from "./types.ts";
@@ -52,11 +52,11 @@ type SystemDraft = TypedEntryDraft<never>;
 type ToolChanges = { readonly toolsRemoved: ToolReference[]; readonly toolsAdded: Tool[] };
 
 /**
- * Plan the `garmin-code-mini.system` entries that make the replayed sections and tools of `view` equal `desired` and `tools` in values
+ * Plan the `gcode.system` entries that make the replayed sections and tools of `view` equal `desired` and `tools` in values
  * and order.
  *
- * - A head marker with no later `garmin-code-mini.system` entry in context: one complete baseline that omits every retained earlier
- *   `garmin-code-mini.system` entry, written even when it restates the replayed values.
+ * - A head marker with no later `gcode.system` entry in context: one complete baseline that omits every retained earlier
+ *   `gcode.system` entry, written even when it restates the replayed values.
  * - Otherwise, when a minimal section patch would leave a different order: remove every shown section, then re-add
  *   every desired section in order.
  * - Otherwise the minimal patch of changed values and `null` removals, or nothing.

@@ -51,7 +51,7 @@ vi.mock("../src/utils/clipboard-command.ts", () => ({
 	}),
 }));
 
-vi.mock("@garmin-code-mini/tui", () => ({
+vi.mock("@gcode/tui", () => ({
 	getNativeClipboard: () => ({ getImage: async () => createTinyBmp1x1Red24bpp() }),
 }));
 

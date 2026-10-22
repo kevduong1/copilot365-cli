@@ -10,9 +10,9 @@
  * correct for that point in history.
  */
 
-import { StringEnum } from "@garmin-code-mini/ai";
-import { matchesKey, Text, truncateToWidth } from "@garmin-code-mini/tui";
-import type { ExtensionAPI, ExtensionContext, Theme } from "garmin-code-mini";
+import { StringEnum } from "@gcode/ai";
+import { matchesKey, Text, truncateToWidth } from "@gcode/tui";
+import type { ExtensionAPI, ExtensionContext, Theme } from "gcode";
 import { Type } from "typebox";
 
 interface Todo {
@@ -102,7 +102,7 @@ class TodoListComponent {
 	}
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	// In-memory state (reconstructed from session on load)
 	let todos: Todo[] = [];
 	let nextId = 1;
@@ -129,11 +129,11 @@ export default function (garminCodeMini: ExtensionAPI) {
 	};
 
 	// Reconstruct state on session events
-	garminCodeMini.on("session_start", async (_event, ctx) => reconstructState(ctx));
-	garminCodeMini.on("session_tree", async (_event, ctx) => reconstructState(ctx));
+	gcode.on("session_start", async (_event, ctx) => reconstructState(ctx));
+	gcode.on("session_tree", async (_event, ctx) => reconstructState(ctx));
 
 	// Register the todo tool for the LLM
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		name: "todo",
 		label: "Todo",
 		description: "Manage a todo list. Actions: list, add (text), toggle (id), clear",
@@ -281,7 +281,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Register the /todos command for users
-	garminCodeMini.registerCommand("todos", {
+	gcode.registerCommand("todos", {
 		description: "Show all todos on the current branch",
 		handler: async (_args, ctx) => {
 			if (ctx.mode !== "tui") {

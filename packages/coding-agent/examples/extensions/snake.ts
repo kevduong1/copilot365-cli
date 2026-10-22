@@ -2,8 +2,8 @@
  * Snake game extension - play snake with /snake command
  */
 
-import { matchesKey, visibleWidth } from "@garmin-code-mini/tui";
-import type { ExtensionAPI } from "garmin-code-mini";
+import { matchesKey, visibleWidth } from "@gcode/tui";
+import type { ExtensionAPI } from "gcode";
 
 const GAME_WIDTH = 40;
 const GAME_HEIGHT = 15;
@@ -306,8 +306,8 @@ class SnakeComponent {
 
 const SNAKE_SAVE_TYPE = "snake-save";
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerCommand("snake", {
+export default function (gcode: ExtensionAPI) {
+	gcode.registerCommand("snake", {
 		description: "Play Snake!",
 
 		handler: async (_args, ctx) => {
@@ -333,7 +333,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 					() => done(undefined),
 					(state) => {
 						// Save or clear state
-						garminCodeMini.appendEntry(SNAKE_SAVE_TYPE, state);
+						gcode.appendEntry(SNAKE_SAVE_TYPE, state);
 					},
 					savedState,
 				);

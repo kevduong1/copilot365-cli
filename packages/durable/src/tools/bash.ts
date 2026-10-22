@@ -1,4 +1,4 @@
-import type { Context } from "@garmin-code-mini/chord";
+import type { Context } from "@gcode/chord";
 import { type Static, Type } from "typebox";
 import { defineTool } from "../harness/define.ts";
 import type { ToolExecutionApi, ToolExecutionResult, ToolRegistration } from "../harness/types.ts";

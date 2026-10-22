@@ -5,15 +5,15 @@
  * They provide a unified system for extensions, custom tools, commands, and more.
  *
  * By default, extension files are discovered from:
- * - ~/.garmin-code-mini/agent/extensions/
- * - <cwd>/.garmin-code-mini/extensions/
+ * - ~/.gcode/agent/extensions/
+ * - <cwd>/.gcode/extensions/
  * - Paths specified in settings.json "extensions" array
  *
  * An extension is a TypeScript file that exports a default function:
- *   export default function (garminCodeMini: ExtensionAPI) { ... }
+ *   export default function (gcode: ExtensionAPI) { ... }
  */
 
-import { createAgentSession, DefaultResourceLoader, getAgentDir, SessionManager } from "garmin-code-mini";
+import { createAgentSession, DefaultResourceLoader, getAgentDir, SessionManager } from "gcode";
 
 // Extensions are discovered automatically from standard locations.
 // You can also add paths via settings.json or DefaultResourceLoader options.
@@ -23,8 +23,8 @@ const resourceLoader = new DefaultResourceLoader({
 	agentDir: getAgentDir(),
 	additionalExtensionPaths: ["./my-logging-extension.ts", "./my-safety-extension.ts"],
 	extensionFactories: [
-		(garminCodeMini) => {
-			garminCodeMini.on("agent_start", () => {
+		(gcode) => {
+			gcode.on("agent_start", () => {
 				console.log("[Inline Extension] Agent starting");
 			});
 		},
@@ -52,25 +52,25 @@ try {
 
 // Example extension file (./my-logging-extension.ts):
 /*
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("agent_start", async () => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("agent_start", async () => {
 		console.log("[Extension] Agent starting");
 	});
 
-	garminCodeMini.on("tool_call", async (event) => {
+	gcode.on("tool_call", async (event) => {
 		console.log(\`[Extension] Tool: \${event.toolName}\`);
 		// Return { block: true, reason: "..." } to block execution
 		return undefined;
 	});
 
-	garminCodeMini.on("agent_end", async (event) => {
+	gcode.on("agent_end", async (event) => {
 		console.log(\`[Extension] Low-level run ended, \${event.messages.length} messages\`);
 	});
 
 	// Register a custom tool
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		name: "my_tool",
 		label: "My Tool",
 		description: "Does something useful",
@@ -84,7 +84,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Register a command
-	garminCodeMini.registerCommand("mycommand", {
+	gcode.registerCommand("mycommand", {
 		description: "Do something",
 		handler: async (args, ctx) => {
 			ctx.ui.notify(\`Command executed with: \${args}\`);

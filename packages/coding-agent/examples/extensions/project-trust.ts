@@ -3,19 +3,19 @@
  *
  * Demonstrates the project_trust event. Install globally or pass via -e:
  *
- *   mkdir -p ~/.garmin-code-mini/agent/extensions
- *   cp packages/coding-agent/examples/extensions/project-trust.ts ~/.garmin-code-mini/agent/extensions/
+ *   mkdir -p ~/.gcode/agent/extensions
+ *   cp packages/coding-agent/examples/extensions/project-trust.ts ~/.gcode/agent/extensions/
  *
  * Or:
  *
- *   garmin-code-mini -e packages/coding-agent/examples/extensions/project-trust.ts
+ *   gcode -e packages/coding-agent/examples/extensions/project-trust.ts
  *
- * Try it in a project containing .garmin-code-mini, AGENTS.md/CLAUDE.md, or .agents/skills.
+ * Try it in a project containing .gcode, AGENTS.md/CLAUDE.md, or .agents/skills.
  */
 
-import type { ExtensionAPI, ProjectTrustEventResult } from "garmin-code-mini";
+import type { ExtensionAPI, ProjectTrustEventResult } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	let loadCount = 0;
 	loadCount++;
 
@@ -23,7 +23,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	// { trusted: "yes" } or { trusted: "no" } wins and suppresses the built-in
 	// trust prompt. Return { trusted: "undecided" } to let another handler or the
 	// built-in flow decide.
-	garminCodeMini.on("project_trust", async (event, ctx): Promise<ProjectTrustEventResult> => {
+	gcode.on("project_trust", async (event, ctx): Promise<ProjectTrustEventResult> => {
 		ctx.ui.notify(`project_trust fired for ${event.cwd} (mode: ${ctx.mode}, load: ${loadCount})`, "info");
 
 		if (!ctx.hasUI) {
@@ -58,7 +58,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		return { trusted: "undecided" };
 	});
 
-	garminCodeMini.on("session_start", (_event, ctx) => {
+	gcode.on("session_start", (_event, ctx) => {
 		ctx.ui.notify(`project-trust example loaded after trust resolution in ${ctx.cwd}`, "info");
 	});
 }

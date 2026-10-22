@@ -5,10 +5,10 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { type ToolResultMessage, Type } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { type ToolResultMessage, Type } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxToolCall } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { createRegistry, defineExtension, defineTool, Harness, ToolResultEntry } from "../../src/index.ts";
 import { openNodeSqliteStorage } from "../../src/storage/sqlite/node.ts";
 
@@ -41,7 +41,7 @@ models.setProvider(faux.provider);
 const callVersion = () => fauxAssistantMessage(fauxToolCall("version", {}), { stopReason: "toolUse" });
 faux.setResponses([callVersion(), fauxAssistantMessage("Done."), callVersion(), fauxAssistantMessage("Done.")]);
 
-const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-reload-"));
+const directory = await mkdtemp(join(tmpdir(), "gcode-durable-reload-"));
 const open = async (registry: ReturnType<typeof createRegistry>) =>
 	Harness.open(await openNodeSqliteStorage(join(directory, "session.sqlite")), { models, registry }, context);
 

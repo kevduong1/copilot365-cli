@@ -1,4 +1,4 @@
-import { copyJson, type Draft } from "@garmin-code-mini/chord";
+import { copyJson, type Draft } from "@gcode/chord";
 import { defineDoc } from "../documents.ts";
 import { documentRetention } from "../session/session.ts";
 import type { ConversationId, ConversationRecord, Tx } from "../types.ts";
@@ -41,7 +41,7 @@ export const INSTRUCTIONS_KEY = "instructions";
 
 /** Built-in agent document; rewindable so forks start from the agent at their fork entry. */
 export const AgentDoc = defineDoc<AgentState>({
-	kind: "garmin-code-mini.agent",
+	kind: "gcode.agent",
 	version: 1,
 	scope: "conversation",
 	history: "rewindable",
@@ -84,7 +84,7 @@ export function resolveSettings(settings: HarnessSettings | undefined): Settings
 	};
 }
 
-/** Apply one change to `garmin-code-mini.agent`: a given field replaces the stored one, `null` clears it, `undefined` changes nothing. */
+/** Apply one change to `gcode.agent`: a given field replaces the stored one, `null` clears it, `undefined` changes nothing. */
 export async function configure(tx: Tx, conversationId: ConversationId, change: AgentChange): Promise<void> {
 	const state = await tx.doc(AgentDoc, conversationId);
 	applyChange(state, change);
@@ -167,7 +167,7 @@ function names(items: readonly { readonly name: string }[]): string[] {
 }
 
 /**
- * Built-in part of every Harness commit that creates or forks a conversation, for `garmin-code-mini.agent`: a fork keeps its `asOf`
+ * Built-in part of every Harness commit that creates or forks a conversation, for `gcode.agent`: a fork keeps its `asOf`
  * copy; a new task-owned conversation copies the stored agent of its owner task's conversation; a new ownerless one
  * starts empty.
  */

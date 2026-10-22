@@ -1,4 +1,4 @@
-import { Key, type KeyId } from "@garmin-code-mini/tui";
+import { Key, type KeyId } from "@gcode/tui";
 import { type TSchemaOptions, Type } from "typebox";
 
 const modifiers = ["ctrl", "shift", "alt", "super"] as const;

@@ -24,9 +24,9 @@ import {
 	type SimpleStreamOptions,
 	type StreamOptions,
 	type TranscriptContext,
-} from "@garmin-code-mini/ai";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
-import { classifierErrorResult, imageErrorResult } from "@garmin-code-mini/ai/utils/model-operations";
+} from "@gcode/ai";
+import { localProvider } from "@gcode/ai/providers/local";
+import { classifierErrorResult, imageErrorResult } from "@gcode/ai/utils/model-operations";
 import type { ModelConfig, ModelsJsonModel, ModelsJsonModelOverride, ModelsJsonProvider } from "./model-config.ts";
 import {
 	clearConfigValueCache,
@@ -578,7 +578,7 @@ export function composeModelProvider(
 					: base.stream(model, context, options);
 			}
 			if (model.api !== "openai-completions") {
-				throw new Error("Garmin Code Mini supports local OpenAI-compatible chat endpoints only.");
+				throw new Error("Gcode supports local OpenAI-compatible chat endpoints only.");
 			}
 			const api = localProvider({
 				id: providerId,

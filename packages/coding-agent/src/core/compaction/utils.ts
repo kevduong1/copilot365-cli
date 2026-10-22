@@ -2,8 +2,8 @@
  * Shared utilities for compaction and branch summarization.
  */
 
-import type { AgentMessage } from "@garmin-code-mini/agent-core";
-import { contentText, type Message } from "@garmin-code-mini/ai";
+import type { AgentMessage } from "@gcode/agent-core";
+import { contentText, type Message } from "@gcode/ai";
 
 // ============================================================================
 // File Operation Tracking

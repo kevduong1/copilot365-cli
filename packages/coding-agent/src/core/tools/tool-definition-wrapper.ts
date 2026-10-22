@@ -1,4 +1,4 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
+import type { AgentTool } from "@gcode/agent-core";
 import type { ExtensionToolContext, ToolDefinition } from "../extensions/types.ts";
 
 /** Creates the context for one tool call. */

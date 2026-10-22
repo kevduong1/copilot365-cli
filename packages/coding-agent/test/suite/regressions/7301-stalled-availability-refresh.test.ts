@@ -1,4 +1,4 @@
-import type { Models } from "@garmin-code-mini/ai";
+import type { Models } from "@gcode/ai";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createHarness, type Harness } from "../harness.ts";
 

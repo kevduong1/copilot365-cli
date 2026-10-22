@@ -1,4 +1,4 @@
-import { CancellableLoader, Container, Loader, Spacer, Text, type TUI } from "@garmin-code-mini/tui";
+import { CancellableLoader, Container, Loader, Spacer, Text, type TUI } from "@gcode/tui";
 import type { Theme } from "../theme/theme.ts";
 import { DynamicBorder } from "./dynamic-border.ts";
 import { keyHint } from "./keybinding-hints.ts";

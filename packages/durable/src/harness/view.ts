@@ -1,6 +1,6 @@
-import { type AttachedReplicatedState, type Context, type JsonValue, replicatedState } from "@garmin-code-mini/chord";
-import { withoutAbortSignal } from "@garmin-code-mini/chord/context";
-import { applyImmutable, type NonEmptyPath, type Op, type Path } from "@garmin-code-mini/chord/delta";
+import { type AttachedReplicatedState, type Context, type JsonValue, replicatedState } from "@gcode/chord";
+import { withoutAbortSignal } from "@gcode/chord/context";
+import { applyImmutable, type NonEmptyPath, type Op, type Path } from "@gcode/chord/delta";
 import { CommittedStateSource, CommittedWatch } from "../session/observation.ts";
 import { contained, type SessionImpl } from "../session/session.ts";
 import type {

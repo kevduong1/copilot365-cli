@@ -1,5 +1,5 @@
-import { fauxAssistantMessage, fauxToolCall, getCurrentTools, type TranscriptContext } from "@garmin-code-mini/ai";
-import type { ToolResultMessage } from "@garmin-code-mini/ai/compat";
+import { fauxAssistantMessage, fauxToolCall, getCurrentTools, type TranscriptContext } from "@gcode/ai";
+import type { ToolResultMessage } from "@gcode/ai/compat";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import type { ExtensionAPI } from "../../src/core/extensions/types.ts";
@@ -11,15 +11,15 @@ import { createHarness, type Harness } from "./harness.ts";
  * A tool that calls other tools, built only on the extension API: its own name, exposure, loadout
  * hook, and ctx.executeTool(). Codemode and tool search use the same mechanisms.
  */
-function orchestratorExtension(garminCodeMini: ExtensionAPI): void {
-	garminCodeMini.registerTool({
+function orchestratorExtension(gcode: ExtensionAPI): void {
+	gcode.registerTool({
 		name: "echo",
 		label: "echo",
 		description: "Echo text.",
 		parameters: Type.Object({ text: Type.String() }),
 		execute: async (_id, { text }) => ({ content: [{ type: "text", text: `echo: ${text}` }], details: {} }),
 	});
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		name: "helper",
 		label: "helper",
 		description: "Only reachable from other tools.",
@@ -27,7 +27,7 @@ function orchestratorExtension(garminCodeMini: ExtensionAPI): void {
 		exposure: "codemode",
 		execute: async () => ({ content: [{ type: "text", text: "helped" }], details: {} }),
 	});
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		name: "run_tools",
 		label: "run_tools",
 		description: "Runs tools.",
@@ -65,8 +65,8 @@ describe("AgentSession tool orchestration", () => {
 			initialActiveToolNames: [],
 			extensionFactories: [
 				orchestratorExtension,
-				(garminCodeMini) => {
-					garminCodeMini.on("tool_call", (event) => {
+				(gcode) => {
+					gcode.on("tool_call", (event) => {
 						toolCalls.push(`${event.toolName}:${event.parentToolCallId ?? "top"}`);
 					});
 				},

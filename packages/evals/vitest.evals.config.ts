@@ -38,9 +38,9 @@ const localConfig = mergeConfig(
 	baseConfig,
 	defineConfig({
 		resolve: {
-			alias: [{ find: /^garmin-code-mini$/, replacement: workspaceSourcePaths.codingAgentIndex }],
+			alias: [{ find: /^gcode$/, replacement: workspaceSourcePaths.codingAgentIndex }],
 		},
 	}),
 );
 
-export default process.env.GARMIN_CODE_MINI_EVAL_CONTAINER === "1" ? evalConfig : mergeConfig(localConfig, evalConfig);
+export default process.env.GCODE_EVAL_CONTAINER === "1" ? evalConfig : mergeConfig(localConfig, evalConfig);

@@ -10,7 +10,7 @@ describe("issue #8337 UTF-8 BOM parsing", () => {
 	let testDir: string;
 
 	beforeEach(() => {
-		testDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-8337-"));
+		testDir = mkdtempSync(join(tmpdir(), "gcode-8337-"));
 	});
 
 	afterEach(() => {
@@ -29,12 +29,12 @@ describe("issue #8337 UTF-8 BOM parsing", () => {
 
 		const agentDir = join(testDir, "agent");
 		const projectDir = join(testDir, "project");
-		mkdirSync(join(projectDir, ".garmin-code-mini"), { recursive: true });
+		mkdirSync(join(projectDir, ".gcode"), { recursive: true });
 		mkdirSync(agentDir, { recursive: true });
 		const globalSettingsPath = join(agentDir, "settings.json");
 		writeFileSync(globalSettingsPath, `\uFEFF${JSON.stringify({ defaultModel: "global-model" })}`);
 		writeFileSync(
-			join(projectDir, ".garmin-code-mini", "settings.json"),
+			join(projectDir, ".gcode", "settings.json"),
 			`\uFEFF${JSON.stringify({ defaultProvider: "project-provider" })}`,
 		);
 

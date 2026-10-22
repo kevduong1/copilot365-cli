@@ -4,7 +4,7 @@ import type {
 	SpanStatus,
 	TelemetryCarrier,
 	TelemetrySpan,
-} from "@garmin-code-mini/telemetry";
+} from "@gcode/telemetry";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createTelemetryAdapterConformance } from "../../telemetry/src/testing/index.ts";
 import type { SqliteDatabase } from "../src/sqlite/index.ts";
@@ -53,9 +53,9 @@ async function fixture(options?: SqliteTelemetryOptions) {
 					id: Number(row.id.split(":")[1]),
 					parentId:
 						row.parent_id?.split(":")[0] === row.id.split(":")[0] ? Number(row.parent_id?.split(":")[1]) : null,
-					context: { "garmin-code-mini-sqlite-span": row.id, "garmin-code-mini-sqlite-trace": row.trace_id },
+					context: { "gcode-sqlite-span": row.id, "gcode-sqlite-trace": row.trace_id },
 					parentContext: row.parent_id
-						? { "garmin-code-mini-sqlite-span": row.parent_id, "garmin-code-mini-sqlite-trace": row.trace_id }
+						? { "gcode-sqlite-span": row.parent_id, "gcode-sqlite-trace": row.trace_id }
 						: null,
 					name: row.name,
 					attributes: JSON.parse(row.attributes) as SpanAttributes,
@@ -66,8 +66,8 @@ async function fixture(options?: SqliteTelemetryOptions) {
 						JSON.parse(row.links) as { trace_id: string; span_id: string; attributes: SpanAttributes }[]
 					).map((link) => ({
 						context: {
-							"garmin-code-mini-sqlite-span": link.span_id,
-							"garmin-code-mini-sqlite-trace": link.trace_id,
+							"gcode-sqlite-span": link.span_id,
+							"gcode-sqlite-trace": link.trace_id,
 						},
 						attributes: link.attributes,
 					})),

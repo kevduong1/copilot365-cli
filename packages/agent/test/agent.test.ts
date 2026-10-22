@@ -1,11 +1,11 @@
-import { type ClientIdentity, GARMIN_CODE_MINI_ATTRIBUTION, localModel } from "@garmin-code-mini/ai";
+import { type ClientIdentity, GCODE_ATTRIBUTION, localModel } from "@gcode/ai";
 import {
 	type AssistantMessage,
 	createAssistantMessageEventStream,
 	getCurrentSystemMessage,
 	toToolDeclaration,
 	type UserMessage,
-} from "@garmin-code-mini/ai/compat";
+} from "@gcode/ai/compat";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import {
@@ -1199,7 +1199,7 @@ describe("Agent", () => {
 		expect(receivedSessionId).toBe("session-def");
 	});
 
-	it("attributes requests to garmin-code-mini by default and merges a configured identity over it", async () => {
+	it("attributes requests to gcode by default and merges a configured identity over it", async () => {
 		const received: (ClientIdentity | undefined)[] = [];
 		const agent = new Agent({
 			streamFn: (_model, _context, options) => {
@@ -1220,9 +1220,9 @@ describe("Agent", () => {
 		await agent.prompt("and again");
 
 		expect(received).toEqual([
-			{ attribution: GARMIN_CODE_MINI_ATTRIBUTION },
+			{ attribution: GCODE_ATTRIBUTION },
 			{ attribution: acme, userAgent: "short" },
-			{ attribution: GARMIN_CODE_MINI_ATTRIBUTION, userAgent: "short" },
+			{ attribution: GCODE_ATTRIBUTION, userAgent: "short" },
 		]);
 	});
 });

@@ -1,23 +1,23 @@
 # Configure shell commands
 
-garmin-code-mini starts a separate non-interactive shell process for each Bash command. Non-interactive Bash does not expand aliases by default and usually does not load the same startup files as an interactive terminal.
+gcode starts a separate non-interactive shell process for each Bash command. Non-interactive Bash does not expand aliases by default and usually does not load the same startup files as an interactive terminal.
 
 Use `shellPath` to choose the Bash executable and `shellCommandPrefix` to run setup before each command.
 
-## Understand which shell garmin-code-mini uses
+## Understand which shell gcode uses
 
 | Command source | Shell |
 |---|---|
-| Model calls the built-in `bash` tool | garmin-code-mini's resolved Bash executable |
+| Model calls the built-in `bash` tool | gcode's resolved Bash executable |
 | You enter `!command` or `!!command` | The same resolved Bash executable |
 | Model calls the optional `powershell` tool | PowerShell 7 (`pwsh.exe`) or Windows PowerShell |
 | An extension provides or replaces a shell tool | The operations implemented by that extension |
 
-garmin-code-mini normally invokes Bash with `bash -c`. On Unix systems, it uses `/bin/bash`, then `bash` on `PATH`, and finally `sh` when Bash is unavailable. Native Windows first checks the configured path, then Git Bash, then `bash.exe` on `PATH`.
+gcode normally invokes Bash with `bash -c`. On Unix systems, it uses `/bin/bash`, then `bash` on `PATH`, and finally `sh` when Bash is unavailable. Native Windows first checks the configured path, then Git Bash, then `bash.exe` on `PATH`.
 
 ## Choose a Bash executable
 
-Set `shellPath` in `~/.garmin-code-mini/agent/settings.json` when garmin-code-mini should use a specific executable:
+Set `shellPath` in `~/.gcode/agent/settings.json` when gcode should use a specific executable:
 
 ```json
 {
@@ -33,7 +33,7 @@ On Windows, use forward slashes or escape backslashes:
 }
 ```
 
-Run `/reload` after changing the setting. See [Run garmin-code-mini on Windows](windows.md) for the native Windows defaults.
+Run `/reload` after changing the setting. See [Run gcode on Windows](windows.md) for the native Windows defaults.
 
 ## Run setup before every Bash command
 
@@ -45,11 +45,11 @@ Set `shellCommandPrefix` to prepend shell setup to both the built-in `bash` tool
 }
 ```
 
-garmin-code-mini joins the prefix and requested command with a newline. The prefix runs again for every command, so keep it fast and free of interactive prompts.
+gcode joins the prefix and requested command with a newline. The prefix runs again for every command, so keep it fast and free of interactive prompts.
 
 ## Enable Bash aliases
 
-Store aliases needed by garmin-code-mini in a Bash-compatible file instead of parsing an entire interactive shell configuration.
+Store aliases needed by gcode in a Bash-compatible file instead of parsing an entire interactive shell configuration.
 
 Create `~/.bash_aliases`:
 
@@ -58,7 +58,7 @@ alias ll='ls -la'
 alias gs='git status --short'
 ```
 
-Then configure garmin-code-mini to enable alias expansion and load the file:
+Then configure gcode to enable alias expansion and load the file:
 
 ```json
 {
@@ -66,7 +66,7 @@ Then configure garmin-code-mini to enable alias expansion and load the file:
 }
 ```
 
-Run `/reload`, then verify the alias through garmin-code-mini:
+Run `/reload`, then verify the alias through gcode:
 
 ```text
 !ll
@@ -80,11 +80,11 @@ Aliases must use Bash-compatible syntax. Do not source an arbitrary `.zshrc` int
 
 ### The prefix works for `!` but not for an extension tool
 
-`shellCommandPrefix` configures garmin-code-mini's built-in Bash execution. An extension that replaces the `bash` tool or provides its own shell operations controls its own setup. Check that extension's documentation.
+`shellCommandPrefix` configures gcode's built-in Bash execution. An extension that replaces the `bash` tool or provides its own shell operations controls its own setup. Check that extension's documentation.
 
 ### `shopt` is not found
 
-garmin-code-mini has fallen back to `sh` or `shellPath` points to a non-Bash shell. Install Bash or set `shellPath` to a Bash executable before using Bash-specific setup such as `shopt`.
+gcode has fallen back to `sh` or `shellPath` points to a non-Bash shell. Install Bash or set `shellPath` to a Bash executable before using Bash-specific setup such as `shopt`.
 
 ### A setup command waits for input
 

@@ -3,8 +3,8 @@
 	"compilerOptions": {
 		"outDir": "./dist",
 		"paths": {
-			"@garmin-code-mini/ai": ["../ai/dist/index.d.ts"],
-			"@garmin-code-mini/ai/*": ["../ai/dist/*.d.ts", "../ai/dist/providers/*.d.ts"]
+			"@gcode/ai": ["../ai/dist/index.d.ts"],
+			"@gcode/ai/*": ["../ai/dist/*.d.ts", "../ai/dist/providers/*.d.ts"]
 		},
 		"rootDir": "./src"
 	},

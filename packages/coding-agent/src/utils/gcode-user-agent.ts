@@ -1,6 +1,6 @@
-import { formatUserAgent } from "@garmin-code-mini/ai";
+import { formatUserAgent } from "@gcode/ai";
 
 /** Application identity included in locally collected diagnostic metadata. */
-export function getGarminCodeMiniUserAgent(version: string): string {
+export function getGcodeUserAgent(version: string): string {
 	return formatUserAgent({ userAgent: "detailed", version });
 }

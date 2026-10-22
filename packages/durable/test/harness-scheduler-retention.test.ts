@@ -3,14 +3,7 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import {
-	type Conversation,
-	defineTask,
-	type Harness,
-	LiveDoc,
-	type Storage,
-	type TaskId,
-} from "@garmin-code-mini/durable";
+import { type Conversation, defineTask, type Harness, LiveDoc, type Storage, type TaskId } from "@gcode/durable";
 import { afterEach, describe, expect, it } from "vitest";
 import { SCHEDULER_INDEX_SIZES } from "../src/harness/harness.ts";
 import { openNodeSqliteStorage } from "../src/storage/sqlite/node.ts";
@@ -119,7 +112,7 @@ afterEach(async () => {
 });
 
 async function sqlitePath(): Promise<string> {
-	const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-retention-"));
+	const directory = await mkdtemp(join(tmpdir(), "gcode-durable-retention-"));
 	directories.push(directory);
 	return join(directory, "session.sqlite");
 }

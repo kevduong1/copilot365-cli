@@ -1,5 +1,5 @@
-import type { Usage } from "@garmin-code-mini/ai";
-import { copyJson, type Draft, type JsonRepresentation } from "@garmin-code-mini/chord";
+import type { Usage } from "@gcode/ai";
+import { copyJson, type Draft, type JsonRepresentation } from "@gcode/chord";
 import { defineDoc } from "../documents.ts";
 import type { ConversationId, Tx } from "../types.ts";
 
@@ -12,7 +12,7 @@ export type UsageState = {
 };
 
 export const UsageDoc = defineDoc<UsageState>({
-	kind: "garmin-code-mini.usage",
+	kind: "gcode.usage",
 	version: 1,
 	scope: "conversation",
 	history: "latest",
@@ -21,7 +21,7 @@ export const UsageDoc = defineDoc<UsageState>({
 	checkpointWhen: () => true,
 });
 
-/** Add `usage` to one bucket of the conversation's `garmin-code-mini.usage`, in the commit that records the response. */
+/** Add `usage` to one bucket of the conversation's `gcode.usage`, in the commit that records the response. */
 export async function recordUsage(
 	tx: Tx,
 	conversationId: ConversationId,

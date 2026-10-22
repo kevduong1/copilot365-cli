@@ -4,13 +4,13 @@
  * Demonstrates the `model_select` hook which fires when the model changes
  * via /model command, Ctrl+P cycling, or session restore.
  *
- * Usage: garmin-code-mini -e ./model-status.ts
+ * Usage: gcode -e ./model-status.ts
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("model_select", async (event, ctx) => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("model_select", async (event, ctx) => {
 		const { model, previousModel, source } = event;
 
 		// Format model identifiers

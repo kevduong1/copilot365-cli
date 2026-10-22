@@ -3,7 +3,7 @@
  * Used by tool renderers and bash-execution.ts for consistent behavior.
  */
 
-import { type Component, Text, truncateToWidth } from "@garmin-code-mini/tui";
+import { type Component, Text, truncateToWidth } from "@gcode/tui";
 
 export interface VisualTruncateResult {
 	/** The visual lines to display */

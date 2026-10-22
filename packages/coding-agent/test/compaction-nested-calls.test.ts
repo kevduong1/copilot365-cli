@@ -1,4 +1,4 @@
-import type { ToolResultMessage } from "@garmin-code-mini/ai/compat";
+import type { ToolResultMessage } from "@gcode/ai/compat";
 import { describe, expect, it } from "vitest";
 import { computeFileLists, createFileOps, extractFileOpsFromMessage } from "../src/core/compaction/utils.ts";
 

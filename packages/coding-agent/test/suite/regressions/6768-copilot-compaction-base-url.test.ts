@@ -4,7 +4,7 @@ import {
 	fauxAssistantMessage,
 	type Model,
 	type Provider,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, type Harness } from "../harness.ts";
 

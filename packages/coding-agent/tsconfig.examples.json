@@ -3,10 +3,10 @@
 	"compilerOptions": {
 		"noEmit": true,
 		"paths": {
-			"garmin-code-mini": ["./src/index.ts"],
-			"garmin-code-mini/hooks": ["./src/core/hooks/index.ts"],
-			"@garmin-code-mini/tui": ["../tui/src/index.ts"],
-			"@garmin-code-mini/ai": ["../ai/src/index.ts"],
+			"gcode": ["./src/index.ts"],
+			"gcode/hooks": ["./src/core/hooks/index.ts"],
+			"@gcode/tui": ["../tui/src/index.ts"],
+			"@gcode/ai": ["../ai/src/index.ts"],
 			"typebox": ["../../node_modules/typebox"]
 		},
 		"skipLibCheck": true

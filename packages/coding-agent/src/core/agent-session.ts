@@ -30,8 +30,8 @@ import {
 	type PrepareNextTurnContext,
 	runToolCall,
 	type ThinkingLevel,
-} from "@garmin-code-mini/agent-core";
-import { contentText, getCurrentSystemMessage, getCurrentTools, retryDelayMs } from "@garmin-code-mini/ai";
+} from "@gcode/agent-core";
+import { contentText, getCurrentSystemMessage, getCurrentTools, retryDelayMs } from "@gcode/ai";
 import type {
 	AssistantMessage,
 	AuthResult,
@@ -42,7 +42,7 @@ import type {
 	TextContent,
 	ToolResultMessage,
 	Usage,
-} from "@garmin-code-mini/ai/compat";
+} from "@gcode/ai/compat";
 import {
 	clampThinkingLevel,
 	cleanupSessionResources,
@@ -54,7 +54,7 @@ import {
 	type RetryCallbacks,
 	resetApiProviders,
 	streamSimple,
-} from "@garmin-code-mini/ai/compat";
+} from "@gcode/ai/compat";
 import { getThemeByName, theme } from "../modes/interactive/theme/theme.ts";
 import { stripFrontmatter } from "../utils/frontmatter.ts";
 import { processImage } from "../utils/image-process.ts";
@@ -1406,7 +1406,7 @@ export class AgentSession {
 		}
 
 		this._extensionRunner.invalidate(
-			"This extension ctx is stale after session replacement or reload. Do not use a captured garmin-code-mini or command ctx after ctx.newSession(), ctx.fork(), ctx.switchSession(), or ctx.reload(). For newSession, fork, and switchSession, move post-replacement work into withSession and use the ctx passed to withSession. For reload, do not use the old ctx after await ctx.reload().",
+			"This extension ctx is stale after session replacement or reload. Do not use a captured gcode or command ctx after ctx.newSession(), ctx.fork(), ctx.switchSession(), or ctx.reload(). For newSession, fork, and switchSession, move post-replacement work into withSession and use the ctx passed to withSession. For reload, do not use the old ctx after await ctx.reload().",
 		);
 		this._disconnectFromAgent();
 		this._eventListeners = [];
@@ -2069,7 +2069,7 @@ export class AgentSession {
 
 	/**
 	 * Send a prompt to the agent.
-	 * - Handles extension commands (registered via garminCodeMini.registerCommand) immediately, even during streaming
+	 * - Handles extension commands (registered via gcode.registerCommand) immediately, even during streaming
 	 * - Expands file-based prompt templates by default
 	 * - During streaming, queues via steer() or followUp() based on streamingBehavior option
 	 * - Validates model and API key before sending (when not streaming)
@@ -2084,7 +2084,7 @@ export class AgentSession {
 		const expandPromptTemplates = options?.expandPromptTemplates ?? true;
 		const preflightResult = options?.preflightResult;
 		// Handle extension commands first (execute immediately, even during streaming)
-		// Extension commands manage their own LLM interaction via garminCodeMini.sendMessage()
+		// Extension commands manage their own LLM interaction via gcode.sendMessage()
 		if (expandPromptTemplates && text.startsWith("/")) {
 			const handled = await this._tryExecuteExtensionCommand(text);
 			if (handled) {
@@ -2766,7 +2766,7 @@ export class AgentSession {
 	// Compaction
 	// =========================================================================
 
-	/** Generate garmin-code-mini's built-in compaction summary for manual and automatic compaction. */
+	/** Generate gcode's built-in compaction summary for manual and automatic compaction. */
 	private async _runDefaultCompaction(
 		preparation: CompactionPreparation,
 		model: Model<any>,
@@ -2774,7 +2774,7 @@ export class AgentSession {
 		signal: AbortSignal,
 		reason: "manual" | "threshold" | "overflow",
 	): Promise<CompactionResult> {
-		// Resolve the request only when garmin-code-mini summarizes itself: routing may call models or fail.
+		// Resolve the request only when gcode summarizes itself: routing may call models or fail.
 		const request = await this._getSummarizationRequestAuth(model, signal);
 		return compact(
 			preparation,

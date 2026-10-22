@@ -1,4 +1,4 @@
-import type { ImageContent, ModelImageResizeOptions, TextContent } from "@garmin-code-mini/ai";
+import type { ImageContent, ModelImageResizeOptions, TextContent } from "@gcode/ai";
 import { processImage } from "./image-process.ts";
 
 export type ToolResultContent = TextContent | ImageContent;

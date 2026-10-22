@@ -1,6 +1,6 @@
 import { homedir } from "node:os";
 import * as path from "node:path";
-import { type AutocompleteProvider, CombinedAutocompleteProvider } from "@garmin-code-mini/tui";
+import { type AutocompleteProvider, CombinedAutocompleteProvider } from "@gcode/tui";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { type Component, Container, type Focusable, type TUI } from "../../tui/src/tui.ts";
 import { TuiMainScreen } from "../../tui/src/tui-main-screen.ts";
@@ -654,21 +654,21 @@ describe("InteractiveMode.showLoadedResources", () => {
 	function createExtensionFixtures(): ExtensionFixture[] {
 		return [
 			{
-				path: "/tmp/project/.garmin-code-mini/extensions/answer.ts",
-				sourceInfo: createSourceInfo("/tmp/project/.garmin-code-mini/extensions/answer.ts", {
+				path: "/tmp/project/.gcode/extensions/answer.ts",
+				sourceInfo: createSourceInfo("/tmp/project/.gcode/extensions/answer.ts", {
 					source: "local",
 					scope: "project",
 					origin: "top-level",
-					baseDir: "/tmp/project/.garmin-code-mini/extensions",
+					baseDir: "/tmp/project/.gcode/extensions",
 				}),
 			},
 			{
-				path: "/tmp/project/.garmin-code-mini/extensions/local-index/index.ts",
-				sourceInfo: createSourceInfo("/tmp/project/.garmin-code-mini/extensions/local-index/index.ts", {
+				path: "/tmp/project/.gcode/extensions/local-index/index.ts",
+				sourceInfo: createSourceInfo("/tmp/project/.gcode/extensions/local-index/index.ts", {
 					source: "local",
 					scope: "project",
 					origin: "top-level",
-					baseDir: "/tmp/project/.garmin-code-mini/extensions",
+					baseDir: "/tmp/project/.gcode/extensions",
 				}),
 			},
 			{
@@ -681,50 +681,47 @@ describe("InteractiveMode.showLoadedResources", () => {
 				}),
 			},
 			{
-				path: "/tmp/project/.garmin-code-mini/npm/node_modules/markdown-preview/extensions/index.ts",
-				sourceInfo: createSourceInfo(
-					"/tmp/project/.garmin-code-mini/npm/node_modules/markdown-preview/extensions/index.ts",
-					{
-						source: "npm:markdown-preview",
-						scope: "project",
-						origin: "package",
-						baseDir: "/tmp/project/.garmin-code-mini/npm/node_modules/markdown-preview",
-					},
-				),
+				path: "/tmp/project/.gcode/npm/node_modules/markdown-preview/extensions/index.ts",
+				sourceInfo: createSourceInfo("/tmp/project/.gcode/npm/node_modules/markdown-preview/extensions/index.ts", {
+					source: "npm:markdown-preview",
+					scope: "project",
+					origin: "package",
+					baseDir: "/tmp/project/.gcode/npm/node_modules/markdown-preview",
+				}),
 			},
 			{
-				path: "/tmp/project/.garmin-code-mini/npm/node_modules/@scope/scoped-package/extensions/index.ts",
+				path: "/tmp/project/.gcode/npm/node_modules/@scope/scoped-package/extensions/index.ts",
 				sourceInfo: createSourceInfo(
-					"/tmp/project/.garmin-code-mini/npm/node_modules/@scope/scoped-package/extensions/index.ts",
+					"/tmp/project/.gcode/npm/node_modules/@scope/scoped-package/extensions/index.ts",
 					{
 						source: "npm:@scope/scoped-package",
 						scope: "project",
 						origin: "package",
-						baseDir: "/tmp/project/.garmin-code-mini/npm/node_modules/@scope/scoped-package",
+						baseDir: "/tmp/project/.gcode/npm/node_modules/@scope/scoped-package",
 					},
 				),
 			},
 			{
-				path: "/tmp/project/.garmin-code-mini/git/github.com/HazAT/interactive-subagents/extensions/index.ts",
+				path: "/tmp/project/.gcode/git/github.com/HazAT/interactive-subagents/extensions/index.ts",
 				sourceInfo: createSourceInfo(
-					"/tmp/project/.garmin-code-mini/git/github.com/HazAT/interactive-subagents/extensions/index.ts",
+					"/tmp/project/.gcode/git/github.com/HazAT/interactive-subagents/extensions/index.ts",
 					{
 						source: "git:github.com/HazAT/interactive-subagents",
 						scope: "project",
 						origin: "package",
-						baseDir: "/tmp/project/.garmin-code-mini/git/github.com/HazAT/interactive-subagents",
+						baseDir: "/tmp/project/.gcode/git/github.com/HazAT/interactive-subagents",
 					},
 				),
 			},
 			{
-				path: "/tmp/project/.garmin-code-mini/git/github.com/HazAT/interactive-subagents/extensions/subagents/index.ts",
+				path: "/tmp/project/.gcode/git/github.com/HazAT/interactive-subagents/extensions/subagents/index.ts",
 				sourceInfo: createSourceInfo(
-					"/tmp/project/.garmin-code-mini/git/github.com/HazAT/interactive-subagents/extensions/subagents/index.ts",
+					"/tmp/project/.gcode/git/github.com/HazAT/interactive-subagents/extensions/subagents/index.ts",
 					{
 						source: "git:github.com/HazAT/interactive-subagents",
 						scope: "project",
 						origin: "package",
-						baseDir: "/tmp/project/.garmin-code-mini/git/github.com/HazAT/interactive-subagents",
+						baseDir: "/tmp/project/.gcode/git/github.com/HazAT/interactive-subagents",
 					},
 				),
 			},
@@ -1067,16 +1064,13 @@ describe("InteractiveMode.showLoadedResources", () => {
 	test("package extensions still strip index.ts correctly (regression guard)", () => {
 		const extensions: ExtensionFixture[] = [
 			{
-				path: "/tmp/project/.garmin-code-mini/npm/node_modules/markdown-preview/extensions/index.ts",
-				sourceInfo: createSourceInfo(
-					"/tmp/project/.garmin-code-mini/npm/node_modules/markdown-preview/extensions/index.ts",
-					{
-						source: "npm:markdown-preview",
-						scope: "project",
-						origin: "package",
-						baseDir: "/tmp/project/.garmin-code-mini/npm/node_modules/markdown-preview",
-					},
-				),
+				path: "/tmp/project/.gcode/npm/node_modules/markdown-preview/extensions/index.ts",
+				sourceInfo: createSourceInfo("/tmp/project/.gcode/npm/node_modules/markdown-preview/extensions/index.ts", {
+					source: "npm:markdown-preview",
+					scope: "project",
+					origin: "package",
+					baseDir: "/tmp/project/.gcode/npm/node_modules/markdown-preview",
+				}),
 			},
 		];
 
@@ -1098,21 +1092,21 @@ describe("InteractiveMode.showLoadedResources", () => {
 	test("labels npm sibling extensions relative to the declaring package", () => {
 		const extensions: ExtensionFixture[] = [
 			{
-				path: "/tmp/project/.garmin-code-mini/npm/node_modules/primary-package/index.ts",
-				sourceInfo: createSourceInfo("/tmp/project/.garmin-code-mini/npm/node_modules/primary-package/index.ts", {
+				path: "/tmp/project/.gcode/npm/node_modules/primary-package/index.ts",
+				sourceInfo: createSourceInfo("/tmp/project/.gcode/npm/node_modules/primary-package/index.ts", {
 					source: "npm:primary-package",
 					scope: "project",
 					origin: "package",
-					baseDir: "/tmp/project/.garmin-code-mini/npm/node_modules/primary-package",
+					baseDir: "/tmp/project/.gcode/npm/node_modules/primary-package",
 				}),
 			},
 			{
-				path: "/tmp/project/.garmin-code-mini/npm/node_modules/sibling-package/index.ts",
-				sourceInfo: createSourceInfo("/tmp/project/.garmin-code-mini/npm/node_modules/sibling-package/index.ts", {
+				path: "/tmp/project/.gcode/npm/node_modules/sibling-package/index.ts",
+				sourceInfo: createSourceInfo("/tmp/project/.gcode/npm/node_modules/sibling-package/index.ts", {
 					source: "npm:primary-package",
 					scope: "project",
 					origin: "package",
-					baseDir: "/tmp/project/.garmin-code-mini/npm/node_modules/primary-package",
+					baseDir: "/tmp/project/.gcode/npm/node_modules/primary-package",
 				}),
 			},
 		];
@@ -1133,9 +1127,9 @@ describe("InteractiveMode.showLoadedResources", () => {
 	});
 
 	test("labels Windows npm sibling extensions relative to the declaring package", () => {
-		const primaryPath = "C:\\Users\\me\\.garmin-code-mini\\agent\\npm\\node_modules\\primary-package\\index.ts";
-		const siblingPath = "C:\\Users\\me\\.garmin-code-mini\\agent\\npm\\node_modules\\sibling-package\\index.ts";
-		const baseDir = "C:\\Users\\me\\.garmin-code-mini\\agent\\npm\\node_modules\\primary-package";
+		const primaryPath = "C:\\Users\\me\\.gcode\\agent\\npm\\node_modules\\primary-package\\index.ts";
+		const siblingPath = "C:\\Users\\me\\.gcode\\agent\\npm\\node_modules\\sibling-package\\index.ts";
+		const baseDir = "C:\\Users\\me\\.gcode\\agent\\npm\\node_modules\\primary-package";
 		const extensions: ExtensionFixture[] = [
 			{
 				path: primaryPath,
@@ -1187,8 +1181,8 @@ describe("InteractiveMode.showLoadedResources", () => {
 		expect(normalizeRenderedOutput(fakeThis.loadedResourcesContainer)).toMatchInlineSnapshot(`
 "[Extensions]
   project
-    /tmp/project/.garmin-code-mini/extensions/answer.ts
-    /tmp/project/.garmin-code-mini/extensions/local-index
+    /tmp/project/.gcode/extensions/answer.ts
+    /tmp/project/.gcode/extensions/local-index
     git:github.com/HazAT/interactive-subagents
       extensions
       extensions/subagents
@@ -1204,12 +1198,12 @@ describe("InteractiveMode.showLoadedResources", () => {
 
 	test("shows context paths relative to cwd while preserving full external paths", () => {
 		const home = homedir();
-		const cwd = path.join(home, "Development", "garmin-code-mini-mono");
+		const cwd = path.join(home, "Development", "gcode-mono");
 		const fakeThis = createShowLoadedResourcesThis({
 			quietStartup: false,
 			cwd,
 			contextFiles: [
-				{ path: path.join(home, ".garmin-code-mini", "agent", "AGENTS.md") },
+				{ path: path.join(home, ".gcode", "agent", "AGENTS.md") },
 				{ path: path.join(cwd, "AGENTS.md") },
 			],
 		});
@@ -1220,7 +1214,7 @@ describe("InteractiveMode.showLoadedResources", () => {
 
 		const output = renderAll(fakeThis.loadedResourcesContainer).replace(/\\/g, "/");
 		expect(output).toContain("[Context]");
-		expect(output).toContain("~/.garmin-code-mini/agent/AGENTS.md, AGENTS.md");
+		expect(output).toContain("~/.gcode/agent/AGENTS.md, AGENTS.md");
 		expect(output).not.toContain(`${cwd.replace(/\\/g, "/")}/AGENTS.md`);
 	});
 
@@ -1229,8 +1223,8 @@ describe("InteractiveMode.showLoadedResources", () => {
 		const fakeThis = createShowLoadedResourcesThis({
 			quietStartup: false,
 			cwd,
-			systemPromptSource: { path: path.join(cwd, ".garmin-code-mini", "SYSTEM.md") },
-			appendSystemPromptSources: [{ path: path.join(cwd, ".garmin-code-mini", "APPEND_SYSTEM.md") }],
+			systemPromptSource: { path: path.join(cwd, ".gcode", "SYSTEM.md") },
+			appendSystemPromptSources: [{ path: path.join(cwd, ".gcode", "APPEND_SYSTEM.md") }],
 			contextFiles: [{ path: path.join(cwd, "AGENTS.md") }],
 		});
 
@@ -1240,18 +1234,18 @@ describe("InteractiveMode.showLoadedResources", () => {
 
 		const output = renderAll(fakeThis.loadedResourcesContainer).replace(/\\/g, "/");
 		expect(output).toContain("[Context]");
-		expect(output).toContain(".garmin-code-mini/SYSTEM.md, .garmin-code-mini/APPEND_SYSTEM.md, AGENTS.md");
+		expect(output).toContain(".gcode/SYSTEM.md, .gcode/APPEND_SYSTEM.md, AGENTS.md");
 	});
 
 	test("shows full context paths when expanded", () => {
 		const home = homedir();
-		const cwd = path.join(home, "Development", "garmin-code-mini-mono");
+		const cwd = path.join(home, "Development", "gcode-mono");
 		const fakeThis = createShowLoadedResourcesThis({
 			quietStartup: false,
 			toolOutputExpanded: true,
 			cwd,
 			contextFiles: [
-				{ path: path.join(home, ".garmin-code-mini", "agent", "AGENTS.md") },
+				{ path: path.join(home, ".gcode", "agent", "AGENTS.md") },
 				{ path: path.join(cwd, "AGENTS.md") },
 			],
 		});
@@ -1262,9 +1256,9 @@ describe("InteractiveMode.showLoadedResources", () => {
 
 		const output = renderAll(fakeThis.loadedResourcesContainer).replace(/\\/g, "/");
 		expect(output).toContain("[Context]");
-		expect(output).toContain("~/.garmin-code-mini/agent/AGENTS.md");
-		expect(output).toContain("~/Development/garmin-code-mini-mono/AGENTS.md");
-		expect(output).not.toContain("~/.garmin-code-mini/agent/AGENTS.md, AGENTS.md");
+		expect(output).toContain("~/.gcode/agent/AGENTS.md");
+		expect(output).toContain("~/Development/gcode-mono/AGENTS.md");
+		expect(output).not.toContain("~/.gcode/agent/AGENTS.md, AGENTS.md");
 	});
 
 	test("does not show verbose listing on quiet startup during reload", () => {
@@ -1297,7 +1291,7 @@ describe("InteractiveMode.showLoadedResources", () => {
 		expect((InteractiveMode as any).prototype.shouldShowStartupDetails.call(fakeThis)).toBe(false);
 	});
 
-	test("keeps the Garmin startup header with quiet startup", () => {
+	test("keeps the Gcode startup header with quiet startup", () => {
 		const quiet = createShowLoadedResourcesThis({ quietStartup: true });
 		expect((InteractiveMode as any).prototype.shouldShowStartupHeader.call(quiet)).toBe(true);
 		const verbose = createShowLoadedResourcesThis({ quietStartup: "header", verbose: true });

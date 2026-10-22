@@ -1,4 +1,4 @@
-import type { JsonValue } from "@garmin-code-mini/chord";
+import type { JsonValue } from "@gcode/chord";
 
 type JsonContainer = Record<string, JsonValue> | JsonValue[];
 

@@ -2,8 +2,8 @@
  * Hello Tool - Minimal custom tool example
  */
 
-import { Type } from "@garmin-code-mini/ai";
-import { defineTool, type ExtensionAPI } from "garmin-code-mini";
+import { Type } from "@gcode/ai";
+import { defineTool, type ExtensionAPI } from "gcode";
 
 const helloTool = defineTool({
 	name: "hello",
@@ -21,6 +21,6 @@ const helloTool = defineTool({
 	},
 });
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerTool(helloTool);
+export default function (gcode: ExtensionAPI) {
+	gcode.registerTool(helloTool);
 }

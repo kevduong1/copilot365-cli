@@ -1,4 +1,4 @@
-import { ModelThinkingLevelSchema } from "@garmin-code-mini/ai/providers/model-schema";
+import { ModelThinkingLevelSchema } from "@gcode/ai/providers/model-schema";
 import { type Static, type TSchemaOptions, Type } from "typebox";
 import { SETTINGS_DEFAULTS } from "./settings-defaults.ts";
 
@@ -393,7 +393,7 @@ export const SettingsSchema = Type.Object(
 		),
 		httpProxy: Type.Optional(
 			Type.String({
-				description: "Proxy URL applied as HTTP_PROXY and HTTPS_PROXY for garmin-code-mini-managed HTTP clients.",
+				description: "Proxy URL applied as HTTP_PROXY and HTTPS_PROXY for gcode-managed HTTP clients.",
 			}),
 		),
 		httpIdleTimeoutMs: Type.Optional(

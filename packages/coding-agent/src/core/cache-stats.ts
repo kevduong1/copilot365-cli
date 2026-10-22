@@ -1,4 +1,4 @@
-import type { AssistantMessage } from "@garmin-code-mini/ai";
+import type { AssistantMessage } from "@gcode/ai";
 import type { SessionEntry } from "./session-manager.ts";
 
 /**

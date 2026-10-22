@@ -6,8 +6,8 @@ import {
 	type Message,
 	type Models,
 	type RegisterFauxProviderOptions,
-} from "@garmin-code-mini/ai";
-import type { Context } from "@garmin-code-mini/chord";
+} from "@gcode/ai";
+import type { Context } from "@gcode/chord";
 import {
 	type Conversation,
 	createRegistry,
@@ -18,7 +18,7 @@ import {
 	type Registry,
 	type Storage,
 	type ToolRegistration,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import type { ExecutionEnv } from "../src/env/index.ts";
 import { context } from "./session-support.ts";
 

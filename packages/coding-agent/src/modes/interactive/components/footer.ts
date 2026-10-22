@@ -1,5 +1,5 @@
 import { isAbsolute, relative, resolve, sep } from "node:path";
-import { type Component, truncateToWidth, visibleWidth } from "@garmin-code-mini/tui";
+import { type Component, truncateToWidth, visibleWidth } from "@gcode/tui";
 import type { AgentSession } from "../../../core/agent-session.ts";
 import { areExperimentalFeaturesEnabled } from "../../../core/experimental.ts";
 import type { ContextUsage } from "../../../core/extensions/types.ts";

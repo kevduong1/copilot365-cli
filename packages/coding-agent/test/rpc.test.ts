@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { AgentEvent } from "@garmin-code-mini/agent-core";
+import type { AgentEvent } from "@gcode/agent-core";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { RpcClient } from "../src/modes/rpc/rpc-client.ts";
 
@@ -11,18 +11,18 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 /**
  * RPC mode tests.
  */
-describe.skipIf(process.env.GARMIN_CODE_MINI_RPC_E2E !== "1")("RPC mode", () => {
+describe.skipIf(process.env.GCODE_RPC_E2E !== "1")("RPC mode", () => {
 	let client: RpcClient;
 	let sessionDir: string;
 
 	beforeEach(() => {
-		sessionDir = join(tmpdir(), `garmin-code-mini-rpc-test-${Date.now()}`);
+		sessionDir = join(tmpdir(), `gcode-rpc-test-${Date.now()}`);
 		client = new RpcClient({
 			cliPath: join(__dirname, "..", "dist", "cli.js"),
 			cwd: join(__dirname, ".."),
-			env: { GARMIN_CODE_MINI_AGENT_DIR: sessionDir },
+			env: { GCODE_AGENT_DIR: sessionDir },
 			provider: "local",
-			model: process.env.GARMIN_CODE_MINI_MODEL ?? "local-model",
+			model: process.env.GCODE_MODEL ?? "local-model",
 		});
 	});
 
@@ -39,7 +39,7 @@ describe.skipIf(process.env.GARMIN_CODE_MINI_RPC_E2E !== "1")("RPC mode", () => 
 
 		expect(state.model).toBeDefined();
 		expect(state.model?.provider).toBe("local");
-		expect(state.model?.id).toBe(process.env.GARMIN_CODE_MINI_MODEL ?? "local-model");
+		expect(state.model?.id).toBe(process.env.GCODE_MODEL ?? "local-model");
 		expect(state.isStreaming).toBe(false);
 		expect(state.messageCount).toBe(0);
 	}, 30000);

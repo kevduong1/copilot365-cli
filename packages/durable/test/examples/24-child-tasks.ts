@@ -5,8 +5,8 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import {
 	type Conversation,
 	createRegistry,
@@ -99,7 +99,7 @@ const Checkout = defineTask<{ cards: string[] }, CheckoutState, string>({
 
 const registry = createRegistry();
 registry.install(defineExtension({ name: "checkout", tasks: [Payment, Checkout] }));
-const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-example-"));
+const directory = await mkdtemp(join(tmpdir(), "gcode-durable-example-"));
 const databasePath = join(directory, "session.sqlite");
 const open = async () =>
 	Harness.open(await openNodeSqliteStorage(databasePath), { models: createModels(), registry }, context);

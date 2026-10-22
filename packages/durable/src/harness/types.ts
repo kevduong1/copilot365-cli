@@ -13,9 +13,9 @@ import type {
 	TSchema,
 	Usage,
 	UserMessage,
-} from "@garmin-code-mini/ai";
-import type { AttachedReplicatedState, Context, JsonValue } from "@garmin-code-mini/chord";
-import type { TelemetryContext } from "@garmin-code-mini/telemetry";
+} from "@gcode/ai";
+import type { AttachedReplicatedState, Context, JsonValue } from "@gcode/chord";
+import type { TelemetryContext } from "@gcode/telemetry";
 import type { ExecutionEnv, ShellOutputSkip, ShellOutputWindow } from "../env/index.ts";
 import type {
 	ConversationId,
@@ -47,7 +47,7 @@ import type { TaskGraph, TaskGraphWatch } from "./task-graph.ts";
 import type { UsageState } from "./usage.ts";
 import type { ConversationView } from "./view.ts";
 
-/** Provider and model ID resolved through garmin-code-mini-ai `Models`. */
+/** Provider and model ID resolved through gcode-ai `Models`. */
 export type ModelRef = {
 	readonly provider: string;
 	readonly modelId: string;
@@ -56,7 +56,7 @@ export type ModelRef = {
 export type UserInput = UserMessage["content"];
 
 /**
- * The entry an input is placed as, instead of `garmin-code-mini.user`: an application kind, and data the transcript shows, such as its
+ * The entry an input is placed as, instead of `gcode.user`: an application kind, and data the transcript shows, such as its
  * author. Its model message is still the input's user message.
  */
 export type InputEntry = { readonly kind: string; readonly data?: JsonValue };
@@ -69,7 +69,7 @@ export type SubmissionDraft = {
 			readonly type: "input";
 			readonly content: UserInput;
 			readonly whenBusy?: "steer" | "followUp" | "reject";
-			/** Place the input as this entry; default `garmin-code-mini.user` without data. The kind must not start with `garmin-code-mini.`. */
+			/** Place the input as this entry; default `gcode.user` without data. The kind must not start with `gcode.`. */
 			readonly entry?: InputEntry;
 	  }
 	| {
@@ -169,7 +169,7 @@ export type ToolExecutionResult<TDetails extends JsonValue = JsonValue> = {
 	readonly details?: TDetails;
 	/** Added after those recorded through `api.diagnostic()`. */
 	readonly diagnostics?: readonly ToolDiagnostic[];
-	/** Spend of the execution itself, such as a model call; stored on the result and in `garmin-code-mini.usage.tools`. */
+	/** Spend of the execution itself, such as a model call; stored on the result and in `gcode.usage.tools`. */
 	readonly usage?: Usage;
 	readonly control?: ToolControl;
 };
@@ -259,9 +259,9 @@ export interface ToolExecutionApi<TDetails extends JsonValue = JsonValue> extend
 	/** Invocation-bound handle of an existing conversation, such as one this tool created in `commit()`. */
 	conversation(id: ConversationId, context: Context): Promise<ConversationHandle | undefined>;
 	/**
-	 * Run tool `name` as a nested call of this one and wait for its result. The nested call is its own `garmin-code-mini.tool` task,
+	 * Run tool `name` as a nested call of this one and wait for its result. The nested call is its own `gcode.tool` task,
 	 * owned by this call: it resolves the tool among the conversation's tools, validates, runs the `ToolTask` hooks (which
-	 * see `call.parent`), applies output limits and the tool's replay policy, and reports progress in `garmin-code-mini.live.nestedTools`.
+	 * see `call.parent`), applies output limits and the tool's replay policy, and reports progress in `gcode.live.nestedTools`.
 	 * Its result returns here instead of entering the transcript. A call that is blocked, invalid, throws, is interrupted,
 	 * or is aborted returns an `isError` result.
 	 *
@@ -294,7 +294,7 @@ export interface ToolExecutionApi<TDetails extends JsonValue = JsonValue> extend
 }
 
 /**
- * Executable tool registered in a registry. Only garmin-code-mini-ai `Tool` fields enter the transcript. `args` are typed by
+ * Executable tool registered in a registry. Only gcode-ai `Tool` fields enter the transcript. `args` are typed by
  * `parameters`, which the Harness validates them against before `execute()`; `defineTool()` infers both generics.
  */
 export type ToolRegistration<
@@ -432,7 +432,7 @@ export type AgentState = {
 	cwd?: string;
 };
 
-/** A change to `garmin-code-mini.agent`: a given field replaces the stored one, `null` clears it, `undefined` changes nothing. */
+/** A change to `gcode.agent`: a given field replaces the stored one, `null` clears it, `undefined` changes nothing. */
 export type AgentChange = {
 	readonly model?: ModelRef | null;
 	readonly thinkingLevel?: ModelThinkingLevel | null;
@@ -480,7 +480,7 @@ export type ConversationCreateOptions = {
 	readonly init?: ConversationInit;
 };
 
-/** Curated garmin-code-mini-ai request options; absent fields use garmin-code-mini-ai defaults. */
+/** Curated gcode-ai request options; absent fields use gcode-ai defaults. */
 export type ConversationStreamOptions = {
 	transport?: Transport;
 	timeoutMs?: number;
@@ -493,7 +493,7 @@ export type ConversationStreamOptions = {
 	deferred?: boolean | { window?: "15m" | "1h" | "24h" };
 };
 
-/** Durable generation attempt retries; the JSON shape of garmin-code-mini-ai `RetryPolicy`. */
+/** Durable generation attempt retries; the JSON shape of gcode-ai `RetryPolicy`. */
 export type ConversationRetryPolicy = {
 	enabled: boolean;
 	maxRetries: number;
@@ -610,13 +610,13 @@ export type HarnessOptions<Tool extends ToolRegistration = ToolRegistration> = {
 	/** Host-owned adapter for content-free admission/phase telemetry; propagation and metrics are optional. */
 	readonly telemetry?: TelemetryContext;
 	/**
-	 * garmin-code-mini-ai model access used by generation, compaction, hooks and tools: a `Models`, or a function returning the current
+	 * gcode-ai model access used by generation, compaction, hooks and tools: a `Models`, or a function returning the current
 	 * one, called at each use, so a host can replace its model configuration without reopening the Harness.
 	 */
 	readonly models: Models | (() => Models);
 	/**
 	 * How model requests identify the app to providers, merged field by field over `DEFAULT_HARNESS_IDENTITY`
-	 * (`{ attribution: GARMIN_CODE_MINI_ATTRIBUTION }`, provider attribution to garmin-code-mini). It applies to every request through the Harness's
+	 * (`{ attribution: GCODE_ATTRIBUTION }`, provider attribution to gcode). It applies to every request through the Harness's
 	 * models, including hooks and tools, and overrides the identity the `Models` was created with; a request's own
 	 * `identity` overrides it. Pass `{ attribution: null }` to send no attribution headers.
 	 */
@@ -628,7 +628,7 @@ export type HarnessOptions<Tool extends ToolRegistration = ToolRegistration> = {
 	readonly env?: (target: EnvTarget, context: Context) => ExecutionEnv | undefined | Promise<ExecutionEnv | undefined>;
 	/**
 	 * Runs in every commit that creates or forks a conversation, raw `tx.createConversation()` included, after the
-	 * built-in `garmin-code-mini.*` documents and before the conveniences apply `agent` and run `init`. A fork already has its copies.
+	 * built-in `gcode.*` documents and before the conveniences apply `agent` and run `init`. A fork already has its copies.
 	 * Table reads throw `ReadAfterWrite`, as in `init`; a throw fails the creating commit.
 	 */
 	readonly conversationCreated?: (tx: Tx, conversation: ConversationRecord) => void | Promise<void>;
@@ -730,13 +730,13 @@ export interface Conversation {
 
 	/**
 	 * Durably admit user input or a passive entry write. A busy conversation, or one with queued items, queues input and
-	 * writes that affect model context in `garmin-code-mini.inbox`; `whenBusy: "reject"` rejects input with `ConversationBusy` instead
+	 * writes that affect model context in `gcode.inbox`; `whenBusy: "reject"` rejects input with `ConversationBusy` instead
 	 * and writes nothing. A write of only `kind` and `data` (no `model`, `head`, or `edits`) is appended at once,
 	 * even mid-run, as it changes nothing the model sees.
 	 */
 	submit(submission: SubmissionDraft, context: Context): Promise<Submission>;
 	/**
-	 * Admit a write of a `garmin-code-mini.reset` entry that starts a new context, carrying `handoff` as a user message when given.
+	 * Admit a write of a `gcode.reset` entry that starts a new context, carrying `handoff` as a user message when given.
 	 * Resolves after admission; while busy, it is placed at the next boundary.
 	 */
 	reset(handoff: string | undefined, context: Context): Promise<void>;
@@ -828,7 +828,7 @@ export interface Harness extends Session {
 	waitForTask<R>(id: TaskId<R>, context: Context): Promise<SettledTask<R>>;
 	/** Resolve when the ordinary ownership scope of every ownerless conversation has no live non-background task. */
 	waitForIdle(context: Context): Promise<void>;
-	/** Session total: every conversation's `garmin-code-mini.usage` summed. */
+	/** Session total: every conversation's `gcode.usage` summed. */
 	usage(context: Context): Promise<UsageState>;
 	/** Every live task with its owner edge, status, and owned conversations (spec §9.5), as a disposable Chord state. */
 	taskGraph(context: Context): Promise<AttachedReplicatedState<TaskGraph>>;

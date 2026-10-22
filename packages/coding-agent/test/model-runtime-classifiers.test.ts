@@ -1,4 +1,4 @@
-import { createProvider, InMemoryModelsStore } from "@garmin-code-mini/ai";
+import { createProvider, InMemoryModelsStore } from "@gcode/ai";
 import { describe, expect, it, vi } from "vitest";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import { ModelRuntime } from "../src/core/model-runtime.ts";

@@ -6,8 +6,8 @@
  * and can be activated via CLI flag, /preset command, or Ctrl+Shift+U to cycle.
  *
  * Config files (merged, project takes precedence):
- * - ~/.garmin-code-mini/agent/presets.json (global)
- * - <cwd>/.garmin-code-mini/presets.json (project-local)
+ * - ~/.gcode/agent/presets.json (global)
+ * - <cwd>/.gcode/presets.json (project-local)
  *
  * Example presets.json:
  * ```json
@@ -30,7 +30,7 @@
  * ```
  *
  * Usage:
- * - `garmin-code-mini --preset plan` - start with plan preset
+ * - `gcode --preset plan` - start with plan preset
  * - `/preset` - show selector to switch presets mid-session
  * - `/preset implement` - switch to implement preset directly
  * - `Ctrl+Shift+U` - cycle through presets
@@ -40,10 +40,10 @@
 
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { Api, Model } from "@garmin-code-mini/ai";
-import { Container, Key, type SelectItem, SelectList, Text } from "@garmin-code-mini/tui";
-import type { ExtensionAPI, ExtensionContext } from "garmin-code-mini";
-import { CONFIG_DIR_NAME, DynamicBorder, getAgentDir } from "garmin-code-mini";
+import type { Api, Model } from "@gcode/ai";
+import { Container, Key, type SelectItem, SelectList, Text } from "@gcode/tui";
+import type { ExtensionAPI, ExtensionContext } from "gcode";
+import { CONFIG_DIR_NAME, DynamicBorder, getAgentDir } from "gcode";
 
 // Preset configuration
 interface Preset {
@@ -104,14 +104,14 @@ interface OriginalState {
 	tools: string[];
 }
 
-export default function presetExtension(garminCodeMini: ExtensionAPI) {
+export default function presetExtension(gcode: ExtensionAPI) {
 	let presets: PresetsConfig = {};
 	let activePresetName: string | undefined;
 	let activePreset: Preset | undefined;
 	let originalState: OriginalState | undefined;
 
 	// Register --preset CLI flag
-	garminCodeMini.registerFlag("preset", {
+	gcode.registerFlag("preset", {
 		description: "Preset configuration to use",
 		type: "string",
 	});
@@ -124,8 +124,8 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 		if (activePresetName === undefined) {
 			originalState = {
 				model: ctx.model,
-				thinkingLevel: garminCodeMini.getThinkingLevel(),
-				tools: garminCodeMini.getActiveTools(),
+				thinkingLevel: gcode.getThinkingLevel(),
+				tools: gcode.getActiveTools(),
 			};
 		}
 
@@ -133,7 +133,7 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 		if (preset.provider && preset.model) {
 			const model = ctx.modelRegistry.find(preset.provider, preset.model);
 			if (model) {
-				const success = await garminCodeMini.setModel(model);
+				const success = await gcode.setModel(model);
 				if (!success) {
 					ctx.ui.notify(`Preset "${name}": No API key for ${preset.provider}/${preset.model}`, "warning");
 				}
@@ -144,12 +144,12 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 
 		// Apply thinking level if specified
 		if (preset.thinkingLevel) {
-			garminCodeMini.setThinkingLevel(preset.thinkingLevel);
+			gcode.setThinkingLevel(preset.thinkingLevel);
 		}
 
 		// Apply tools if specified
 		if (preset.tools && preset.tools.length > 0) {
-			const allToolNames = garminCodeMini.getAllTools().map((t) => t.name);
+			const allToolNames = gcode.getAllTools().map((t) => t.name);
 			const validTools = preset.tools.filter((t) => allToolNames.includes(t));
 			const invalidTools = preset.tools.filter((t) => !allToolNames.includes(t));
 
@@ -158,7 +158,7 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 			}
 
 			if (validTools.length > 0) {
-				garminCodeMini.setActiveTools(validTools);
+				gcode.setActiveTools(validTools);
 			}
 		}
 
@@ -273,12 +273,12 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 			activePreset = undefined;
 			if (originalState) {
 				if (originalState.model) {
-					await garminCodeMini.setModel(originalState.model);
+					await gcode.setModel(originalState.model);
 				}
-				garminCodeMini.setThinkingLevel(originalState.thinkingLevel);
-				garminCodeMini.setActiveTools(originalState.tools);
+				gcode.setThinkingLevel(originalState.thinkingLevel);
+				gcode.setActiveTools(originalState.tools);
 			} else {
-				garminCodeMini.setActiveTools(["read", "bash", "edit", "write"]);
+				gcode.setActiveTools(["read", "bash", "edit", "write"]);
 			}
 			ctx.ui.notify("Preset cleared, defaults restored", "info");
 			updateStatus(ctx);
@@ -329,12 +329,12 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 			activePreset = undefined;
 			if (originalState) {
 				if (originalState.model) {
-					await garminCodeMini.setModel(originalState.model);
+					await gcode.setModel(originalState.model);
 				}
-				garminCodeMini.setThinkingLevel(originalState.thinkingLevel);
-				garminCodeMini.setActiveTools(originalState.tools);
+				gcode.setThinkingLevel(originalState.thinkingLevel);
+				gcode.setActiveTools(originalState.tools);
 			} else {
-				garminCodeMini.setActiveTools(["read", "bash", "edit", "write"]);
+				gcode.setActiveTools(["read", "bash", "edit", "write"]);
 			}
 			ctx.ui.notify("Preset cleared, defaults restored", "info");
 			updateStatus(ctx);
@@ -349,7 +349,7 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 		updateStatus(ctx);
 	}
 
-	garminCodeMini.registerShortcut(Key.ctrlShift("u"), {
+	gcode.registerShortcut(Key.ctrlShift("u"), {
 		description: "Cycle presets",
 		handler: async (ctx) => {
 			await cyclePreset(ctx);
@@ -357,7 +357,7 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 	});
 
 	// Register /preset command
-	garminCodeMini.registerCommand("preset", {
+	gcode.registerCommand("preset", {
 		description: "Switch preset configuration",
 		handler: async (args, ctx) => {
 			// If preset name provided, apply directly
@@ -383,7 +383,7 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 	});
 
 	// Inject preset instructions into system prompt
-	garminCodeMini.on("before_agent_start", async (event) => {
+	gcode.on("before_agent_start", async (event) => {
 		if (activePreset?.instructions) {
 			return {
 				systemPrompt: `${event.systemPrompt}\n\n${activePreset.instructions}`,
@@ -392,12 +392,12 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 	});
 
 	// Initialize on session start
-	garminCodeMini.on("session_start", async (_event, ctx) => {
+	gcode.on("session_start", async (_event, ctx) => {
 		// Load presets from config files
 		presets = loadPresets(ctx.cwd);
 
 		// Check for --preset flag
-		const presetFlag = garminCodeMini.getFlag("preset");
+		const presetFlag = gcode.getFlag("preset");
 		if (typeof presetFlag === "string" && presetFlag) {
 			const preset = presets[presetFlag];
 			if (preset) {
@@ -428,9 +428,9 @@ export default function presetExtension(garminCodeMini: ExtensionAPI) {
 	});
 
 	// Persist preset state
-	garminCodeMini.on("turn_start", async () => {
+	gcode.on("turn_start", async () => {
 		if (activePresetName) {
-			garminCodeMini.appendEntry("preset-state", { name: activePresetName });
+			gcode.appendEntry("preset-state", { name: activePresetName });
 		}
 	});
 }

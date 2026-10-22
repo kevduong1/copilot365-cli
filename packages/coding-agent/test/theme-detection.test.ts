@@ -1,4 +1,4 @@
-import { resetCapabilitiesCache, setCapabilities } from "@garmin-code-mini/tui";
+import { resetCapabilitiesCache, setCapabilities } from "@gcode/tui";
 import { afterEach, describe, expect, it } from "vitest";
 import {
 	detectColorFgBgTheme,

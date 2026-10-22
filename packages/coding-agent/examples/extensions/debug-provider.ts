@@ -6,8 +6,8 @@
  * as expandable custom entries.
  */
 
-import { Box, Text } from "@garmin-code-mini/tui";
-import { type ExtensionAPI, keyHint } from "garmin-code-mini";
+import { Box, Text } from "@gcode/tui";
+import { type ExtensionAPI, keyHint } from "gcode";
 
 const ENTRY_TYPE = "debug-provider-events";
 const STATUS_KEY = "debug-provider";
@@ -19,12 +19,12 @@ interface ProviderDebugEntry {
 	events: unknown[];
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	let enabled = false;
 	let activeEvents: unknown[] | undefined;
 	let completedEntry: ProviderDebugEntry | undefined;
 
-	garminCodeMini.registerEntryRenderer<ProviderDebugEntry>(ENTRY_TYPE, (entry, { expanded }, theme) => {
+	gcode.registerEntryRenderer<ProviderDebugEntry>(ENTRY_TYPE, (entry, { expanded }, theme) => {
 		const data = entry.data;
 		if (!data) return new Text(theme.fg("warning", "[provider debug] Missing event data"), 0, 0);
 
@@ -44,7 +44,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		return box;
 	});
 
-	garminCodeMini.registerCommand("debug-provider", {
+	gcode.registerCommand("debug-provider", {
 		description: "Toggle capture of raw provider stream events",
 		handler: async (args, ctx) => {
 			const requestedState = args.trim().toLowerCase();
@@ -63,15 +63,15 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.on("turn_start", () => {
+	gcode.on("turn_start", () => {
 		activeEvents = enabled ? [] : undefined;
 	});
 
-	garminCodeMini.on("provider_stream_event", (event) => {
+	gcode.on("provider_stream_event", (event) => {
 		activeEvents?.push(structuredClone(event.data));
 	});
 
-	garminCodeMini.on("message_end", (event) => {
+	gcode.on("message_end", (event) => {
 		if (event.message.role !== "assistant" || !activeEvents) return;
 		completedEntry = {
 			provider: event.message.provider,
@@ -82,9 +82,9 @@ export default function (garminCodeMini: ExtensionAPI) {
 		activeEvents = undefined;
 	});
 
-	garminCodeMini.on("turn_end", () => {
+	gcode.on("turn_end", () => {
 		if (!completedEntry) return;
-		garminCodeMini.appendEntry<ProviderDebugEntry>(ENTRY_TYPE, completedEntry);
+		gcode.appendEntry<ProviderDebugEntry>(ENTRY_TYPE, completedEntry);
 		completedEntry = undefined;
 	});
 }

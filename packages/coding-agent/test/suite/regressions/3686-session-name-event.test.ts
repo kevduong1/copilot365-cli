@@ -21,12 +21,12 @@ describe("regression #3686: session name changes emit an event", () => {
 		expect(harness.eventsOfType("session_info_changed").map((event) => event.name)).toEqual(["hello world"]);
 	});
 
-	it("emits session_info_changed when an extension calls garminCodeMini.setSessionName", async () => {
+	it("emits session_info_changed when an extension calls gcode.setSessionName", async () => {
 		let api: ExtensionAPI | undefined;
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					api = garminCodeMini;
+				(gcode) => {
+					api = gcode;
 				},
 			],
 		});
@@ -43,9 +43,9 @@ describe("regression #3686: session name changes emit an event", () => {
 		const events: Array<{ name: string | undefined }> = [];
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					api = garminCodeMini;
-					garminCodeMini.on("session_info_changed", (event) => {
+				(gcode) => {
+					api = gcode;
+					gcode.on("session_info_changed", (event) => {
 						events.push({ name: event.name });
 					});
 				},

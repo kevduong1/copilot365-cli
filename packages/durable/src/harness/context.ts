@@ -1,5 +1,5 @@
-import type { AssistantMessage, Message, ToolCall, ToolResultMessage } from "@garmin-code-mini/ai";
-import type { Context } from "@garmin-code-mini/chord";
+import type { AssistantMessage, Message, ToolCall, ToolResultMessage } from "@gcode/ai";
+import type { Context } from "@gcode/chord";
 import { SystemEntry } from "../entries.ts";
 import { idFromNumber } from "../ids.ts";
 import type { SessionImpl } from "../session/session.ts";
@@ -176,9 +176,9 @@ function extendRange(previous: ContextRange, bounds: ContextBounds, added: reado
 }
 
 /**
- * The baseline among `entries`, oldest first: the system message of the first `garmin-code-mini.system` entry after the head
+ * The baseline among `entries`, oldest first: the system message of the first `gcode.system` entry after the head
  * marker, or of the transcript without one, when generation wrote it with every section and tool in effect. After a
- * head marker it always does, and omits the retained `garmin-code-mini.system` entries. Without one it does when it saw no system
+ * head marker it always does, and omits the retained `gcode.system` entries. Without one it does when it saw no system
  * message before, which holds unless an earlier entry carries one, even if an edit omits it later. An edit that targets
  * the baseline contributes other messages, or none, so none leads; a later entry does not take its place.
  */

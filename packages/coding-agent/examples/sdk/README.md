@@ -1,6 +1,6 @@
 # SDK Examples
 
-Programmatic usage of garmin-code-mini-coding-agent via `createAgentSession()` and `createAgentSessionRuntime()`.
+Programmatic usage of gcode-coding-agent via `createAgentSession()` and `createAgentSessionRuntime()`.
 
 The runtime example shows how to build a recreate function that closes over process-global fixed inputs and recreates cwd-bound services and sessions as the active session cwd changes.
 
@@ -32,14 +32,14 @@ node examples/sdk/01-minimal.ts
 ## Quick Reference
 
 ```typescript
-import { getModel } from "@garmin-code-mini/ai";
+import { getModel } from "@gcode/ai";
 import {
   createAgentSession,
   DefaultResourceLoader,
   ModelRuntime,
   SessionManager,
   SettingsManager,
-} from "garmin-code-mini";
+} from "gcode";
 
 const modelRuntime = await ModelRuntime.create();
 
@@ -107,7 +107,7 @@ await session.prompt("Hello");
 |--------|---------|-------------|
 | `modelRuntime` | Runtime using `agentDir/auth.json` and `models.json` | Canonical model and authentication runtime |
 | `cwd` | `process.cwd()` | Working directory |
-| `agentDir` | `~/.garmin-code-mini/agent` | Config directory |
+| `agentDir` | `~/.gcode/agent` | Config directory |
 | `model` | From settings/first available | Model to use |
 | `thinkingLevel` | From settings/"off" | off, low, medium, high |
 | `tools` | `["read", "bash", "edit", "write"]` built-ins | Allowlist tool names across built-in, extension, and custom tools |

@@ -20,7 +20,7 @@ The [settings schema](../schemas/settings.schema.json) is shipped locally for ed
 | `showCacheMissNotices` | boolean | `false` | Show notices for significant cache misses, successful cache warming, compaction usage, and provider recovery. |
 | `cacheWarming` | `"off" \| "streaming" \| "idle"` | `"streaming"` | Keep eligible provider prompt caches warm during active runs or, with `"idle"`, between runs. Global setting only. |
 
-Cache warming runs only when the model declares a cache lifetime and garmin-code-mini estimates at least $0.05 in avoided cache-miss cost. Refresh usage counts toward session totals but does not enter model context. `/session` shows the next decision; extensions can override it with `cache_warming_decision`. Local models without cache lifetime metadata do not schedule cache warming.
+Cache warming runs only when the model declares a cache lifetime and gcode estimates at least $0.05 in avoided cache-miss cost. Refresh usage counts toward session totals but does not enter model context. `/session` shows the next decision; extensions can override it with `cache_warming_decision`. Local models without cache lifetime metadata do not schedule cache warming.
 
 See [Choose a Model](models.md) for model selection and thinking controls.
 
@@ -57,13 +57,13 @@ This replaces `bash` with `powershell` and enables `grep`: `["-bash", "+powershe
 
 `/reload` enables tools newly added to `defaultTools`. It does not disable tools removed from it or re-enable unchanged tools you turned off. `--tools` with plain names, `--no-tools`, and `--no-builtin-tools` override `defaultTools`, also on reload.
 
-CLI tool options override this setting for one invocation. `--tools` with only `+name` and `-name` entries changes the resolved `defaultTools` selection instead, for example `garmin-code-mini --tools +codemode`. On `/reload`, these entries apply to the reloaded setting too, so a tool removed with `-name` stays removed. See [Command Line](cli.md#tools).
+CLI tool options override this setting for one invocation. `--tools` with only `+name` and `-name` entries changes the resolved `defaultTools` selection instead, for example `gcode --tools +codemode`. On `/reload`, these entries apply to the reloaded setting too, so a tool removed with `-name` stays removed. See [Command Line](cli.md#tools).
 
 ## Sessions and context
 
 | Setting | Type | Default | Description |
 |---|---|---|---|
-| `sessionDir` | string | Agent session directory | Session storage directory. Relative paths resolve from the working directory. `GARMIN_CODE_MINI_SESSION_DIR` and `--session-dir` override this setting. |
+| `sessionDir` | string | Agent session directory | Session storage directory. Relative paths resolve from the working directory. `GCODE_SESSION_DIR` and `--session-dir` override this setting. |
 
 ### Compaction
 
@@ -92,7 +92,7 @@ See [Compaction Reference](compaction.md) for trigger, summarization, and valida
 | Setting | Type | Default | Description |
 |---|---|---|---|
 | `theme` | string | `"system"` | Built-in or custom theme name. `system` derives colors from the terminal theme. |
-| `quietStartup` | boolean \| `"header"` | `false` | `true` and `"header"` hide the loaded-resource listing and model scope. The Garmin startup header remains visible. |
+| `quietStartup` | boolean \| `"header"` | `false` | `true` and `"header"` hide the loaded-resource listing and model scope. The Gcode startup header remains visible. |
 | `tuiMode` | `"regular" \| "fullscreen"` | `"fullscreen"` | Interactive terminal UI mode. |
 | `fullscreenExitOutput` | `"transcript" \| "resume-hint"` | `"transcript"` | Output printed when fullscreen mode exits. |
 | `fullscreenScrollbar` | `"auto" \| "always" \| "hidden"` | `"auto"` | Fullscreen transcript scrollbar behavior. |
@@ -101,7 +101,7 @@ See [Compaction Reference](compaction.md) for trigger, summarization, and valida
 | `editorPaddingX` | number | `0` | Horizontal editor padding from 0 to 3 cells. |
 | `outputPad` | `0 \| 1` | `1` | Horizontal transcript padding for messages, tool output, `!` command output, and summary blocks. |
 | `autocompleteMaxVisible` | number | `5` | Visible autocomplete entries, from 3 to 20. |
-| `showHardwareCursor` | boolean | `false` | Use the terminal cursor instead of garmin-code-mini's drawn cursor. garmin-code-mini still positions it for input methods. |
+| `showHardwareCursor` | boolean | `false` | Use the terminal cursor instead of gcode's drawn cursor. gcode still positions it for input methods. |
 | `terminal.showImages` | boolean | `true` | Display inline images when supported. |
 | `terminal.imageWidthCells` | number | `60` | Preferred inline image width in terminal cells. |
 | `terminal.clearOnShrink` | boolean | `false` | Clear empty rows when rendered content shrinks. |
@@ -121,7 +121,7 @@ See [Themes](themes.md) and [Terminal Setup](terminal-setup.md) for format and p
 | Setting | Type | Default | Description |
 |---|---|---|---|
 | `transport` | `"auto" \| "sse" \| "websocket" \| "websocket-cached"` | `"auto"` | Preferred transport for AI providers that support multiple transports. |
-| `httpProxy` | string | None | Proxy URL applied as `HTTP_PROXY` and `HTTPS_PROXY` for garmin-code-mini-managed HTTP clients. **Can only be set in agent-directory settings.** |
+| `httpProxy` | string | None | Proxy URL applied as `HTTP_PROXY` and `HTTPS_PROXY` for gcode-managed HTTP clients. **Can only be set in agent-directory settings.** |
 | `httpIdleTimeoutMs` | number | `300000` | HTTP header and body idle timeout in milliseconds. Set to `0` to disable. |
 | `websocketConnectTimeoutMs` | number | `15000` | WebSocket connection timeout in milliseconds. Set to `0` to disable. |
 | `retry.enabled` | boolean | `true` | Enable automatic agent-level retry for transient failures. |
@@ -132,7 +132,7 @@ See [Themes](themes.md) and [Terminal Setup](terminal-setup.md) for format and p
 | `retry.provider.maxRetries` | number | `0` | Provider-level retry attempts. |
 | `retry.provider.maxRetryDelayMs` | number | `60000` | Maximum server-requested delay in milliseconds. Set to `0` to disable the limit. |
 
-Keep `retry.provider.maxRetries` at `0` unless provider-level retries are required. Provider retries can delay garmin-code-mini from handling quota and usage-limit errors itself.
+Keep `retry.provider.maxRetries` at `0` unless provider-level retries are required. Provider retries can delay gcode from handling quota and usage-limit errors itself.
 
 ## Shell
 
@@ -142,22 +142,22 @@ Keep `retry.provider.maxRetries` at `0` unless provider-level retries are requir
 | `shellCommandPrefix` | string | None | Prefix prepended to every shell command. |
 | `npmCommand` | `string[]` | `npm` | Command and arguments used for npm package lookup and installation. |
 
-See [Shell aliases](shell-aliases.md) for shell setup and [garmin-code-mini Packages](packages.md) for package-manager behavior.
+See [Shell aliases](shell-aliases.md) for shell setup and [gcode Packages](packages.md) for package-manager behavior.
 
 ## Resources
 
-Resource paths in user settings resolve from the agent directory. Paths in project settings resolve from the project `.garmin-code-mini` directory. Absolute paths and `~` are supported.
+Resource paths in user settings resolve from the agent directory. Paths in project settings resolve from the project `.gcode` directory. Absolute paths and `~` are supported.
 
 | Setting | Type | Default | Description |
 |---|---|---|---|
-| `packages` | array | `[]` | Local extension package paths. See [garmin-code-mini Packages](packages.md). |
+| `packages` | array | `[]` | Local extension package paths. See [gcode Packages](packages.md). |
 | `extensions` | `string[]` | `[]` | Extension files or directories. |
 | `skills` | `string[]` | `[]` | Skill files or directories. |
 | `prompts` | `string[]` | `[]` | Prompt-template files or directories. |
 | `themes` | `string[]` | `[]` | Theme files or directories. |
 | `enableSkillCommands` | boolean | `true` | Register skills as `/skill:name` commands. |
 
-Resource arrays support glob exclusions with `!pattern`, exact inclusion with `+path`, and exact exclusion with `-path`. garmin-code-mini loads resources listed in both user-level and project settings.
+Resource arrays support glob exclusions with `!pattern`, exact inclusion with `+path`, and exact exclusion with `-path`. gcode loads resources listed in both user-level and project settings.
 
 The built-in extensions are `builtin:codemode` and `builtin:tool-search`. Local extensions can be loaded explicitly with `-e <path>`.
 

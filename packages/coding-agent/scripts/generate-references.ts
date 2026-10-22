@@ -3,8 +3,8 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { CompatSchemasByApi } from "@garmin-code-mini/ai/providers/compat-schema";
-import { ModelInputLimitsSchema } from "@garmin-code-mini/ai/providers/model-schema";
+import { CompatSchemasByApi } from "@gcode/ai/providers/compat-schema";
+import { ModelInputLimitsSchema } from "@gcode/ai/providers/model-schema";
 import type { TSchema } from "typebox";
 import { ModelsJsonSchemas } from "../src/core/model-config.ts";
 

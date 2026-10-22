@@ -1,4 +1,4 @@
-import { resetCapabilitiesCache, setCapabilities } from "@garmin-code-mini/tui";
+import { resetCapabilitiesCache, setCapabilities } from "@gcode/tui";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getMarkdownTheme, highlightCode, initTheme, theme } from "../src/modes/interactive/theme/theme.ts";
 import {

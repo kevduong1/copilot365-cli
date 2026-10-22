@@ -20,26 +20,26 @@ export interface CodemodeExtensionOptions {
 	models?: boolean;
 }
 
-function readMode(garminCodeMini: ExtensionAPI): CodemodeMode {
-	return garminCodeMini.getSettings().codemode?.mode === "only" ? "only" : SETTINGS_DEFAULTS.codemode.mode;
+function readMode(gcode: ExtensionAPI): CodemodeMode {
+	return gcode.getSettings().codemode?.mode === "only" ? "only" : SETTINGS_DEFAULTS.codemode.mode;
 }
 
-function readInlineBudget(garminCodeMini: ExtensionAPI): number | undefined {
-	const budget = garminCodeMini.getSettings().codemode?.inlineBudget;
+function readInlineBudget(gcode: ExtensionAPI): number | undefined {
+	const budget = gcode.getSettings().codemode?.inlineBudget;
 	return typeof budget === "number" && Number.isFinite(budget) && budget >= 0 ? budget : undefined;
 }
 
 export function createCodemodeExtension(options: CodemodeExtensionOptions = {}): ExtensionFactory {
-	return (garminCodeMini) => {
-		garminCodeMini.registerTool({
+	return (gcode) => {
+		gcode.registerTool({
 			...createCodemodeToolDefinition({
-				appendEntry: (customType, data) => garminCodeMini.appendEntry(customType, data),
+				appendEntry: (customType, data) => gcode.appendEntry(customType, data),
 				models: options.models ?? true,
-				getToolNamespace: (name) => garminCodeMini.getAllTools().find((tool) => tool.name === name)?.namespace,
+				getToolNamespace: (name) => gcode.getAllTools().find((tool) => tool.name === name)?.namespace,
 				getToolGuidelines: () =>
-					new Map(garminCodeMini.getAllTools().map((tool) => [tool.name, tool.promptGuidelines ?? []] as const)),
-				getMode: () => options.mode ?? readMode(garminCodeMini),
-				getInlineBudget: () => options.inlineBudget ?? readInlineBudget(garminCodeMini),
+					new Map(gcode.getAllTools().map((tool) => [tool.name, tool.promptGuidelines ?? []] as const)),
+				getMode: () => options.mode ?? readMode(gcode),
+				getInlineBudget: () => options.inlineBudget ?? readInlineBudget(gcode),
 			}),
 			defaultActive: false,
 		});

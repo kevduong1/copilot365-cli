@@ -1,5 +1,5 @@
-import type { TSchema } from "@garmin-code-mini/ai";
-import type { JsonValue } from "@garmin-code-mini/chord";
+import type { TSchema } from "@gcode/ai";
+import type { JsonValue } from "@gcode/chord";
 import type { AnyTask, Extension, HookRegistration, HooksOf, PromptSection, ToolRegistration, Wrap } from "./types.ts";
 
 /** Identity function that types an extension. */

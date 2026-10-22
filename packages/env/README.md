@@ -1,18 +1,18 @@
-# @garmin-code-mini/env
+# @gcode/env
 
-Remote execution environments for [garmin-code-mini Durable](../durable): an agent's tools run on another machine, usually over SSH,
+Remote execution environments for [gcode Durable](../durable): an agent's tools run on another machine, usually over SSH,
 while the Durable worker, its storage and credentials stay local.
 
-- `garmin-code-mini-env` (`daemon/`): a small Rust program that runs on the remote machine. It speaks a framed protocol on stdin and
+- `gcode-env` (`daemon/`): a small Rust program that runs on the remote machine. It speaks a framed protocol on stdin and
   stdout ([docs/protocol.md](docs/protocol.md)) and performs file operations and commands there.
 - `RemoteExecutionEnv`: a Durable `ExecutionEnv` that talks to the daemon through a `Connection`. Its results match
   `NodeExecutionEnv` running on the remote machine; only error messages may differ
   ([docs/semantics.md](docs/semantics.md)).
 
 ```ts
-import { acceptHostKey, connectSsh, RemoteExecutionEnv, scanHostKey, sshConnection } from "@garmin-code-mini/env";
+import { acceptHostKey, connectSsh, RemoteExecutionEnv, scanHostKey, sshConnection } from "@gcode/env";
 
-const target = { host: "gpu-box", knownHostsFile: "/data/ssh/known_hosts", hostKeyAlias: "garmin-code-mini-env-gpu" };
+const target = { host: "gpu-box", knownHostsFile: "/data/ssh/known_hosts", hostKeyAlias: "gcode-env-gpu" };
 // Once: show the host's key fingerprint to the owner, who compares it out of band and accepts it.
 const { lines, fingerprints } = await scanHostKey(target);
 await acceptHostKey(target, lines);
@@ -20,12 +20,12 @@ await acceptHostKey(target, lines);
 // Detects the remote system, deploys the daemon if missing (named by its SHA-256 and verified before every start),
 // and returns a connection that starts it over ssh.
 const { connection } = await connectSsh(target);
-const env = new RemoteExecutionEnv({ connection, id: "garmin-code-mini-env:gpu", cwd: "/home/me/project" });
+const env = new RemoteExecutionEnv({ connection, id: "gcode-env:gpu", cwd: "/home/me/project" });
 
 // Or lazily: nothing happens until the first operation, which detects, deploys and connects. A failure (no network,
 // untrusted host key) is that operation's error, and the next operation tries again.
 const lazy = sshConnection(target);
-const lazyEnv = new RemoteExecutionEnv({ connection: lazy.connection, id: "garmin-code-mini-env:gpu", cwd: "/home/me/project" });
+const lazyEnv = new RemoteExecutionEnv({ connection: lazy.connection, id: "gcode-env:gpu", cwd: "/home/me/project" });
 ```
 
 The package ships the daemon for every supported remote system in `bin/`. `ssh` runs with `BatchMode`, strict host-key
@@ -60,7 +60,7 @@ run through Git Bash as `NodeExecutionEnv` runs them there; argv commands run di
 
 ## Development
 
-`npm run build:daemon` builds the daemon with Cargo; the tests talk to `daemon/target/debug/garmin-code-mini-env` over a pipe, or to
-the binary named by `GARMIN_CODE_MINI_ENV_DAEMON` (CI tests the release builds this way). They run Durable's env conformance suite
+`npm run build:daemon` builds the daemon with Cargo; the tests talk to `daemon/target/debug/gcode-env` over a pipe, or to
+the binary named by `GCODE_ENV_DAEMON` (CI tests the release builds this way). They run Durable's env conformance suite
 against `RemoteExecutionEnv` and compare random operation sequences and Durable's tools against `NodeExecutionEnv` on
-the same machine. `test/ssh-external.test.ts` runs the suite over a real SSH server when `GARMIN_CODE_MINI_ENV_SSH_HOST` is set.
+the same machine. `test/ssh-external.test.ts` runs the suite over a real SSH server when `GCODE_ENV_SSH_HOST` is set.

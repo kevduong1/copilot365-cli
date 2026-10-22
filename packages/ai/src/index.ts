@@ -3,9 +3,9 @@ export { Type } from "typebox";
 
 // Core only, side-effect free: no generated catalogs, no provider factories,
 // no api-registry, no OAuth implementations, no compat. Provider factories
-// live under "@garmin-code-mini/ai/providers/*", API implementations under
-// "@garmin-code-mini/ai/api/*", the old global API under
-// "@garmin-code-mini/ai/compat".
+// live under "@gcode/ai/providers/*", API implementations under
+// "@gcode/ai/api/*", the old global API under
+// "@gcode/ai/compat".
 export * from "./api/lazy.ts";
 export type { OpenAICompletionsOptions } from "./api/openai-completions.ts";
 export * from "./auth/context.ts";
@@ -37,4 +37,4 @@ export * from "./utils/transcript.ts";
 export * from "./utils/typebox-helpers.ts";
 export { uuidv7 } from "./utils/uuid.ts";
 export * from "./utils/validation.ts";
-export { GARMIN_CODE_MINI_AI_VERSION } from "./utils/version.ts";
+export { GCODE_AI_VERSION } from "./utils/version.ts";

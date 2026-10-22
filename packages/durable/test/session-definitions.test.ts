@@ -1,4 +1,4 @@
-import type { Draft } from "@garmin-code-mini/chord";
+import type { Draft } from "@gcode/chord";
 import {
 	type ConversationId,
 	createSession,
@@ -15,7 +15,7 @@ import {
 	type TaskId,
 	type Tx,
 	type TypedEntry,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, expectTypeOf, it } from "vitest";
 import { idFromNumber } from "../src/ids.ts";
 import { context } from "./session-support.ts";

@@ -5,8 +5,8 @@
  * Multiple questions: tab bar navigation between questions
  */
 
-import { Editor, type EditorTheme, Key, matchesKey, Text, visibleWidth, wrapTextWithAnsi } from "@garmin-code-mini/tui";
-import type { ExtensionAPI } from "garmin-code-mini";
+import { Editor, type EditorTheme, Key, matchesKey, Text, visibleWidth, wrapTextWithAnsi } from "@gcode/tui";
+import type { ExtensionAPI } from "gcode";
 import { Type } from "typebox";
 
 // Types
@@ -73,8 +73,8 @@ function errorResult(
 	};
 }
 
-export default function questionnaire(garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerTool({
+export default function questionnaire(gcode: ExtensionAPI) {
+	gcode.registerTool({
 		name: "questionnaire",
 		label: "Questionnaire",
 		description:

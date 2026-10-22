@@ -637,7 +637,7 @@
     },
     "httpProxy": {
       "type": "string",
-      "description": "Proxy URL applied as HTTP_PROXY and HTTPS_PROXY for garmin-code-mini-managed HTTP clients."
+      "description": "Proxy URL applied as HTTP_PROXY and HTTPS_PROXY for gcode-managed HTTP clients."
     },
     "httpIdleTimeoutMs": {
       "anyOf": [

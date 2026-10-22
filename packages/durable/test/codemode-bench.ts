@@ -8,10 +8,10 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT as context } from "@garmin-code-mini/chord/context";
-import { CodemodeSandbox } from "@garmin-code-mini/codemode";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT as context } from "@gcode/chord/context";
+import { CodemodeSandbox } from "@gcode/codemode";
 import { Type } from "typebox";
 import { createCodemodeTool } from "../src/codemode/codemode.ts";
 import { createRegistry, defineExtension, defineTool, Harness } from "../src/index.ts";
@@ -42,7 +42,7 @@ const plain = defineTool({
 });
 
 async function run(mode: "codemode" | "plain", shape: Shape, n: number): Promise<{ ms: number; commits: number }> {
-	const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-codemode-bench-"));
+	const directory = await mkdtemp(join(tmpdir(), "gcode-codemode-bench-"));
 	try {
 		const faux = fauxProvider();
 		const models = createModels();

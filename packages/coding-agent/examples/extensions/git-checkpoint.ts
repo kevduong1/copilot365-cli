@@ -5,28 +5,28 @@
  * When forking, offers to restore code to that point in history.
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	const checkpoints = new Map<string, string>();
 	let currentEntryId: string | undefined;
 
 	// Track the current entry ID when user messages are saved
-	garminCodeMini.on("tool_result", async (_event, ctx) => {
+	gcode.on("tool_result", async (_event, ctx) => {
 		const leaf = ctx.sessionManager.getLeafEntry();
 		if (leaf) currentEntryId = leaf.id;
 	});
 
-	garminCodeMini.on("turn_start", async () => {
+	gcode.on("turn_start", async () => {
 		// Create a git stash entry before LLM makes changes
-		const { stdout } = await garminCodeMini.exec("git", ["stash", "create"]);
+		const { stdout } = await gcode.exec("git", ["stash", "create"]);
 		const ref = stdout.trim();
 		if (ref && currentEntryId) {
 			checkpoints.set(currentEntryId, ref);
 		}
 	});
 
-	garminCodeMini.on("session_before_fork", async (event, ctx) => {
+	gcode.on("session_before_fork", async (event, ctx) => {
 		const ref = checkpoints.get(event.entryId);
 		if (!ref) return;
 
@@ -41,12 +41,12 @@ export default function (garminCodeMini: ExtensionAPI) {
 		]);
 
 		if (choice?.startsWith("Yes")) {
-			await garminCodeMini.exec("git", ["stash", "apply", ref]);
+			await gcode.exec("git", ["stash", "apply", ref]);
 			ctx.ui.notify("Code restored to checkpoint", "info");
 		}
 	});
 
-	garminCodeMini.on("agent_settled", async () => {
+	gcode.on("agent_settled", async () => {
 		// Clear checkpoints after the full agent run completes
 		checkpoints.clear();
 	});

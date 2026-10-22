@@ -1,7 +1,7 @@
-import { uuidv7 } from "@garmin-code-mini/ai";
-import { Container, Markdown, matchesKey, Text } from "@garmin-code-mini/tui";
-import type { ExtensionAPI, ExtensionCommandContext } from "garmin-code-mini";
-import { DynamicBorder, getMarkdownTheme } from "garmin-code-mini";
+import { uuidv7 } from "@gcode/ai";
+import { Container, Markdown, matchesKey, Text } from "@gcode/tui";
+import type { ExtensionAPI, ExtensionCommandContext } from "gcode";
+import { DynamicBorder, getMarkdownTheme } from "gcode";
 
 type ContentBlock = {
 	type?: string;
@@ -142,8 +142,8 @@ const showSummaryUi = async (summary: string, ctx: ExtensionCommandContext) => {
 	});
 };
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerCommand("summarize", {
+export default function (gcode: ExtensionAPI) {
+	gcode.registerCommand("summarize", {
 		description: "Summarize the current conversation in a custom UI",
 		handler: async (_args, ctx) => {
 			const branch = ctx.sessionManager.getBranch();

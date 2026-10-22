@@ -1,7 +1,7 @@
-import { type Context, copyJson, type Draft, type JsonValue } from "@garmin-code-mini/chord";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import { type Change, type Op, type Prepared, type Tracker, track } from "@garmin-code-mini/chord/delta";
-import type { TelemetryCarrier } from "@garmin-code-mini/telemetry";
+import { type Context, copyJson, type Draft, type JsonValue } from "@gcode/chord";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import { type Change, type Op, type Prepared, type Tracker, track } from "@gcode/chord/delta";
+import type { TelemetryCarrier } from "@gcode/telemetry";
 import {
 	type AnyDocDefinition,
 	type AnyDocToken,

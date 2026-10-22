@@ -1,6 +1,6 @@
-import { Agent } from "@garmin-code-mini/agent-core";
-import { createModels } from "@garmin-code-mini/ai";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
+import { Agent } from "@gcode/agent-core";
+import { createModels } from "@gcode/ai";
+import { localProvider } from "@gcode/ai/providers/local";
 
 const models = createModels();
 models.setProvider(localProvider());

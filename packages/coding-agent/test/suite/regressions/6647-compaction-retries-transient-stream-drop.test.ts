@@ -1,5 +1,5 @@
-import type { StreamFn } from "@garmin-code-mini/agent-core";
-import { type AssistantMessage, createAssistantMessageEventStream, fauxAssistantMessage } from "@garmin-code-mini/ai";
+import type { StreamFn } from "@gcode/agent-core";
+import { type AssistantMessage, createAssistantMessageEventStream, fauxAssistantMessage } from "@gcode/ai";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, type Harness } from "../harness.ts";
 

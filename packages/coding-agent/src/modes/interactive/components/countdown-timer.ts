@@ -2,7 +2,7 @@
  * Reusable countdown timer for dialog components.
  */
 
-import type { TUI } from "@garmin-code-mini/tui";
+import type { TUI } from "@gcode/tui";
 
 export class CountdownTimer {
 	private intervalId: ReturnType<typeof setInterval> | undefined;

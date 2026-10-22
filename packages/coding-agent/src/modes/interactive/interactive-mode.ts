@@ -7,8 +7,8 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentMessage, ThinkingLevel } from "@garmin-code-mini/agent-core";
-import type { AssistantMessage, ImageContent, Message, Model, Usage } from "@garmin-code-mini/ai/compat";
+import type { AgentMessage, ThinkingLevel } from "@gcode/agent-core";
+import type { AssistantMessage, ImageContent, Message, Model, Usage } from "@gcode/ai/compat";
 import type {
 	AutocompleteItem,
 	AutocompleteProvider,
@@ -20,8 +20,8 @@ import type {
 	OverlayOptions,
 	SlashCommand,
 	TuiMainScreenRenderState,
-} from "@garmin-code-mini/tui";
-import * as TuiLayouts from "@garmin-code-mini/tui";
+} from "@gcode/tui";
+import * as TuiLayouts from "@gcode/tui";
 import {
 	CombinedAutocompleteProvider,
 	type Component,
@@ -39,7 +39,7 @@ import {
 	TuiAltScreen,
 	TuiMainScreen,
 	visibleWidth,
-} from "@garmin-code-mini/tui";
+} from "@gcode/tui";
 import chalk from "chalk";
 import { spawn } from "child_process";
 import {
@@ -212,6 +212,18 @@ class ExpandableText extends ThemedText implements Expandable {
 	}
 }
 
+class StartupHeader extends ExpandableText {
+	private renderWidth: number | undefined;
+
+	override render(width: number): string[] {
+		if (this.renderWidth !== width) {
+			this.renderWidth = width;
+			this.invalidate();
+		}
+		return super.render(width);
+	}
+}
+
 type ExtensionDialogComponent = Component & { dispose?(): void };
 
 type CompactionQueuedMessage = {
@@ -311,7 +323,7 @@ export interface InteractiveModeOptions {
 	startupDiagnostics?: AgentSessionRuntimeDiagnostic[];
 	/** Warning message if session model couldn't be restored */
 	modelFallbackMessage?: string;
-	/** Cwd to trust after reload if it gained a .garmin-code-mini directory during this implicitly trusted session. */
+	/** Cwd to trust after reload if it gained a .gcode directory during this implicitly trusted session. */
 	autoTrustOnReloadCwd?: string;
 	/** Initial message to send on startup (can include @file content) */
 	initialMessage?: string;
@@ -915,10 +927,21 @@ export class InteractiveMode {
 					"dim",
 					`Press ${keyText("app.tools.expand")} to show full startup help${showDetails ? " and loaded resources" : ""}.`,
 				);
-			const wordmark = () =>
-				`${theme.fg("accent", theme.bold("GARMIN"))}\n${theme.fg("muted", `CODE MINI  v${this.version}`)}`;
+			const wordmark = () => {
+				const logo =
+					this.session.messages.length === 0 && this.ui.terminal.columns >= 50
+						? [
+								"  ____    _    ____  __  __ ___ _   _ ",
+								" / ___|  / \\  |  _ \\|  \\/  |_ _| \\ | |",
+								"| |  _  / _ \\ | |_) | |\\/| || ||  \\| |",
+								"| |_| |/ ___ \\|  _ <| |  | || || |\\  |",
+								" \\____/_/   \\_\\_| \\_\\_|  |_|___|_| \\_|",
+							].join("\n")
+						: "GARMIN";
+				return `${theme.fg("accent", theme.bold(logo))}\n${theme.fg("muted", `gcode · v${this.version}`)}`;
+			};
 			const onboarding = () => theme.fg("dim", "Local coding assistant. Describe a task to begin.");
-			const header = new ExpandableText(
+			const header = new StartupHeader(
 				() => `${wordmark()}\n${compactInstructions()}\n${compactOnboarding()}\n\n${onboarding()}`,
 				() => `${wordmark()}\n${expandedInstructions()}\n\n${onboarding()}`,
 				this.getStartupExpansionState(),
@@ -1121,7 +1144,7 @@ export class InteractiveMode {
 		}
 
 		if (extendedKeysFormat === "xterm") {
-			return "tmux extended-keys-format is xterm. garmin-code-mini works best with csi-u. Add `set -g extended-keys-format csi-u` to ~/.tmux.conf and restart tmux.";
+			return "tmux extended-keys-format is xterm. gcode works best with csi-u. Add `set -g extended-keys-format csi-u` to ~/.tmux.conf and restart tmux.";
 		}
 
 		return undefined;
@@ -1968,6 +1991,7 @@ export class InteractiveMode {
 	}
 
 	private renderCurrentSessionState(): void {
+		this.builtInHeader?.invalidate();
 		this.loadedResourcesContainer.clear();
 		this.chatContainer.clear();
 		this.pendingMessagesContainer.clear();
@@ -2887,7 +2911,7 @@ export class InteractiveMode {
 			if (image) {
 				const tmpDir = os.tmpdir();
 				const ext = extensionForImageMimeType(image.mimeType) ?? "png";
-				const fileName = `garmin-code-mini-clipboard-${crypto.randomUUID()}.${ext}`;
+				const fileName = `gcode-clipboard-${crypto.randomUUID()}.${ext}`;
 				const filePath = path.join(tmpDir, fileName);
 				fs.writeFileSync(filePath, Buffer.from(image.bytes));
 
@@ -3929,7 +3953,7 @@ export class InteractiveMode {
 				() =>
 					theme.fg(
 						"warning",
-						`This project is not trusted. Project ${CONFIG_DIR_NAME} resources and packages are ignored. Use /trust to save a trust decision, then restart garmin-code-mini.`,
+						`This project is not trusted. Project ${CONFIG_DIR_NAME} resources and packages are ignored. Use /trust to save a trust decision, then restart gcode.`,
 					),
 				1,
 				0,
@@ -4044,7 +4068,7 @@ export class InteractiveMode {
 	 * paste / Kitty / modifyOtherKeys sequences.
 	 */
 	private uncaughtCrash(error: Error): never {
-		// A dead terminal is not a garmin-code-mini crash. Do not try to restore it or record it.
+		// A dead terminal is not a gcode crash. Do not try to restore it or record it.
 		if (isDeadTerminalError(error)) {
 			this.emergencyTerminalExit();
 		}
@@ -4116,7 +4140,7 @@ export class InteractiveMode {
 
 		// Restore the terminal before the process dies on any uncaught throw.
 		// Without this, an unhandled exception from extension code (or anywhere
-		// in garmin-code-mini) leaves the terminal in raw mode with no cursor.
+		// in gcode) leaves the terminal in raw mode with no cursor.
 		const uncaughtExceptionHandler = (error: Error) => this.uncaughtCrash(error);
 		process.prependListener("uncaughtException", uncaughtExceptionHandler);
 		this.signalCleanupHandlers.push(() => process.off("uncaughtException", uncaughtExceptionHandler));

@@ -7,7 +7,7 @@
  * - Registers additional tools at runtime via /add-echo-tool <name>
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 import { Type } from "typebox";
 
 const ECHO_PARAMS = Type.Object({
@@ -21,7 +21,7 @@ function normalizeToolName(input: string): string | undefined {
 	return trimmed;
 }
 
-export default function dynamicToolsExtension(garminCodeMini: ExtensionAPI) {
+export default function dynamicToolsExtension(gcode: ExtensionAPI) {
 	const registeredToolNames = new Set<string>();
 
 	const registerEchoTool = (name: string, label: string, prefix: string): boolean => {
@@ -30,7 +30,7 @@ export default function dynamicToolsExtension(garminCodeMini: ExtensionAPI) {
 		}
 
 		registeredToolNames.add(name);
-		garminCodeMini.registerTool({
+		gcode.registerTool({
 			name,
 			label,
 			description: `Echo a message with prefix: ${prefix}`,
@@ -48,12 +48,12 @@ export default function dynamicToolsExtension(garminCodeMini: ExtensionAPI) {
 		return true;
 	};
 
-	garminCodeMini.on("session_start", (_event, ctx) => {
+	gcode.on("session_start", (_event, ctx) => {
 		registerEchoTool("echo_session", "Echo Session", "[session] ");
 		ctx.ui.notify("Registered dynamic tool: echo_session", "info");
 	});
 
-	garminCodeMini.registerCommand("add-echo-tool", {
+	gcode.registerCommand("add-echo-tool", {
 		description: "Register a new echo tool dynamically: /add-echo-tool <tool_name>",
 		handler: async (args, ctx) => {
 			const toolName = normalizeToolName(args);

@@ -1,9 +1,9 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createModels, fauxAssistantMessage, fauxText, fauxToolCall, Type } from "@garmin-code-mini/ai";
-import type { Context, JsonValue } from "@garmin-code-mini/chord";
-import { withAbortSignal } from "@garmin-code-mini/chord/context";
+import { createModels, fauxAssistantMessage, fauxText, fauxToolCall, Type } from "@gcode/ai";
+import type { Context, JsonValue } from "@gcode/chord";
+import { withAbortSignal } from "@gcode/chord/context";
 import {
 	type Conversation,
 	type ConversationId,
@@ -16,7 +16,7 @@ import {
 	MemoryStorage,
 	type Storage,
 	type TaskId,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import type { SessionImpl } from "../src/session/session.ts";
 import { openNodeSqliteStorage } from "../src/storage/sqlite/node.ts";
@@ -197,7 +197,7 @@ describe("Harness close", () => {
 	});
 
 	it("lets a new Harness open the same Storage once close resolved: no old invocation code runs", async () => {
-		const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-lifecycle-"));
+		const directory = await mkdtemp(join(tmpdir(), "gcode-durable-lifecycle-"));
 		try {
 			const path = join(directory, "session.sqlite");
 			const log: string[] = [];

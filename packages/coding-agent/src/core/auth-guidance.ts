@@ -1,7 +1,7 @@
 const UNKNOWN_PROVIDER = "unknown";
 
 export function getProviderLoginHelp(): string {
-	return "Start a local OpenAI-compatible server. Set GARMIN_CODE_MINI_BASE_URL and GARMIN_CODE_MINI_MODEL to select its endpoint and model.";
+	return "Start a local OpenAI-compatible server. Set GCODE_BASE_URL and GCODE_MODEL to select its endpoint and model.";
 }
 
 export function formatNoModelsAvailableMessage(): string {
@@ -14,5 +14,5 @@ export function formatNoModelSelectedMessage(): string {
 
 export function formatNoApiKeyFoundMessage(provider: string): string {
 	const providerDisplay = provider === UNKNOWN_PROVIDER ? "the selected model" : provider;
-	return `Could not configure ${providerDisplay}.\n\n${getProviderLoginHelp()} If your local server requires a key, set GARMIN_CODE_MINI_API_KEY.`;
+	return `Could not configure ${providerDisplay}.\n\n${getProviderLoginHelp()} If your local server requires a key, set GCODE_API_KEY.`;
 }

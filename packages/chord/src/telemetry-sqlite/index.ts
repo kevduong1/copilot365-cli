@@ -11,7 +11,7 @@ import {
 	type TelemetryPropagation,
 	type TelemetrySpan,
 	type TelemetryStore,
-} from "@garmin-code-mini/telemetry";
+} from "@gcode/telemetry";
 import { applySqliteMigrations, type SqliteDatabase, type SqliteValue } from "../sqlite/index.ts";
 import { findMetrics, findTraces, getTrace } from "./store.ts";
 
@@ -49,8 +49,8 @@ type Metric = {
 	max: number;
 };
 const identities = new WeakMap<TelemetryContext, Identity>();
-const carrierKey = "garmin-code-mini-sqlite-span";
-const traceKey = "garmin-code-mini-sqlite-trace";
+const carrierKey = "gcode-sqlite-span";
+const traceKey = "gcode-sqlite-trace";
 const intervalMs = 10_000;
 
 function copyAttributes(attributes?: SpanAttributes): SpanAttributes {

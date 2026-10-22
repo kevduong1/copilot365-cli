@@ -5,12 +5,12 @@
  * Useful for preventing accidental modifications to sensitive files.
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	const protectedPaths = [".env", ".git/", "node_modules/"];
 
-	garminCodeMini.on("tool_call", async (event, ctx) => {
+	gcode.on("tool_call", async (event, ctx) => {
 		if (event.toolName !== "write" && event.toolName !== "edit") {
 			return undefined;
 		}

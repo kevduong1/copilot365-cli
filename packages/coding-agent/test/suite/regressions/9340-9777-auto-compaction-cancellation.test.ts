@@ -1,4 +1,4 @@
-import { type AssistantMessage, fauxAssistantMessage } from "@garmin-code-mini/ai";
+import { type AssistantMessage, fauxAssistantMessage } from "@gcode/ai";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createHarness, type Harness } from "../harness.ts";
 
@@ -52,8 +52,8 @@ describe("automatic compaction cancellation regressions", () => {
 				retry: { enabled: false },
 			},
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_before_compact", () => ({ cancel: true }));
+				(gcode) => {
+					gcode.on("session_before_compact", () => ({ cancel: true }));
 				},
 			],
 		});
@@ -143,8 +143,8 @@ describe("automatic compaction cancellation regressions", () => {
 		const harness = await createHarness({
 			settings: { compaction: { keepRecentTokens: 1 } },
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_before_compact", () => ({ cancel: true }));
+				(gcode) => {
+					gcode.on("session_before_compact", () => ({ cancel: true }));
 				},
 			],
 		});

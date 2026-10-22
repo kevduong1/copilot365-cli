@@ -82,7 +82,7 @@ describe("native Linux clipboard", { skip: !dependenciesAvailable, timeout: 6000
 	}
 
 	before(() => {
-		directory = mkdtempSync(join(tmpdir(), "garmin-code-mini-clipboard-test-"));
+		directory = mkdtempSync(join(tmpdir(), "gcode-clipboard-test-"));
 		const flags = ["-std=c11", "-D_POSIX_C_SOURCE=200809L", "-Wall", "-Wextra", "-Werror", "-pthread"];
 		execFileSync("cc", [
 			...flags,

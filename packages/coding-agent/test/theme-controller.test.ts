@@ -1,4 +1,4 @@
-import type { TerminalColors, TUI } from "@garmin-code-mini/tui";
+import type { TerminalColors, TUI } from "@gcode/tui";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SettingsManager } from "../src/core/settings-manager.ts";
 import {

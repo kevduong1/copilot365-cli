@@ -1,7 +1,7 @@
 {
-	"name": "@garmin-code-mini/ai",
+	"name": "@gcode/ai",
 	"version": "1.3.0",
-	"description": "Offline local OpenAI-compatible inference for Garmin Code Mini",
+	"description": "Offline local OpenAI-compatible inference for Gcode",
 	"type": "module",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
@@ -51,7 +51,7 @@
 		"prepublishOnly": "npm run clean && npm run build"
 	},
 	"dependencies": {
-		"@garmin-code-mini/telemetry": "1.3.0",
+		"@gcode/telemetry": "1.3.0",
 		"partial-json": "0.1.7",
 		"typebox": "1.3.27"
 	},

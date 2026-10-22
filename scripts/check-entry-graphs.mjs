@@ -19,14 +19,14 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 /** Workspace package name -> its source root, so cross-package imports are followed. */
 const WORKSPACE = {
-	"@garmin-code-mini/chord": "packages/chord/src",
-	"@garmin-code-mini/ai": "packages/ai/src",
-	"@garmin-code-mini/durable": "packages/durable/src",
-	"@garmin-code-mini/agent-core": "packages/agent/src",
-	"@garmin-code-mini/codemode": "packages/codemode/src",
-	"@garmin-code-mini/telemetry": "packages/telemetry/src",
-	"@garmin-code-mini/mcp": "packages/mcp/src",
-	"@garmin-code-mini/tui": "packages/tui/src",
+	"@gcode/chord": "packages/chord/src",
+	"@gcode/ai": "packages/ai/src",
+	"@gcode/durable": "packages/durable/src",
+	"@gcode/agent-core": "packages/agent/src",
+	"@gcode/codemode": "packages/codemode/src",
+	"@gcode/telemetry": "packages/telemetry/src",
+	"@gcode/mcp": "packages/mcp/src",
+	"@gcode/tui": "packages/tui/src",
 };
 
 /**
@@ -36,7 +36,7 @@ const WORKSPACE = {
 const BUDGETS = {
 	"packages/ai": {
 		"./models": {
-			// Request telemetry reaches garmin-code-mini-ai's telemetry.ts and garmin-code-mini-telemetry's root (index, noop, metrics, memory).
+			// Request telemetry reaches gcode-ai's telemetry.ts and gcode-telemetry's root (index, noop, metrics, memory).
 			// Request identity reaches utils/identity.ts and its version constant.
 			maxFiles: 20,
 			forbid: ["providers/", "models.generated.ts", "index.ts", "utils/validation.ts", "utils/typebox-helpers.ts"],
@@ -60,11 +60,11 @@ const BUDGETS = {
 	},
 	"packages/durable": {
 		".": {
-			// Tool argument validation reaches TypeBox; provider-session creation reaches garmin-code-mini-ai's lean UUID utility; the
+			// Tool argument validation reaches TypeBox; provider-session creation reaches gcode-ai's lean UUID utility; the
 			// memory and SQLite storages share scan order and cursor handling. Values from Chord's root (copyJson,
-			// replicatedState) reach its host runtime through the root barrel. Chord's context reaches garmin-code-mini-telemetry's root
+			// replicatedState) reach its host runtime through the root barrel. Chord's context reaches gcode-telemetry's root
 			// (index, noop, metrics, memory) for its NOOP telemetry default; harness/telemetry.ts is Durable's schema.
-			// The Harness's request identity reaches garmin-code-mini-ai's utils/identity.ts and its version constant.
+			// The Harness's request identity reaches gcode-ai's utils/identity.ts and its version constant.
 			maxFiles: 73,
 			forbid: [
 				"packages/ai/src/index.ts",

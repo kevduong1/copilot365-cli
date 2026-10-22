@@ -1,18 +1,18 @@
 # Keybindings Reference
 
-garmin-code-mini exposes named actions, such as `app.session.new`, that can be assigned keybindings. You can change default assignments or bind unassigned actions in garmin-code-mini's [user configuration](configuration.md#agent-directory).
+gcode exposes named actions, such as `app.session.new`, that can be assigned keybindings. You can change default assignments or bind unassigned actions in gcode's [user configuration](configuration.md#agent-directory).
 
 Run `/hotkeys` to see the active shortcuts for the main editor and application.
 
 ## Assign keybindings
 
-Create `<agent-dir>/keybindings.json`. The agent directory defaults to `~/.garmin-code-mini/agent` and is described in [Agent directory](configuration.md#agent-directory).
+Create `<agent-dir>/keybindings.json`. The agent directory defaults to `~/.gcode/agent` and is described in [Agent directory](configuration.md#agent-directory).
 
 Map each action identifier to one key or a list of keys:
 
 ```json
 {
-  "$schema": "https://garmin-code-mini.dev/schemas/keybindings.schema.json",
+  "$schema": "https://gcode.dev/schemas/keybindings.schema.json",
   "app.session.new": "ctrl+shift+n",
   "app.session.tree": ["ctrl+shift+t", "alt+shift+t"]
 }
@@ -128,7 +128,7 @@ In fullscreen mode, these actions control the transcript and take precedence ove
 | `app.editor.external` | `ctrl+g` | Open in external editor (`externalEditor`, `$VISUAL`, `$EDITOR`, Notepad on Windows, or `nano` elsewhere) |
 | `app.clipboard.pasteImage` | `ctrl+v` (`alt+v` on Windows and WSL) | Paste files on macOS, images, or text from clipboard |
 
-On native Windows, `app.suspend` has no default because Windows terminals do not support Unix job control. If you assign it manually, garmin-code-mini shows a status message instead of suspending. WSL uses the normal `ctrl+z` and `fg` behavior.
+On native Windows, `app.suspend` has no default because Windows terminals do not support Unix job control. If you assign it manually, gcode shows a status message instead of suspending. WSL uses the normal `ctrl+z` and `fg` behavior.
 
 ### Sessions
 

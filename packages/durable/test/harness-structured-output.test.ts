@@ -8,8 +8,8 @@ import {
 	fauxToolCall,
 	type ToolResultMessage,
 	Type,
-} from "@garmin-code-mini/ai";
-import type { JsonValue } from "@garmin-code-mini/chord";
+} from "@gcode/ai";
+import type { JsonValue } from "@gcode/chord";
 import {
 	defineTool,
 	MemoryStorage,
@@ -21,7 +21,7 @@ import {
 	ToolResultEntry,
 	ToolTask,
 	watchEvents,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { NodeExecutionEnv } from "../src/env/node.ts";
 import { createBashTool } from "../src/tools/index.ts";
@@ -368,7 +368,7 @@ describe("structured output", () => {
 	});
 
 	it("gives callers of bash its retained output and exit code, also for a nonzero exit", async () => {
-		const directory = mkdtempSync(join(tmpdir(), "garmin-code-mini-durable-structured-"));
+		const directory = mkdtempSync(join(tmpdir(), "gcode-durable-structured-"));
 		try {
 			const setup = chatSetup();
 			addTool(setup.registry, createBashTool());

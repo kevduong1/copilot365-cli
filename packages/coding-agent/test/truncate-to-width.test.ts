@@ -1,4 +1,4 @@
-import { truncateToWidth, visibleWidth } from "@garmin-code-mini/tui";
+import { truncateToWidth, visibleWidth } from "@gcode/tui";
 import { describe, expect, it } from "vitest";
 
 /**

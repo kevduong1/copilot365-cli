@@ -1,5 +1,5 @@
-import type { Api, Model, ModelsRefreshResult } from "@garmin-code-mini/ai";
-import { setKeybindings, type TUI } from "@garmin-code-mini/tui";
+import type { Api, Model, ModelsRefreshResult } from "@gcode/ai";
+import { setKeybindings, type TUI } from "@gcode/tui";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { KeybindingsManager } from "../../../src/core/keybindings.ts";
 import type { ScopedModelsSelectorComponent } from "../../../src/modes/interactive/components/scoped-models-selector.ts";

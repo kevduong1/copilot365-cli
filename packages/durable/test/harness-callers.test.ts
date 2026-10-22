@@ -1,4 +1,4 @@
-import { type AssistantMessage, fauxAssistantMessage, fauxText, fauxToolCall, Type } from "@garmin-code-mini/ai";
+import { type AssistantMessage, fauxAssistantMessage, fauxText, fauxToolCall, Type } from "@gcode/ai";
 import {
 	AgentDoc,
 	type Conversation,
@@ -6,7 +6,7 @@ import {
 	MemoryStorage,
 	type NestedToolExecutionResult,
 	type ToolRegistration,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { type ChatSetup, chatSetup, openChat } from "./chat-support.ts";
 import { addTool } from "./harness-support.ts";
@@ -122,7 +122,7 @@ describe("who may call a tool", () => {
 		await root.configure({ modelTools: [read] }, context);
 		await (await root.submit({ type: "input", content: "go" }, context)).wait(context);
 		const entries = await root.entries({}, 100, undefined, context);
-		const result = entries.items.find((entry) => entry.kind === "garmin-code-mini.tool-result");
+		const result = entries.items.find((entry) => entry.kind === "gcode.tool-result");
 		expect(JSON.stringify(result?.model)).toContain("Tool bash is not available");
 		await harness.close(context);
 	});

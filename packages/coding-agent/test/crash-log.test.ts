@@ -22,30 +22,25 @@ function packageExtension(source: string, baseDir: string, entry = "extensions/i
 describe("extension crash attribution", () => {
 	test("matches stack frames beneath loaded package roots", () => {
 		const memory = packageExtension(
-			"npm:garmin-code-mini-observational-memory",
-			"/home/fedora/.garmin-code-mini/agent/npm/node_modules/garmin-code-mini-observational-memory",
+			"npm:gcode-observational-memory",
+			"/home/fedora/.gcode/agent/npm/node_modules/gcode-observational-memory",
 		);
-		const unrelated = packageExtension(
-			"npm:unrelated",
-			"/home/fedora/.garmin-code-mini/agent/npm/node_modules/unrelated",
-		);
+		const unrelated = packageExtension("npm:unrelated", "/home/fedora/.gcode/agent/npm/node_modules/unrelated");
 		const stack =
 			"TypeError: Cannot read properties of undefined (reading 'runtime')\n" +
-			"    at streamSimple (file:///home/fedora/.local/lib/node_modules/garmin-code-mini/dist/bundle/chunks/chunk-CMRUVXTE.js:1093:16944)\n" +
-			"    at /home/fedora/.garmin-code-mini/agent/npm/node_modules/garmin-code-mini-observational-memory/src/agents/worker-stream.ts:43:45";
+			"    at streamSimple (file:///home/fedora/.local/lib/node_modules/gcode/dist/bundle/chunks/chunk-CMRUVXTE.js:1093:16944)\n" +
+			"    at /home/fedora/.gcode/agent/npm/node_modules/gcode-observational-memory/src/agents/worker-stream.ts:43:45";
 
-		expect(findExtensionStackMatches(stack, [memory, unrelated])).toEqual([
-			"npm:garmin-code-mini-observational-memory",
-		]);
+		expect(findExtensionStackMatches(stack, [memory, unrelated])).toEqual(["npm:gcode-observational-memory"]);
 	});
 
 	test("normalizes Windows paths and deduplicates package extensions", () => {
-		const root = "C:\\Users\\reporter\\.garmin-code-mini\\agent\\npm\\node_modules\\@scope\\memory";
+		const root = "C:\\Users\\reporter\\.gcode\\agent\\npm\\node_modules\\@scope\\memory";
 		const first = packageExtension("npm:@scope/memory", root, "extensions/first.ts");
 		const second = packageExtension("npm:@scope/memory", root, "extensions/second.ts");
 		const stack =
 			"Error: broken\n" +
-			"    at run (c:\\users\\reporter\\.garmin-code-mini\\agent\\npm\\node_modules\\@scope\\memory\\src\\worker.ts:4:2)";
+			"    at run (c:\\users\\reporter\\.gcode\\agent\\npm\\node_modules\\@scope\\memory\\src\\worker.ts:4:2)";
 
 		expect(findExtensionStackMatches(stack, [first, second])).toEqual(["npm:@scope/memory"]);
 	});
@@ -69,25 +64,25 @@ describe("extension crash attribution", () => {
 
 	test("ignores extension paths in the error message", () => {
 		const extension = packageExtension("npm:memory", "/tmp/node_modules/memory");
-		const stack = `Error: Failed to read ${extension.resolvedPath}\n    at run (file:///opt/garmin-code-mini/dist/core.js:4:2)`;
+		const stack = `Error: Failed to read ${extension.resolvedPath}\n    at run (file:///opt/gcode/dist/core.js:4:2)`;
 
 		expect(findExtensionStackMatches(stack, [extension])).toEqual([]);
 	});
 
 	test("decodes frame paths independently from malformed error text", () => {
 		const extension: StackExtension = {
-			path: "/Users/reporter/.garmin-code-mini/agent/extensions/local memory/index.ts",
-			resolvedPath: "/Users/reporter/.garmin-code-mini/agent/extensions/local memory/index.ts",
+			path: "/Users/reporter/.gcode/agent/extensions/local memory/index.ts",
+			resolvedPath: "/Users/reporter/.gcode/agent/extensions/local memory/index.ts",
 			sourceInfo: {
-				path: "/Users/reporter/.garmin-code-mini/agent/extensions/local memory/index.ts",
+				path: "/Users/reporter/.gcode/agent/extensions/local memory/index.ts",
 				source: "local",
 				scope: "user",
 				origin: "top-level",
-				baseDir: "/Users/reporter/.garmin-code-mini/agent/extensions",
+				baseDir: "/Users/reporter/.gcode/agent/extensions",
 			},
 		};
 		const stack =
-			"Error: progress 100%\n    at run (file:///Users/reporter/.garmin-code-mini/agent/extensions/local%20memory/worker.ts:4:2)";
+			"Error: progress 100%\n    at run (file:///Users/reporter/.gcode/agent/extensions/local%20memory/worker.ts:4:2)";
 
 		expect(findExtensionStackMatches(stack, [extension])).toEqual([extension.path]);
 	});

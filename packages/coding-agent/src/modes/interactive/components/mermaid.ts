@@ -1,4 +1,4 @@
-import { Marked, type Token } from "@garmin-code-mini/tui";
+import { Marked, type Token } from "@gcode/tui";
 import { type MermaidArt, render, type Span } from "grok-mermaid";
 import type { MarkdownTransformer } from "../../../core/extensions/types.ts";
 import type { MermaidRenderingMode } from "../../../core/settings-manager.ts";

@@ -2,10 +2,10 @@ import {
 	applySqliteMigrations as applyMigrations,
 	type SqliteDatabase,
 	type SqliteMigration,
-} from "@garmin-code-mini/chord/sqlite";
+} from "@gcode/chord/sqlite";
 import { DEFAULT_SQLITE_SCHEMA, type SqliteSchema } from "./schema.ts";
 
-export type { SqliteMigration } from "@garmin-code-mini/chord/sqlite";
+export type { SqliteMigration } from "@gcode/chord/sqlite";
 
 /** Build immutable, ordered schema history for a set of SQLite identifiers. */
 export function createSqliteMigrations(schema: SqliteSchema): readonly SqliteMigration[] {

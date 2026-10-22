@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import type * as OsModule from "node:os";
-import type { NativeClipboard } from "@garmin-code-mini/tui";
+import type { NativeClipboard } from "@gcode/tui";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { copyToClipboard, readClipboardText } from "../src/utils/clipboard.ts";
 
@@ -21,7 +21,7 @@ const mocks = vi.hoisted(() => ({
 		>(),
 	platform: vi.fn<() => NodeJS.Platform>(),
 }));
-vi.mock("@garmin-code-mini/tui", () => ({ getNativeClipboard: mocks.getNativeClipboard }));
+vi.mock("@gcode/tui", () => ({ getNativeClipboard: mocks.getNativeClipboard }));
 vi.mock("../src/utils/clipboard-command.ts", () => ({ runClipboardCommand: mocks.command }));
 vi.mock("node:os", async () => ({
 	...(await vi.importActual<typeof OsModule>("node:os")),
@@ -42,7 +42,7 @@ beforeEach(() => {
 		"WT_SESSION",
 		"WSL_DISTRO_NAME",
 		"WSLENV",
-		"GARMIN_CODE_MINI_CLIPBOARD_OSC52",
+		"GCODE_CLIPBOARD_OSC52",
 	])
 		vi.stubEnv(name, "");
 	mocks.platform.mockReturnValue("darwin");
@@ -155,25 +155,22 @@ describe("copyToClipboard", () => {
 		["darwin", undefined],
 		["win32", undefined],
 		["linux", ":99"],
-	] as const)(
-		"GARMIN_CODE_MINI_CLIPBOARD_OSC52=1 emits OSC 52 after a successful %s copy",
-		async (platform, display) => {
-			// Regression test for #10826, #10835, #10114: remote clients without SSH markers.
-			mocks.platform.mockReturnValue(platform);
-			if (display) vi.stubEnv("DISPLAY", display);
-			vi.stubEnv("GARMIN_CODE_MINI_CLIPBOARD_OSC52", "1");
-			await copyToClipboard("hello");
-			if (platform === "linux") {
-				expect(mocks.command).toHaveBeenCalledWith("xclip", ["-selection", "clipboard"], {
-					input: "hello",
-					timeoutMs: 5000,
-				});
-			} else {
-				expect(mocks.clipboard.setText).toHaveBeenCalledWith("hello");
-			}
-			expect(osc52Writes).toEqual([`\x1b]52;c;${Buffer.from("hello").toString("base64")}\x07`]);
-		},
-	);
+	] as const)("GCODE_CLIPBOARD_OSC52=1 emits OSC 52 after a successful %s copy", async (platform, display) => {
+		// Regression test for #10826, #10835, #10114: remote clients without SSH markers.
+		mocks.platform.mockReturnValue(platform);
+		if (display) vi.stubEnv("DISPLAY", display);
+		vi.stubEnv("GCODE_CLIPBOARD_OSC52", "1");
+		await copyToClipboard("hello");
+		if (platform === "linux") {
+			expect(mocks.command).toHaveBeenCalledWith("xclip", ["-selection", "clipboard"], {
+				input: "hello",
+				timeoutMs: 5000,
+			});
+		} else {
+			expect(mocks.clipboard.setText).toHaveBeenCalledWith("hello");
+		}
+		expect(osc52Writes).toEqual([`\x1b]52;c;${Buffer.from("hello").toString("base64")}\x07`]);
+	});
 	test("a rejected native write falls back to pbcopy", async () => {
 		mocks.clipboard.setText.mockRejectedValue(new Error("native failed"));
 		await copyToClipboard("hello");

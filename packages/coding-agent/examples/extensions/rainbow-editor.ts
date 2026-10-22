@@ -1,10 +1,10 @@
 /**
  * Rainbow Editor - highlights "ultrathink" with animated shine effect
  *
- * Usage: garmin-code-mini --extension ./examples/extensions/rainbow-editor.ts
+ * Usage: gcode --extension ./examples/extensions/rainbow-editor.ts
  */
 
-import { CustomEditor, type ExtensionAPI } from "garmin-code-mini";
+import { CustomEditor, type ExtensionAPI } from "gcode";
 
 // Base colors (coral → yellow → green → teal → blue → purple → pink)
 const COLORS: [number, number, number][] = [
@@ -81,8 +81,8 @@ class RainbowEditor extends CustomEditor {
 	}
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("session_start", (_event, ctx) => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("session_start", (_event, ctx) => {
 		ctx.ui.setEditorComponent((tui, theme, kb) => new RainbowEditor(tui, theme, kb));
 	});
 }

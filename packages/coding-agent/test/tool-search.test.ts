@@ -1,4 +1,4 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
+import type { AgentTool } from "@gcode/agent-core";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import type { ToolNamespace } from "../src/core/extensions/types.ts";

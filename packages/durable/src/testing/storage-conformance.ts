@@ -1,6 +1,6 @@
-import type { JsonValue } from "@garmin-code-mini/chord";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import type { Op } from "@garmin-code-mini/chord/delta";
+import type { JsonValue } from "@gcode/chord";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import type { Op } from "@gcode/chord/delta";
 import { idFromNumber } from "../ids.ts";
 import {
 	type ConversationId,

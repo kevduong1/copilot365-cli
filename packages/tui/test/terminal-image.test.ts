@@ -45,9 +45,9 @@ const ENV_KEYS = [
 	"CMUX_WORKSPACE_ID",
 	"WARP_SESSION_ID",
 	"WARP_TERMINAL_SESSION_UUID",
-	"GARMIN_CODE_MINI_HYPERLINKS",
-	"GARMIN_CODE_MINI_IMAGE_PROTOCOL",
-	"GARMIN_CODE_MINI_TRUE_COLOR",
+	"GCODE_HYPERLINKS",
+	"GCODE_IMAGE_PROTOCOL",
+	"GCODE_TRUE_COLOR",
 ] as const;
 
 function withEnv<T>(overrides: Record<string, string | undefined>, fn: () => T): T {
@@ -229,9 +229,9 @@ describe("detectCapabilities", () => {
 		assert.deepStrictEqual(
 			withEnv(
 				{
-					GARMIN_CODE_MINI_HYPERLINKS: "1",
-					GARMIN_CODE_MINI_IMAGE_PROTOCOL: "kitty",
-					GARMIN_CODE_MINI_TRUE_COLOR: "1",
+					GCODE_HYPERLINKS: "1",
+					GCODE_IMAGE_PROTOCOL: "kitty",
+					GCODE_TRUE_COLOR: "1",
 				},
 				() => detectCapabilities(),
 			),
@@ -241,9 +241,9 @@ describe("detectCapabilities", () => {
 			withEnv(
 				{
 					TERM_PROGRAM: "iterm.app",
-					GARMIN_CODE_MINI_HYPERLINKS: "0",
-					GARMIN_CODE_MINI_IMAGE_PROTOCOL: "none",
-					GARMIN_CODE_MINI_TRUE_COLOR: "0",
+					GCODE_HYPERLINKS: "0",
+					GCODE_IMAGE_PROTOCOL: "none",
+					GCODE_TRUE_COLOR: "0",
 				},
 				() => detectCapabilities(),
 			),
@@ -256,9 +256,9 @@ describe("detectCapabilities", () => {
 			withEnv(
 				{
 					TERM_PROGRAM: "ghostty",
-					GARMIN_CODE_MINI_HYPERLINKS: "auto",
-					GARMIN_CODE_MINI_IMAGE_PROTOCOL: "auto",
-					GARMIN_CODE_MINI_TRUE_COLOR: "auto",
+					GCODE_HYPERLINKS: "auto",
+					GCODE_IMAGE_PROTOCOL: "auto",
+					GCODE_TRUE_COLOR: "auto",
 				},
 				() => detectCapabilities(),
 			),
@@ -269,9 +269,9 @@ describe("detectCapabilities", () => {
 	it("applies and clears programmatic overrides", () => {
 		withEnv(
 			{
-				GARMIN_CODE_MINI_HYPERLINKS: "1",
-				GARMIN_CODE_MINI_IMAGE_PROTOCOL: "kitty",
-				GARMIN_CODE_MINI_TRUE_COLOR: "1",
+				GCODE_HYPERLINKS: "1",
+				GCODE_IMAGE_PROTOCOL: "kitty",
+				GCODE_TRUE_COLOR: "1",
 			},
 			() => {
 				setCapabilityOverrides({ images: null, trueColor: false, hyperlinks: false });
@@ -292,8 +292,8 @@ describe("detectCapabilities", () => {
 		const caps = withEnv(
 			{
 				TMUX: "/tmp/tmux-1000/default,1234,0",
-				GARMIN_CODE_MINI_HYPERLINKS: "1",
-				GARMIN_CODE_MINI_IMAGE_PROTOCOL: "kitty",
+				GCODE_HYPERLINKS: "1",
+				GCODE_IMAGE_PROTOCOL: "kitty",
 			},
 			() =>
 				detectCapabilities(() => {
@@ -349,7 +349,7 @@ describe("detectCapabilities", () => {
 			assert.strictEqual(caps.images, "kitty");
 			assert.strictEqual(caps.trueColor, true);
 		});
-		withEnv({ TERM_PROGRAM: "herdr", GARMIN_CODE_MINI_HYPERLINKS: "0" }, () => {
+		withEnv({ TERM_PROGRAM: "herdr", GCODE_HYPERLINKS: "0" }, () => {
 			assert.strictEqual(detectCapabilities().hyperlinks, false);
 		});
 	});
@@ -362,7 +362,7 @@ describe("detectCapabilities", () => {
 			assert.strictEqual(caps.images, "kitty");
 			assert.strictEqual(caps.trueColor, true);
 		});
-		withEnv({ TERM_PROGRAM: "rex", GARMIN_CODE_MINI_HYPERLINKS: "0" }, () => {
+		withEnv({ TERM_PROGRAM: "rex", GCODE_HYPERLINKS: "0" }, () => {
 			assert.strictEqual(detectCapabilities().hyperlinks, false);
 		});
 	});
@@ -828,9 +828,9 @@ describe("imageFallback", () => {
 	it("shortens home-prefixed absolute paths without hyperlinks", () => {
 		setCapabilities({ images: null, trueColor: false, hyperlinks: false });
 		try {
-			const abs = join(homedir(), ".garmin-code-mini", "agent", "shot.png");
+			const abs = join(homedir(), ".gcode", "agent", "shot.png");
 			const result = imageFallback("image/png", { widthPx: 1280, heightPx: 720 }, abs);
-			assert.strictEqual(result, "[Image: ~/.garmin-code-mini/agent/shot.png [image/png] 1280x720]");
+			assert.strictEqual(result, "[Image: ~/.gcode/agent/shot.png [image/png] 1280x720]");
 		} finally {
 			resetCapabilitiesCache();
 		}
@@ -839,7 +839,7 @@ describe("imageFallback", () => {
 	it("wraps shortened absolute paths in OSC 8 file links when hyperlinks are enabled", () => {
 		setCapabilities({ images: null, trueColor: false, hyperlinks: true });
 		try {
-			const abs = join(homedir(), ".garmin-code-mini", "agent", "shot.png");
+			const abs = join(homedir(), ".gcode", "agent", "shot.png");
 			const result = imageFallback("image/png", { widthPx: 10, heightPx: 10 }, abs);
 			assert.ok(result.includes("\x1b]8;;file://"), "expected OSC 8 file link");
 			assert.ok(
@@ -848,7 +848,7 @@ describe("imageFallback", () => {
 			);
 			// Visible text must use ~/... not the expanded home path.
 			const visible = result.replace(/\x1b\]8;;.*?\x1b\\/g, "");
-			assert.strictEqual(visible, "[Image: ~/.garmin-code-mini/agent/shot.png [image/png] 10x10]");
+			assert.strictEqual(visible, "[Image: ~/.gcode/agent/shot.png [image/png] 10x10]");
 		} finally {
 			resetCapabilitiesCache();
 		}

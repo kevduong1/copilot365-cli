@@ -1,18 +1,18 @@
-// JSON mode: stream one prompt's run as JSON lines, like `garmin-code-mini --mode json`. Two modes:
+// JSON mode: stream one prompt's run as JSON lines, like `gcode --mode json`. Two modes:
 //   --events (default): the experimental agent events of watchEvents(), starting with a `snapshot` event.
 //   --ops: the raw ConversationView frames, starting with the view itself; each later line holds one commit's ops.
 // --storage sqlite (default) | jsonl | memory: sqlite writes a temporary database file, jsonl a temporary directory;
 // neither is deleted, and the path is printed to stderr at the end.
-// Uses the local endpoint when GARMIN_CODE_MINI_MODEL is set, and a scripted faux model otherwise.
+// Uses the local endpoint when GCODE_MODEL is set, and a scripted faux model otherwise.
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/19-json.ts --events "What is in this directory?"
 import { mkdtemp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@gcode/ai/providers/faux";
+import { localProvider } from "@gcode/ai/providers/local";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { NodeExecutionEnv } from "../../src/env/node.ts";
 import {
 	createRegistry,
@@ -39,10 +39,10 @@ const prompt =
 let storage: Storage;
 let location: string | undefined;
 if (storageKind === "sqlite") {
-	location = join(tmpdir(), `garmin-code-mini-durable-json-${Date.now()}.sqlite`);
+	location = join(tmpdir(), `gcode-durable-json-${Date.now()}.sqlite`);
 	storage = await openNodeSqliteStorage(location);
 } else if (storageKind === "jsonl") {
-	location = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-json-"));
+	location = await mkdtemp(join(tmpdir(), "gcode-durable-json-"));
 	storage = await openNodeJsonlStorage(location, context);
 } else if (storageKind === "memory") {
 	storage = new MemoryStorage();
@@ -52,8 +52,8 @@ if (storageKind === "sqlite") {
 const print = (value: unknown): void => void process.stdout.write(`${JSON.stringify(value)}\n`);
 
 const models = createModels();
-let model = { provider: "local", modelId: process.env.GARMIN_CODE_MINI_MODEL || "local-model" };
-if (process.env.GARMIN_CODE_MINI_MODEL !== undefined) {
+let model = { provider: "local", modelId: process.env.GCODE_MODEL || "local-model" };
+if (process.env.GCODE_MODEL !== undefined) {
 	models.setProvider(localProvider());
 } else {
 	const faux = fauxProvider({ tokensPerSecond: 200 });

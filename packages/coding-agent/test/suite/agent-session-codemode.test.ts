@@ -1,6 +1,6 @@
 import { readFileSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import type { AgentTool } from "@garmin-code-mini/agent-core";
+import type { AgentTool } from "@gcode/agent-core";
 import {
 	type AssistantImages,
 	type ClassifierModel,
@@ -12,8 +12,8 @@ import {
 	type ImageModel,
 	type ImagesContext,
 	type TranscriptContext,
-} from "@garmin-code-mini/ai";
-import type { ToolResultMessage, Usage } from "@garmin-code-mini/ai/compat";
+} from "@gcode/ai";
+import type { ToolResultMessage, Usage } from "@gcode/ai/compat";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import type { ExtensionAPI } from "../../src/core/extensions/types.ts";
@@ -125,9 +125,9 @@ describe("AgentSession codemode tool", () => {
 
 	async function setup(extensionFactories?: HarnessOptions["extensionFactories"]) {
 		// Registered by an extension so they run with the session's tool context, next to the built-in codemode.
-		const registerTools = (garminCodeMini: ExtensionAPI) => {
+		const registerTools = (gcode: ExtensionAPI) => {
 			for (const tool of [echoTool as AgentTool, statsTool, screenshotTool]) {
-				garminCodeMini.registerTool(createToolDefinitionFromAgentTool(tool));
+				gcode.registerTool(createToolDefinitionFromAgentTool(tool));
 			}
 		};
 		const harness = await createHarness({
@@ -247,14 +247,14 @@ describe("AgentSession codemode tool", () => {
 
 	it("routes nested calls through extension hooks", async () => {
 		const harness = await setup([
-			(garminCodeMini) => {
-				garminCodeMini.on("tool_call", (event) => {
+			(gcode) => {
+				gcode.on("tool_call", (event) => {
 					if (event.toolName === "echo" && (event.input as { text: string }).text === "forbidden") {
 						return { block: true, reason: "echo of forbidden text is blocked" };
 					}
 					return undefined;
 				});
-				garminCodeMini.on("tool_result", (event) => {
+				gcode.on("tool_result", (event) => {
 					if (event.toolName === "stats") {
 						return { content: [{ type: "text", text: "redacted" }] };
 					}
@@ -303,9 +303,7 @@ describe("AgentSession codemode tool", () => {
 			parameters: Type.Object({}),
 			execute: async () => ({ content: [{ type: "text", text: "ran" }], details: {}, usage: usage(100, 0.25) }),
 		};
-		const harness = await setup([
-			(garminCodeMini) => garminCodeMini.registerTool(createToolDefinitionFromAgentTool(billedTool)),
-		]);
+		const harness = await setup([(gcode) => gcode.registerTool(createToolDefinitionFromAgentTool(billedTool))]);
 		harness.setResponses([
 			fauxAssistantMessage(
 				[
@@ -334,14 +332,14 @@ describe("AgentSession codemode tool", () => {
 
 	it("keeps structured content that tool_result handlers replace along with the content", async () => {
 		const harness = await setup([
-			(garminCodeMini) => {
-				garminCodeMini.on("tool_result", (event) =>
+			(gcode) => {
+				gcode.on("tool_result", (event) =>
 					event.toolName === "stats"
 						? { content: [{ type: "text", text: "0 files" }], structuredContent: { files: 0, names: [] } }
 						: undefined,
 				);
 				// A later handler that only touches details keeps what the first one set.
-				garminCodeMini.on("tool_result", (event) =>
+				gcode.on("tool_result", (event) =>
 					event.toolName === "stats" ? { details: { audited: true } } : undefined,
 				);
 			},
@@ -356,7 +354,7 @@ describe("AgentSession codemode tool", () => {
 		expect(JSON.parse(resultText(codemodeResult(harness)))).toEqual({ files: 0, names: [] });
 	});
 
-	// Saved images: https://github.com/earendil-works/garmin-code-mini/issues/10310
+	// Saved images: https://github.com/earendil-works/gcode/issues/10310
 	it("attaches only the images the script passes to image(), in output order, each after its saved path", async () => {
 		const harness = await setup();
 		harness.setResponses([
@@ -581,7 +579,7 @@ describe("codemode options and store", () => {
 		expect(resultText(result)).toBe('["out\\n",3,"number"]');
 	});
 
-	// https://github.com/earendil-works/garmin-code-mini/issues/10251
+	// https://github.com/earendil-works/gcode/issues/10251
 	it("resolves read calls to text for text files and to image blocks that image() shows", async () => {
 		const harness = await createHarness({
 			initialActiveToolNames: ["codemode", "read"],

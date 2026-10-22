@@ -34,7 +34,7 @@ export const DoomKeys = {
 	KEY_RALT: 0x80 + 0x38,
 } as const;
 
-import { Key, matchesKey, parseKey } from "@garmin-code-mini/tui";
+import { Key, matchesKey, parseKey } from "@gcode/tui";
 
 /**
  * Map terminal key input to DOOM key codes

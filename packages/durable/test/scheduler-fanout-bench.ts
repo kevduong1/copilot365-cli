@@ -6,9 +6,9 @@
  *   node --conditions=source --experimental-strip-types test/scheduler-fanout-bench.ts [calls...]
  */
 
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT as context } from "@garmin-code-mini/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT as context } from "@gcode/chord/context";
 import { Type } from "typebox";
 import { createRegistry, defineExtension, defineTool, Harness, ToolResultEntry } from "../src/index.ts";
 import { MemoryStorage } from "../src/storage/memory.ts";

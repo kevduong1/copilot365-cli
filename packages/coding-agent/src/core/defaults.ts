@@ -1,4 +1,4 @@
-import type { ThinkingLevel } from "@garmin-code-mini/agent-core";
+import type { ThinkingLevel } from "@gcode/agent-core";
 
 export const DEFAULT_THINKING_LEVEL: ThinkingLevel = "medium";
 export const THINKING_LEVEL_OPTIONS: readonly ThinkingLevel[] = [

@@ -1,5 +1,5 @@
-import type { AssistantMessage } from "@garmin-code-mini/ai";
-import type { TuiMouseEvent } from "@garmin-code-mini/tui";
+import type { AssistantMessage } from "@gcode/ai";
+import type { TuiMouseEvent } from "@gcode/tui";
 import { describe, expect, test } from "vitest";
 import { AssistantMessageComponent } from "../src/modes/interactive/components/assistant-message.ts";
 import { UserMessageComponent } from "../src/modes/interactive/components/user-message.ts";

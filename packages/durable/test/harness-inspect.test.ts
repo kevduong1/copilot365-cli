@@ -1,4 +1,4 @@
-import { defineTask, MemoryStorage, type TaskId, type TaskInspection } from "@garmin-code-mini/durable";
+import { defineTask, MemoryStorage, type TaskId, type TaskInspection } from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { chatSetup, openChat, unanswered, waitFor } from "./chat-support.ts";
 import { context } from "./session-support.ts";
@@ -155,7 +155,7 @@ describe("Harness.inspect()", () => {
 		const inspection = await harness.inspect(context);
 		expect(inspection.submissions).toEqual([await input.status(context)]);
 		expect(inspection.tasks.map((entry) => [entry.record.kind, entry.state.kind])).toEqual([
-			["garmin-code-mini.generation", "running"],
+			["gcode.generation", "running"],
 		]);
 		await harness.close(context);
 	});

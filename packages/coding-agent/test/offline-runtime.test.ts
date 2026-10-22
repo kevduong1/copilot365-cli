@@ -20,7 +20,7 @@ describe("offline runtime", () => {
 	it("has a usable local default without credentials or background requests", async () => {
 		const fetch = vi.fn();
 		vi.stubGlobal("fetch", fetch);
-		vi.stubEnv("GARMIN_CODE_MINI_MODEL", "test-local-model");
+		vi.stubEnv("GCODE_MODEL", "test-local-model");
 		const runtime = await ModelRuntime.create({ credentials: AuthStorage.inMemory(), modelsPath: null });
 		expect(runtime.getProviders().map((provider) => provider.id)).toEqual(["local"]);
 		expect(runtime.getAvailableSnapshot().map((model) => model.id)).toEqual(["test-local-model"]);
@@ -32,7 +32,7 @@ describe("offline runtime", () => {
 	});
 
 	it("loads local packages and rejects remote installation and fetching", async () => {
-		const directory = mkdtempSync(join(tmpdir(), "garmin-mini-offline-"));
+		const directory = mkdtempSync(join(tmpdir(), "gcode-offline-"));
 		directories.push(directory);
 		const packageDirectory = join(directory, "extension");
 		mkdirSync(packageDirectory);

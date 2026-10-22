@@ -1,5 +1,5 @@
-import type { AssistantMessage, Usage } from "@garmin-code-mini/ai";
-import type { Draft, JsonRepresentation, JsonValue } from "@garmin-code-mini/chord";
+import type { AssistantMessage, Usage } from "@gcode/ai";
+import type { Draft, JsonRepresentation, JsonValue } from "@gcode/chord";
 import { defineDoc } from "../documents.ts";
 import type { Transaction } from "../session/transaction.ts";
 import type { EntryId, JsonObject, SubmissionId, SubmissionSettlement, TaskId, TaskRecord, Tx } from "../types.ts";
@@ -109,7 +109,7 @@ export type LiveState = {
 };
 
 export const LiveDoc = defineDoc<LiveState>({
-	kind: "garmin-code-mini.live",
+	kind: "gcode.live",
 	version: 1,
 	scope: "conversation",
 	history: "latest",
@@ -126,10 +126,10 @@ export const LiveDoc = defineDoc<LiveState>({
 		!(value.nestedTools ?? []).some((slot) => slot.status === "running"),
 });
 
-/** Built-in task kinds that can own `garmin-code-mini.live.run`. */
-const RUN_TASK_KINDS: ReadonlySet<string> = new Set(["garmin-code-mini.generation"]);
-const TOOL_TASK_KIND = "garmin-code-mini.tool";
-const COMPACTION_TASK_KIND = "garmin-code-mini.compaction";
+/** Built-in task kinds that can own `gcode.live.run`. */
+const RUN_TASK_KINDS: ReadonlySet<string> = new Set(["gcode.generation"]);
+const TOOL_TASK_KIND = "gcode.tool";
+const COMPACTION_TASK_KIND = "gcode.compaction";
 
 /**
  * End the run owned by `taskId`: settle each of its inputs and remove `run`. Always removes `generation`, `tools`, and
@@ -173,7 +173,7 @@ export function failCompactionStatus(live: Draft<LiveState>, taskId: TaskId, err
 }
 
 /**
- * The slot of tool task `taskId`, model-issued or nested, if `garmin-code-mini.live` still lists it. Nested slots are found by binary
+ * The slot of tool task `taskId`, model-issued or nested, if `gcode.live` still lists it. Nested slots are found by binary
  * search: a tool may make thousands of nested calls, each of which looks up its slot in several commits, and every
  * element a search reads costs a node in the draft's change tracker. Their task IDs ascend: each slot is appended in
  * the commit that creates its task, task IDs ascend in commit order, and removal keeps the order.
@@ -228,10 +228,10 @@ export function clearProgress(slot: Draft<SlotProgress>): void {
  * Harness cleanup for a terminal outcome the scheduler writes itself (`faulted` or `orphaned`). A run task ends its
  * run; a tool task's slot is marked done without an entry, and context derivation synthesizes the missing result; a
  * compaction task's status is removed and its failure recorded.
- * Ignores other kinds so it never creates `garmin-code-mini.live` elsewhere. The scheduler calls this without knowing task kinds;
+ * Ignores other kinds so it never creates `gcode.live` elsewhere. The scheduler calls this without knowing task kinds;
  * the Harness passes it in (spec §5.4).
  * REMINDER: a committed generation partial becomes an aborted assistant entry here, exactly as in the generation abort
- * handler, so the transcript keeps what the model produced and `garmin-code-mini.usage` counts its spend. The scheduler's commit has
+ * handler, so the transcript keeps what the model produced and `gcode.usage` counts its spend. The scheduler's commit has
  * no task scope, so that entry has no `byTaskId`. Faults come from task bugs
  * or malformed provider data (a non-JSON value in a response), or a commit the Storage rejected without effect; an
  * uncertain storage failure poisons the Session instead and writes no outcome.

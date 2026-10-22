@@ -3,7 +3,7 @@ owner:
 ---
 # prompt
 
-What garmin-code-mini tells the model.
+What gcode tells the model.
 
 In:
 - System prompt assembly, tool descriptions and guidelines.

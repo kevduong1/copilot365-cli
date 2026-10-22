@@ -1,4 +1,4 @@
-import { Container } from "@garmin-code-mini/tui";
+import { Container } from "@gcode/tui";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SessionManager } from "../src/core/session-manager.ts";
 import { SettingsManager } from "../src/core/settings-manager.ts";

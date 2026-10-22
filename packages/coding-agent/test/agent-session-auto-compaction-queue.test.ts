@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Agent } from "@garmin-code-mini/agent-core";
-import { type AssistantMessage, createAssistantMessageEventStream, fauxAssistantMessage } from "@garmin-code-mini/ai";
-import { getModel, streamSimple } from "@garmin-code-mini/ai/compat";
+import { Agent } from "@gcode/agent-core";
+import { type AssistantMessage, createAssistantMessageEventStream, fauxAssistantMessage } from "@gcode/ai";
+import { getModel, streamSimple } from "@gcode/ai/compat";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AgentSession } from "../src/core/agent-session.ts";
 import { AuthStorage } from "../src/core/auth-storage.ts";
@@ -19,7 +19,7 @@ describe("AgentSession auto-compaction queue resume", () => {
 	let tempDir: string;
 
 	beforeEach(async () => {
-		tempDir = join(tmpdir(), `garmin-code-mini-auto-compaction-queue-${Date.now()}`);
+		tempDir = join(tmpdir(), `gcode-auto-compaction-queue-${Date.now()}`);
 		mkdirSync(tempDir, { recursive: true });
 
 		const model = getModel("local", "local-model")!;

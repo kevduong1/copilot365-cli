@@ -1,5 +1,5 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import { fauxAssistantMessage, fauxThinking, fauxToolCall } from "@garmin-code-mini/ai";
+import type { AgentTool } from "@gcode/agent-core";
+import { fauxAssistantMessage, fauxThinking, fauxToolCall } from "@gcode/ai";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, type Harness } from "./harness.ts";
@@ -126,8 +126,8 @@ describe("AgentSession retry and event characterization", () => {
 		const harness = await createHarness({
 			settings: { retry: { enabled: true, maxRetries: 3, baseDelayMs: 1 } },
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("message_end", async (event) => {
+				(gcode) => {
+					gcode.on("message_end", async (event) => {
 						if (event.message.role === "assistant") {
 							await new Promise((resolve) => setTimeout(resolve, 40));
 						}
@@ -230,11 +230,11 @@ describe("AgentSession retry and event characterization", () => {
 		const order: string[] = [];
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("message_start", async (event) => {
+				(gcode) => {
+					gcode.on("message_start", async (event) => {
 						order.push(`extension:${event.type}:${event.message.role}`);
 					});
-					garminCodeMini.on("message_end", async (event) => {
+					gcode.on("message_end", async (event) => {
 						order.push(`extension:${event.type}:${event.message.role}`);
 					});
 				},

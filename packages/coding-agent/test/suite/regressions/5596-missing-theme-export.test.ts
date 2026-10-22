@@ -1,8 +1,8 @@
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Agent } from "@garmin-code-mini/agent-core";
-import { fauxAssistantMessage, registerFauxProvider, streamSimple } from "@garmin-code-mini/ai/compat";
+import { Agent } from "@gcode/agent-core";
+import { fauxAssistantMessage, registerFauxProvider, streamSimple } from "@gcode/ai/compat";
 import { afterEach, describe, expect, it } from "vitest";
 import { AgentSession } from "../../../src/core/agent-session.ts";
 import { AuthStorage } from "../../../src/core/auth-storage.ts";
@@ -24,7 +24,7 @@ describe("regression #5596: missing configured theme export", () => {
 	});
 
 	it("exports with the active fallback theme when the configured theme is missing", async () => {
-		const tempDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-5596-"));
+		const tempDir = mkdtempSync(join(tmpdir(), "gcode-5596-"));
 		const faux = registerFauxProvider({
 			models: [{ id: "faux-1", reasoning: false }],
 		});

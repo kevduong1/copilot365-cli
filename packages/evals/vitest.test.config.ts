@@ -8,7 +8,7 @@ export default mergeConfig(
 			include: ["test/**/*.test.ts"],
 		},
 		resolve: {
-			alias: [{ find: /^garmin-code-mini$/, replacement: workspaceSourcePaths.codingAgentIndex }],
+			alias: [{ find: /^gcode$/, replacement: workspaceSourcePaths.codingAgentIndex }],
 		},
 	}),
 );

@@ -1,6 +1,6 @@
-# garmin-code-mini-env wire protocol
+# gcode-env wire protocol
 
-Version 1. The client starts `garmin-code-mini-env serve --token <hex>` (over `ssh`, or directly in tests) and talks to it over the
+Version 1. The client starts `gcode-env serve --token <hex>` (over `ssh`, or directly in tests) and talks to it over the
 process's stdin and stdout. stderr is diagnostic text for logs only.
 
 ## Sync

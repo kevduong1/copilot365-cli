@@ -1,11 +1,11 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
 const baseDir = dirname(fileURLToPath(import.meta.url));
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("resources_discover", () => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("resources_discover", () => {
 		return {
 			skillPaths: [join(baseDir, "SKILL.md")],
 			promptPaths: [join(baseDir, "dynamic.md")],

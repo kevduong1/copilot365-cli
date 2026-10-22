@@ -2,7 +2,7 @@
  * CLI argument parsing and help display
  */
 
-import type { ThinkingLevel } from "@garmin-code-mini/agent-core";
+import type { ThinkingLevel } from "@gcode/agent-core";
 import chalk from "chalk";
 import { APP_NAME, CONFIG_DIR_NAME, ENV_AGENT_DIR, ENV_SESSION_DIR } from "../config.ts";
 import type { ExtensionFlag } from "../core/extensions/types.ts";
@@ -274,7 +274,7 @@ export function printHelp(extensionFlags?: ExtensionFlag[]): void {
 	const extensionFlagsText = extensionFlags?.length
 		? `\n${chalk.bold("Extension flags:")}\n${extensionFlags.map((flag) => `  --${flag.name}${flag.type === "string" ? " <value>" : ""}  ${flag.description ?? "Local extension option"}`).join("\n")}\n`
 		: "";
-	console.log(`${chalk.bold("GARMIN CODE MINI")} - Local coding assistant
+	console.log(`${chalk.bold("GCODE")} - Local coding assistant
 
 Usage:
   ${APP_NAME} [options] [@files...] [messages...]
@@ -335,11 +335,11 @@ Examples:
   ${APP_NAME} --tools read,grep,find,ls -p "Review src"
 
 Environment variables:
-  GARMIN_CODE_MINI_BASE_URL      Local endpoint (default: http://127.0.0.1:8080/v1)
-  GARMIN_CODE_MINI_MODEL         Default model ID (default: local-model)
-  GARMIN_CODE_MINI_API_KEY       Optional key for the local endpoint
+  GCODE_BASE_URL      Local endpoint (default: http://127.0.0.1:8080/v1)
+  GCODE_MODEL         Default model ID (default: local-model)
+  GCODE_API_KEY       Optional key for the local endpoint
   ${ENV_AGENT_DIR}    Config directory (default: ~/${CONFIG_DIR_NAME}/agent)
   ${ENV_SESSION_DIR}  Session storage directory
-  GARMIN_CODE_MINI_PACKAGE_DIR   Override the package asset directory
+  GCODE_PACKAGE_DIR   Override the package asset directory
 `);
 }

@@ -6,7 +6,7 @@ import { getBinDir } from "../config.ts";
 
 const TOOLS = { fd: ["fd", "fdfind"], rg: ["rg"] } as const;
 
-/** Find an already installed tool; Garmin Code Mini never downloads executables. */
+/** Find an already installed tool; Gcode never downloads executables. */
 export function getToolPath(tool: "fd" | "rg"): string | null {
 	const localPath = join(getBinDir(), `${tool}${platform() === "win32" ? ".exe" : ""}`);
 	if (existsSync(localPath)) return localPath;

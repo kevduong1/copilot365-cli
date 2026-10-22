@@ -1,4 +1,4 @@
-import { InMemoryTelemetryContext, NOOP_TELEMETRY_CONTEXT } from "@garmin-code-mini/telemetry";
+import { InMemoryTelemetryContext, NOOP_TELEMETRY_CONTEXT } from "@gcode/telemetry";
 import { describe, expect, expectTypeOf, it } from "vitest";
 import type { HarnessOptions } from "../src/harness/types.ts";
 

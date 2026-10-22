@@ -1,8 +1,8 @@
 # Extensions
 
-Extensions are TypeScript modules that add executable behavior to garmin-code-mini. Use one when a workflow needs tools, commands, event handlers, model providers, session state, or terminal UI rather than instructions alone.
+Extensions are TypeScript modules that add executable behavior to gcode. Use one when a workflow needs tools, commands, event handlers, model providers, session state, or terminal UI rather than instructions alone.
 
-An extension runs inside the garmin-code-mini process with the same operating-system permissions. It can inspect prompts, tool calls, files, credentials, and session history, so load extensions only from sources you trust.
+An extension runs inside the gcode process with the same operating-system permissions. It can inspect prompts, tool calls, files, credentials, and session history, so load extensions only from sources you trust.
 
 Typical extensions add an agent tool, protect paths, confirm dangerous commands, react to session events, modify context, expose a command, or display persistent status.
 
@@ -14,13 +14,13 @@ Typical extensions add an agent tool, protect paths, confirm dangerous commands,
 
 An extension exports a default factory that receives `ExtensionAPI`. The factory registers capabilities for the current extension runtime.
 
-Create `~/.garmin-code-mini/agent/extensions/hello.ts`:
+Create `~/.gcode/agent/extensions/hello.ts`:
 
 ```typescript
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
-  garminCodeMini.registerCommand("hello", {
+export default function (gcode: ExtensionAPI) {
+  gcode.registerCommand("hello", {
     description: "Show a greeting",
     handler: async (name, ctx) => {
       ctx.ui.notify(`Hello, ${name || "world"}!`, "info");
@@ -29,21 +29,21 @@ export default function (garminCodeMini: ExtensionAPI) {
 }
 ```
 
-Start garmin-code-mini and run `/hello`. During development, load a file directly:
+Start gcode and run `/hello`. During development, load a file directly:
 
 ```bash
-garmin-code-mini --extension ./hello.ts
+gcode --extension ./hello.ts
 ```
 
-garmin-code-mini uses `jiti`, so local TypeScript extensions do not need a separate compilation step. Use [garmin-code-mini packages](packages.md) for distributed extensions and dependencies.
+gcode uses `jiti`, so local TypeScript extensions do not need a separate compilation step. Use [gcode packages](packages.md) for distributed extensions and dependencies.
 
 <a id="extension-locations"></a>
 <a id="available-imports"></a>
 <a id="choose-where-it-loads"></a>
 
-## Add it to garmin-code-mini
+## Add it to gcode
 
-Place the extension in your user or project extensions directory. garmin-code-mini loads direct TypeScript or JavaScript files and subdirectories containing an `index.ts` or `index.js` entry point.
+Place the extension in your user or project extensions directory. gcode loads direct TypeScript or JavaScript files and subdirectories containing an `index.ts` or `index.js` entry point.
 
 Use a single file for a small extension and a directory for a multi-file implementation. Put npm dependencies in a nearby `package.json`. See [Configuration](configuration.md) for conventional locations and [Settings](settings.md#resources) for additional paths.
 
@@ -53,7 +53,7 @@ Reload replaces the extension runtime, so code after `await ctx.reload()` must n
 
 ## Understand the runtime lifecycle
 
-The factory can be synchronous or asynchronous. garmin-code-mini waits for an asynchronous factory before startup continues, allowing it to fetch configuration or register providers needed during startup.
+The factory can be synchronous or asynchronous. gcode waits for an asynchronous factory before startup continues, allowing it to fetch configuration or register providers needed during startup.
 
 Do not start processes, sockets, watchers, or timers in the factory because some invocations load extensions without starting a session.
 Start long-lived resources from `session_start` or from the command or tool that needs them.
@@ -120,9 +120,9 @@ The lifecycle involves these event groups:
 | Tool execution | `tool_execution_start`, `tool_call`, `tool_execution_update`, `tool_result`, `tool_execution_end` |
 | Settlement | `agent_before_settle`, `agent_settled` |
 
-garmin-code-mini counts as busy while a run starts, including the compaction check and `before_agent_start`, so messages sent meanwhile go into the starting run. Message lifecycle events also cover user and tool-result messages; the model request list places only the assistant stream where it occurs in each turn.
+gcode counts as busy while a run starts, including the compaction check and `before_agent_start`, so messages sent meanwhile go into the starting run. Message lifecycle events also cover user and tool-result messages; the model request list places only the assistant stream where it occurs in each turn.
 
-Tool hooks run for each tool call, and one assistant response can start another turn by returning tool calls. Provider hooks run only when that transport exposes the corresponding stage. See the exported declarations in [`extensions/types.ts`](https://github.com/earendil-works/garmin-code-mini/blob/main/packages/coding-agent/src/core/extensions/types.ts) for exact event payloads and result types.
+Tool hooks run for each tool call, and one assistant response can start another turn by returning tool calls. Provider hooks run only when that transport exposes the corresponding stage. See the exported declarations in [`extensions/types.ts`](https://github.com/earendil-works/gcode/blob/main/packages/coding-agent/src/core/extensions/types.ts) for exact event payloads and result types.
 
 Session startup and replacement follow a separate lifecycle:
 
@@ -164,7 +164,7 @@ flowchart TD
 
 <a id="agent_start--agent_end--agent_before_settle--agent_settled"></a>
 
-Use `agent_before_settle` when an extension must append entries or request one final continuation. Use `agent_settled` for notification-only work that should run after garmin-code-mini has no automatic continuation remaining.
+Use `agent_before_settle` when an extension must append entries or request one final continuation. Use `agent_settled` for notification-only work that should run after gcode has no automatic continuation remaining.
 
 <a id="extensionapi-methods"></a>
 
@@ -172,20 +172,20 @@ Use `agent_before_settle` when an extension must append entries or request one f
 
 | Capability | Main API |
 |---|---|
-| Observe or modify lifecycle behavior | `garminCodeMini.on()` |
-| Add a model-callable operation | `garminCodeMini.registerTool()` |
-| Add a `/` command | `garminCodeMini.registerCommand()` |
-| Add a shortcut or CLI flag | `garminCodeMini.registerShortcut()` or `garminCodeMini.registerFlag()` |
-| Send user or custom messages | `garminCodeMini.sendUserMessage()` or `garminCodeMini.sendMessage()` |
-| Persist non-context session data | `garminCodeMini.appendEntry()` |
-| Change active tools, model, or thinking level | Session control methods on `garmin-code-mini` |
-| Add a model provider | `garminCodeMini.registerProvider()` |
-| Add an MCP server | `garminCodeMini.registerMcpServer()` |
-| Route each request to a model | [`garminCodeMini.registerVirtualModel()`](virtual-models.md) |
+| Observe or modify lifecycle behavior | `gcode.on()` |
+| Add a model-callable operation | `gcode.registerTool()` |
+| Add a `/` command | `gcode.registerCommand()` |
+| Add a shortcut or CLI flag | `gcode.registerShortcut()` or `gcode.registerFlag()` |
+| Send user or custom messages | `gcode.sendUserMessage()` or `gcode.sendMessage()` |
+| Persist non-context session data | `gcode.appendEntry()` |
+| Change active tools, model, or thinking level | Session control methods on `gcode` |
+| Add a model provider | `gcode.registerProvider()` |
+| Add an MCP server | `gcode.registerMcpServer()` |
+| Route each request to a model | [`gcode.registerVirtualModel()`](virtual-models.md) |
 | Add terminal rendering | Renderer registration and `ctx.ui` |
-| Communicate with another extension | `garminCodeMini.events` |
+| Communicate with another extension | `gcode.events` |
 
-Use the exported declarations in [`extensions/types.ts`](https://github.com/earendil-works/garmin-code-mini/blob/main/packages/coding-agent/src/core/extensions/types.ts) for exact event, context, tool, and result types.
+Use the exported declarations in [`extensions/types.ts`](https://github.com/earendil-works/gcode/blob/main/packages/coding-agent/src/core/extensions/types.ts) for exact event, context, tool, and result types.
 
 ## Follow the extension contracts
 
@@ -194,7 +194,7 @@ Use the exported declarations in [`extensions/types.ts`](https://github.com/eare
 
 ### Events and concurrency
 
-Handlers run in extension load and registration order. `garminCodeMini.on()` returns a function that unsubscribes that registration; changes do not affect a dispatch already in progress.
+Handlers run in extension load and registration order. `gcode.on()` returns a function that unsubscribes that registration; changes do not affect a dispatch already in progress.
 Some events notify; others transform data, replace results, or cancel an operation.
 Use each event’s declared result type rather than assuming every return value has an effect.
 
@@ -213,19 +213,19 @@ Events cover resource discovery, sessions, agent and message lifecycle, provider
 
 Notification handlers should not perform slow work on a streaming event. Transform handlers should preserve fields they do not intentionally own, and gate handlers should fail closed when their safety decision cannot be made.
 
-`before_agent_start` exposes both the current prompt and its structured `systemPromptOptions`. `event.messageType` says what started the run: `"user"` for a prompt or `garminCodeMini.sendUserMessage()`, with `prompt` and `images`; `"custom"` for `garminCodeMini.sendMessage(..., { triggerTurn: true })`, with the starting `message` and no `prompt`. A returned `message` is added to either kind of run; check `messageType` to skip runs started by custom messages. Prefer changing prompt sections, selected tools, or guidelines so garmin-code-mini can append a transcript delta. Returning `systemPrompt`, or setting `forceSystemPrompt`, replaces the whole prompt for that run while the transcript continues recording the structured sections. Providers receive the forced text as their leading system prompt.
+`before_agent_start` exposes both the current prompt and its structured `systemPromptOptions`. `event.messageType` says what started the run: `"user"` for a prompt or `gcode.sendUserMessage()`, with `prompt` and `images`; `"custom"` for `gcode.sendMessage(..., { triggerTurn: true })`, with the starting `message` and no `prompt`. A returned `message` is added to either kind of run; check `messageType` to skip runs started by custom messages. Prefer changing prompt sections, selected tools, or guidelines so gcode can append a transcript delta. Returning `systemPrompt`, or setting `forceSystemPrompt`, replaces the whole prompt for that run while the transcript continues recording the structured sections. Providers receive the forced text as their leading system prompt.
 
 `message_end` can replace a finalized message while preserving its role. `tool_call` can mutate input or block execution. `tool_result` handlers compose, with each handler seeing prior changes.
 
 <a id="provider_stream_event"></a>
 
-`provider_stream_event` fires for each parsed provider stream event before garmin-code-mini normalizes it. The event identifies the provider, API, and model; `event.data` is the earliest structured value available to garmin-code-mini, not necessarily the original HTTP bytes or SSE frame. Treat it as read-only because mutation can affect normalization. The event is notification-only and is not persisted.
+`provider_stream_event` fires for each parsed provider stream event before gcode normalizes it. The event identifies the provider, API, and model; `event.data` is the earliest structured value available to gcode, not necessarily the original HTTP bytes or SSE frame. Treat it as read-only because mutation can affect normalization. The event is notification-only and is not persisted.
 
 Handlers are awaited in stream order, so slow handlers delay stream consumption. Handler errors are reported without changing the provider response. See [`debug-provider.ts`](../examples/extensions/debug-provider.ts) for an opt-in viewer that groups raw events by assistant message.
 
 <a id="context_with_system"></a>
 
-`context` transforms conversation messages without prompt and tool system messages; garmin-code-mini restores that state afterward. Use `context_with_system` only when a request-local transformation must own the complete transcript, and keep a system message at index zero.
+`context` transforms conversation messages without prompt and tool system messages; gcode restores that state afterward. Use `context_with_system` only when a request-local transformation must own the complete transcript, and keep a system message at index zero.
 
 `turn_end` and `agent_before_settle` are actionable boundaries. Their handlers can chain proposed `custom`, `custom_message`, `context_edit`, or `compaction` entries and return `continue: true` for one next model request. Guard continuation conditions because an unconditional continuation can loop. Use the exported event declarations for the complete validation and ordering contract.
 
@@ -258,7 +258,7 @@ Truncate large model-facing results and tell the model where to read the complet
 
 Declare `outputSchema` and return a matching `structuredContent` when the result is data. The model still receives `content`; programmatic callers such as codemode scripts receive `structuredContent` instead of the text. Tools without `outputSchema` are passed to scripts as their text content. To report a failure that still carries data, return the result with `isError: true` instead of throwing: the model sees an error, and scripts still receive `structuredContent`.
 
-A tool can run other tools with `ctx.executeTool(name, args, { signal, onUpdate })`. Nested calls go through argument validation and the `tool_call` and `tool_result` handlers like model-issued calls, and emit `tool_execution_start`, `tool_execution_update`, and `tool_execution_end`; all of these events carry `parentToolCallId`, and their `toolCallId` is assigned by garmin-code-mini as `<parent id>/<n>`. These ids do not appear as tool calls or tool results in the transcript. Nested calls do not add transcript entries: their results only reach the calling tool, which reports them itself, for example through `onUpdate` and `details`. The session keeps a bounded record of them (name, arguments, status, duration, error; never results) as `nestedCalls` on the calling tool's result message. It is used for compaction file lists and shown in HTML exports. Arguments over 8 KiB per call or 32 KiB per tool result are omitted, at most 256 calls are kept, and `complete: false` marks a record that lost anything. The `usage` of nested results, at every depth, is added to the calling tool's result `usage`, so a tool reports only its own usage, not that of the tools it called. `ctx.tools` lists the tools `ctx.executeTool()` can call. `tool_result` handlers that redact `content` should also replace `structuredContent`; replacing only `content` drops it.
+A tool can run other tools with `ctx.executeTool(name, args, { signal, onUpdate })`. Nested calls go through argument validation and the `tool_call` and `tool_result` handlers like model-issued calls, and emit `tool_execution_start`, `tool_execution_update`, and `tool_execution_end`; all of these events carry `parentToolCallId`, and their `toolCallId` is assigned by gcode as `<parent id>/<n>`. These ids do not appear as tool calls or tool results in the transcript. Nested calls do not add transcript entries: their results only reach the calling tool, which reports them itself, for example through `onUpdate` and `details`. The session keeps a bounded record of them (name, arguments, status, duration, error; never results) as `nestedCalls` on the calling tool's result message. It is used for compaction file lists and shown in HTML exports. Arguments over 8 KiB per call or 32 KiB per tool result are omitted, at most 256 calls are kept, and `complete: false` marks a record that lost anything. The `usage` of nested results, at every depth, is added to the calling tool's result `usage`, so a tool reports only its own usage, not that of the tools it called. `ctx.tools` lists the tools `ctx.executeTool()` can call. `tool_result` handlers that redact `content` should also replace `structuredContent`; replacing only `content` drops it.
 
 See [`hello.ts`](../examples/extensions/hello.ts), [`todo.ts`](../examples/extensions/todo.ts), [`dynamic-tools.ts`](../examples/extensions/dynamic-tools.ts), and [`truncated-tool.ts`](../examples/extensions/truncated-tool.ts).
 
@@ -274,13 +274,13 @@ See [`hello.ts`](../examples/extensions/hello.ts), [`todo.ts`](../examples/exten
 
 `namespace: { name, aliases, description, instructions }` groups related tools, as MCP servers do. Codemode tools list a namespace under one heading with its `description`. `instructions` holds longer usage guidance; it is not listed, and codemode scripts read it with `describeNamespace(name)`. `aliases` are other names scripts may look the namespace up by, for example the server name `docs` for `mcp__docs`; a name and the same name as a script identifier (`my-docs`, `my_docs`) match alike.
 
-Registering a `direct` or `model-only` tool activates it; the other exposures are not activated on registration. The active set (`garminCodeMini.getActiveTools()`, `garminCodeMini.setActiveTools()`) is the set of tools declared to the model. `garminCodeMini.getAllTools()` reports each tool's `exposure`, `namespace`, `annotations`, and `reachesTools`.
+Registering a `direct` or `model-only` tool activates it; the other exposures are not activated on registration. The active set (`gcode.getActiveTools()`, `gcode.setActiveTools()`) is the set of tools declared to the model. `gcode.getAllTools()` reports each tool's `exposure`, `namespace`, `annotations`, and `reachesTools`.
 
 `annotations` are hints about what a tool does, with the meaning of MCP tool annotations: `readOnlyHint`, `destructiveHint`, `idempotentHint`, and `openWorldHint`. MCP tools carry the hints their server declares. Missing hints take the MCP defaults: a tool is not read-only, and may be destructive and reach an open world. The hints are not verified, but a permission extension can use them to decide which calls to confirm. This confirms the calls Codex asks approval for:
 
 ```typescript
-garminCodeMini.on("tool_call", async (event, ctx) => {
-  const hints = garminCodeMini.getAllTools().find((tool) => tool.name === event.toolName)?.annotations;
+gcode.on("tool_call", async (event, ctx) => {
+  const hints = gcode.getAllTools().find((tool) => tool.name === event.toolName)?.annotations;
   const needsApproval =
     hints?.destructiveHint === true ||
     (!hints?.readOnlyHint && ((hints?.destructiveHint ?? true) || (hints?.openWorldHint ?? true)));
@@ -296,26 +296,26 @@ A tool that reaches other tools declares which ones a call may reach with `reach
 
 ### Activate tools dynamically
 
-Register every tool first, keep optional tools inactive, and use `garminCodeMini.setActiveTools()` from a loader tool to select the desired active tools. Names must already be registered; unknown names are ignored.
+Register every tool first, keep optional tools inactive, and use `gcode.setActiveTools()` from a loader tool to select the desired active tools. Names must already be registered; unknown names are ignored.
 
-garmin-code-mini records the initial prompt and tool set in the transcript's first system message, then appends tool and prompt changes before the next model request. Providers that cannot represent the transition receive a complete transcript checkpoint, which can invalidate the cached prefix.
+gcode records the initial prompt and tool set in the transcript's first system message, then appends tool and prompt changes before the next model request. Providers that cannot represent the transition receive a complete transcript checkpoint, which can invalidate the cached prefix.
 
 ### Tool rendering
 
-A tool's `renderCall` and `renderResult` draw its calls in the interactive transcript and in HTML exports. `garminCodeMini.registerToolRenderer((toolName, next) => renderers)` chooses renderers for calls to any tool, including tools that are not registered yet, such as MCP tools in a resumed session before their server connected. `next()` returns what the remaining resolvers (in extension load order), then the registered tool, would use, so `next() ?? mine` only fills in.
+A tool's `renderCall` and `renderResult` draw its calls in the interactive transcript and in HTML exports. `gcode.registerToolRenderer((toolName, next) => renderers)` chooses renderers for calls to any tool, including tools that are not registered yet, such as MCP tools in a resumed session before their server connected. `next()` returns what the remaining resolvers (in extension load order), then the registered tool, would use, so `next() ?? mine` only fills in.
 
 ### MCP servers
 
-`garminCodeMini.registerMcpServer(name, config)` adds an MCP server for the current session. `config` has the shape of an `mcpServers` entry in [`mcp.json`](mcp.md): `command`, `args`, `env`, and `cwd` for stdio servers, `url`, `headers`, and `oauth` for HTTP servers, plus `exposure`, `toolExposure`, `description`, `enabled`, and `timeout`.
+`gcode.registerMcpServer(name, config)` adds an MCP server for the current session. `config` has the shape of an `mcpServers` entry in [`mcp.json`](mcp.md): `command`, `args`, `env`, and `cwd` for stdio servers, `url`, `headers`, and `oauth` for HTTP servers, plus `exposure`, `toolExposure`, `description`, `enabled`, and `timeout`.
 
 ```typescript
-garminCodeMini.registerMcpServer("jira", { url: "https://mcp.example.com/jira", exposure: "codemode" });
-garminCodeMini.unregisterMcpServer("jira");
+gcode.registerMcpServer("jira", { url: "https://mcp.example.com/jira", exposure: "codemode" });
+gcode.unregisterMcpServer("jira");
 ```
 
-Servers registered while the extension loads connect when the session starts, together with the `mcp.json` servers; servers registered later connect right away, and `garminCodeMini.unregisterMcpServer()` closes the connection and makes the server's tools unreachable. Registrations are not saved: register again on every load, for example based on the extension's own settings. A server in `mcp.json` with the same name takes precedence, and `/mcp` shows the override. Registering the same name again replaces the extension's earlier registration; names registered by another extension, invalid names, and invalid configs throw.
+Servers registered while the extension loads connect when the session starts, together with the `mcp.json` servers; servers registered later connect right away, and `gcode.unregisterMcpServer()` closes the connection and makes the server's tools unreachable. Registrations are not saved: register again on every load, for example based on the extension's own settings. A server in `mcp.json` with the same name takes precedence, and `/mcp` shows the override. Registering the same name again replaces the extension's earlier registration; names registered by another extension, invalid names, and invalid configs throw.
 
-The built-in MCP support connects registered servers. When nothing does, because another extension replaced it (see [MCP](mcp.md#other-mcp-extensions)), each registration is reported as an extension error. Other MCP extensions can connect registered servers too: read them with `garminCodeMini.getMcpServers()` on `session_start` and handle the `mcp_servers_change` event for later changes.
+The built-in MCP support connects registered servers. When nothing does, because another extension replaced it (see [MCP](mcp.md#other-mcp-extensions)), each registration is reported as an extension error. Other MCP extensions can connect registered servers too: read them with `gcode.getMcpServers()` on `session_start` and handle the `mcp_servers_change` event for later changes.
 
 <a id="extensioncontext"></a>
 <a id="extensioncommandcontext"></a>
@@ -341,8 +341,8 @@ Choose storage based on how state participates in the conversation:
 | State | Storage |
 |---|---|
 | Tool state that follows the active branch | Tool-result `details` |
-| Durable data excluded from model context | `garminCodeMini.appendEntry()` |
-| Custom content stored and sent to the model | `garminCodeMini.sendMessage()` |
+| Durable data excluded from model context | `gcode.appendEntry()` |
+| Custom content stored and sent to the model | `gcode.sendMessage()` |
 | Data outside one session | External storage |
 
 Reconstruct branch-sensitive state from `ctx.sessionManager.getBranch()` during `session_start`.
@@ -372,7 +372,7 @@ Keep tool and event behavior independent from rendering so non-interactive modes
 
 ### Errors and cleanup
 
-garmin-code-mini reports handler errors and continues where possible. A `tool_call` handler failure blocks the tool as a fail-safe; a tool execution failure becomes an error result for the model.
+gcode reports handler errors and continues where possible. A `tool_call` handler failure blocks the tool as a fail-safe; a tool execution failure becomes an error result for the model.
 
 Release resources in `session_shutdown` even when normal operation attempted cleanup.
 Keep cleanup idempotent because cancellation, reload, session replacement, and process exit can converge on the same path.
@@ -397,4 +397,4 @@ The checked [extension examples](../examples/extensions/) are the implementation
 | Route built-in tools to another machine | [`ssh.ts`](../examples/extensions/ssh.ts) | Reuses tool operation interfaces instead of recreating tool contracts. |
 | Add OAuth and provider-specific streaming | [`custom-provider-gitlab-duo/`](../examples/extensions/custom-provider-gitlab-duo/) | Shows a complete provider integration while delegating supported protocols. |
 
-Use [Custom Providers](custom-provider.md) for model-service integrations, [Terminal UI](tui.md) for custom components, and [garmin-code-mini Packages](packages.md) to install or distribute extensions with other resources. Use the exported declarations for exact signatures, payloads, and result schemas; this guide focuses on lifecycle choices, composition, and durable implementation patterns.
+Use [Custom Providers](custom-provider.md) for model-service integrations, [Terminal UI](tui.md) for custom components, and [gcode Packages](packages.md) to install or distribute extensions with other resources. Use the exported declarations for exact signatures, payloads, and result schemas; this guide focuses on lifecycle choices, composition, and durable implementation patterns.

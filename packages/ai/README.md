@@ -1,4 +1,4 @@
-# Garmin Code Mini local inference
+# Gcode local inference
 
 This package connects the coding agent to your own OpenAI-compatible chat-completions server. It uses native `fetch`, streams text and tool calls, validates tool arguments, and tracks token usage reported by the server.
 
@@ -8,16 +8,16 @@ The only built-in provider is `local`. Startup uses a static model declaration a
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `GARMIN_CODE_MINI_BASE_URL` | `http://127.0.0.1:8080/v1` | Your server's API base URL |
-| `GARMIN_CODE_MINI_MODEL` | `local-model` | Model identifier expected by your server |
-| `GARMIN_CODE_MINI_API_KEY` | unset | Optional bearer token for your server |
+| `GCODE_BASE_URL` | `http://127.0.0.1:8080/v1` | Your server's API base URL |
+| `GCODE_MODEL` | `local-model` | Model identifier expected by your server |
+| `GCODE_API_KEY` | unset | Optional bearer token for your server |
 
 Run your inference server separately with a model that supports tool calling. Set the base URL to a loopback address, LAN address, or internal hostname. The configured server is the inference request destination. HTTP redirects fail instead of forwarding requests to another destination.
 
 ## Usage
 
 ```typescript
-import { createModels, localProvider } from "@garmin-code-mini/ai";
+import { createModels, localProvider } from "@gcode/ai";
 
 const models = createModels();
 models.setProvider(localProvider());

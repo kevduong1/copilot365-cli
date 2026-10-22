@@ -1,4 +1,4 @@
-name: Garmin Code Mini environment daemons
+name: Gcode environment daemons
 
 on:
   workflow_call:

@@ -5,10 +5,10 @@
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Type } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { Type } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxToolCall } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { NodeExecutionEnv } from "../../src/env/node.ts";
 import {
 	createRegistry,
@@ -64,7 +64,7 @@ const leavePlanMode = { extensions: null, tools: null };
 
 // ─── Host setup ─────────────────────────────────────────────────────────────
 
-const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-plan-"));
+const directory = await mkdtemp(join(tmpdir(), "gcode-durable-plan-"));
 await writeFile(join(directory, "server.ts"), "app.listen(3000);\n");
 
 const faux = fauxProvider();

@@ -1,5 +1,5 @@
-import { copyJson, type JsonValue } from "@garmin-code-mini/chord";
-import type { Op } from "@garmin-code-mini/chord/delta";
+import { copyJson, type JsonValue } from "@gcode/chord";
+import type { Op } from "@gcode/chord/delta";
 import { idFromNumber } from "./ids.ts";
 import type {
 	CheckpointInfo,

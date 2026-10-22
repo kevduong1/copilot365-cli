@@ -218,7 +218,7 @@ describe("Coding Agent Tools", () => {
 			expect(imageBlock?.mimeType).toBe("image/png");
 			expect(typeof imageBlock?.data).toBe("string");
 			expect((imageBlock?.data ?? "").length).toBeGreaterThan(0);
-			// Programmatic callers get the same image as a block. https://github.com/earendil-works/garmin-code-mini/issues/10251
+			// Programmatic callers get the same image as a block. https://github.com/earendil-works/gcode/issues/10251
 			expect(result.structuredContent).toEqual({
 				type: "image",
 				data: imageBlock?.data,
@@ -543,7 +543,7 @@ describe("Coding Agent Tools", () => {
 			expect(readFileSync(largeOutput.full_output_path!, "utf-8").endsWith("300000\n")).toBe(true);
 		});
 
-		// Regression tests for https://github.com/earendil-works/garmin-code-mini/issues/9577
+		// Regression tests for https://github.com/earendil-works/gcode/issues/9577
 		it.skipIf(process.platform === "win32")(
 			"should map signal-killed commands to 128 plus the signal number",
 			async () => {
@@ -1139,12 +1139,12 @@ describe("edit tool fuzzy matching", () => {
 
 		const result = await editTool.execute("test-fuzzy-chinese", {
 			path: testFile,
-			edits: [{ oldText: "你好,世界\n你好(世界)\n", newText: "你好，garmin-code-mini\n你好(garminCodeMini)\n" }],
+			edits: [{ oldText: "你好,世界\n你好(世界)\n", newText: "你好，gcode\n你好(gcode)\n" }],
 		});
 
 		expect(getTextOutput(result)).toContain("Successfully replaced");
 		const content = readFileSync(testFile, "utf-8");
-		expect(content).toBe("你好，garmin-code-mini\n你好(garminCodeMini)\n");
+		expect(content).toBe("你好，gcode\n你好(gcode)\n");
 	});
 
 	it("should match compatibility-equivalent Unicode forms", async () => {

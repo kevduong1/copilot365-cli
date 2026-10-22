@@ -2,10 +2,10 @@
  * Working Indicator Extension
  *
  * Demonstrates `ctx.ui.setWorkingIndicator()` for customizing the inline
- * working indicator shown while garmin-code-mini is streaming a response.
+ * working indicator shown while gcode is streaming a response.
  *
  * Usage:
- *   garmin-code-mini --extension examples/extensions/working-indicator.ts
+ *   gcode --extension examples/extensions/working-indicator.ts
  *
  * Commands:
  *   /working-indicator           Show current mode
@@ -13,10 +13,10 @@
  *   /working-indicator pulse     Use a custom animated indicator
  *   /working-indicator none      Hide the indicator entirely
  *   /working-indicator spinner   Restore an animated spinner
- *   /working-indicator reset     Restore garmin-code-mini's default spinner
+ *   /working-indicator reset     Restore gcode's default spinner
  */
 
-import type { ExtensionAPI, ExtensionContext, WorkingIndicatorOptions } from "garmin-code-mini";
+import type { ExtensionAPI, ExtensionContext, WorkingIndicatorOptions } from "gcode";
 
 type WorkingIndicatorMode = "dot" | "none" | "pulse" | "spinner" | "default";
 
@@ -79,11 +79,11 @@ function describeMode(mode: WorkingIndicatorMode): string {
 		case "spinner":
 			return "custom spinner";
 		case "default":
-			return "garmin-code-mini default spinner";
+			return "gcode default spinner";
 	}
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	let mode: WorkingIndicatorMode = "spinner";
 
 	const applyIndicator = (ctx: ExtensionContext) => {
@@ -91,11 +91,11 @@ export default function (garminCodeMini: ExtensionAPI) {
 		ctx.ui.setStatus("working-indicator", ctx.ui.theme.fg("dim", `Indicator: ${describeMode(mode)}`));
 	};
 
-	garminCodeMini.on("session_start", async (_event, ctx) => {
+	gcode.on("session_start", async (_event, ctx) => {
 		applyIndicator(ctx);
 	});
 
-	garminCodeMini.registerCommand("working-indicator", {
+	gcode.registerCommand("working-indicator", {
 		description: "Set the streaming working indicator: dot, pulse, none, spinner, or reset.",
 		handler: async (args, ctx) => {
 			const nextMode = args.trim().toLowerCase();

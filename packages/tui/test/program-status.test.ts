@@ -11,8 +11,8 @@ function decodeMessage(sequence: string): string | undefined {
 describe("formatProgramStatus", () => {
 	it("encodes state, app, kind, and a base64 message", () => {
 		assert.equal(
-			formatProgramStatus({ state: "blocked", app: "garmin-code-mini", kind: "permission", message: "Allow bash?" }),
-			`\x1b]7501;state=blocked:app=garmin-code-mini:kind=permission:msg=${Buffer.from("Allow bash?").toString("base64")}\x1b\\`,
+			formatProgramStatus({ state: "blocked", app: "gcode", kind: "permission", message: "Allow bash?" }),
+			`\x1b]7501;state=blocked:app=gcode:kind=permission:msg=${Buffer.from("Allow bash?").toString("base64")}\x1b\\`,
 		);
 		assert.equal(formatProgramStatus({ state: "clear" }), "\x1b]7501;state=clear\x1b\\");
 	});
@@ -32,7 +32,7 @@ describe("formatProgramStatus", () => {
 	});
 
 	it("cuts long messages at a UTF-8 boundary within the spec limits", () => {
-		const sequence = formatProgramStatus({ state: "working", app: "garmin-code-mini", message: "é".repeat(2000) });
+		const sequence = formatProgramStatus({ state: "working", app: "gcode", message: "é".repeat(2000) });
 		const message = decodeMessage(sequence)!;
 		assert.equal(message, "é".repeat(1024));
 		assert.ok(Buffer.byteLength(message) <= 2048);

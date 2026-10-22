@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { getModel } from "@garmin-code-mini/ai/compat";
+import { getModel } from "@gcode/ai/compat";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { DefaultResourceLoader } from "../src/core/resource-loader.ts";
 import { createAgentSession } from "../src/core/sdk.ts";
@@ -15,8 +15,8 @@ const strictToolNames = ["read", "bash", "powershell", "edit", "write"] as const
 describe("strict built-in tools", () => {
 	afterEach(() => vi.unstubAllEnvs());
 
-	it.each([undefined, "0", "1"])("prefers strict sampling with GARMIN_CODE_MINI_EXPERIMENTAL=%s", (experimental) => {
-		vi.stubEnv("GARMIN_CODE_MINI_EXPERIMENTAL", experimental);
+	it.each([undefined, "0", "1"])("prefers strict sampling with GCODE_EXPERIMENTAL=%s", (experimental) => {
+		vi.stubEnv("GCODE_EXPERIMENTAL", experimental);
 		const definitions = createAllToolDefinitions(process.cwd());
 		const tools = createAllTools(process.cwd());
 		for (const name of strictToolNames) {
@@ -49,7 +49,7 @@ describe("strict built-in tools", () => {
 	it.each([{ activeTools: [] }, { activeTools: ["read"] }, { activeTools: [...strictToolNames] }])(
 		"allows extensions to re-register tools without strict sampling: $activeTools",
 		async ({ activeTools }) => {
-			const cwd = mkdtempSync(join(tmpdir(), "garmin-code-mini-non-strict-tools-"));
+			const cwd = mkdtempSync(join(tmpdir(), "gcode-non-strict-tools-"));
 			const agentDir = join(cwd, "agent");
 			const settingsManager = SettingsManager.inMemory({ defaultTools: activeTools });
 			const resourceLoader = new DefaultResourceLoader({
@@ -61,13 +61,13 @@ describe("strict built-in tools", () => {
 				noPromptTemplates: true,
 				noThemes: true,
 				extensionFactories: [
-					(garminCodeMini) => {
-						garminCodeMini.on("session_start", () => {
+					(gcode) => {
+						gcode.on("session_start", () => {
 							const definitions = createAllToolDefinitions(cwd);
 							for (const name of strictToolNames) {
-								garminCodeMini.registerTool({ ...definitions[name], constrainedSampling: false });
+								gcode.registerTool({ ...definitions[name], constrainedSampling: false });
 							}
-							garminCodeMini.setActiveTools(activeTools);
+							gcode.setActiveTools(activeTools);
 						});
 					},
 				],

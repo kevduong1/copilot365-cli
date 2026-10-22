@@ -1,7 +1,7 @@
-import { type AssistantMessage, fauxAssistantMessage, fauxText, Type } from "@garmin-code-mini/ai";
-import { CodemodeSandbox } from "@garmin-code-mini/codemode";
-import { CODEMODE_SOURCE_GRAMMAR } from "@garmin-code-mini/codemode/source";
-import { defineTool, MemoryStorage, type ToolRegistration } from "@garmin-code-mini/durable";
+import { type AssistantMessage, fauxAssistantMessage, fauxText, Type } from "@gcode/ai";
+import { CodemodeSandbox } from "@gcode/codemode";
+import { CODEMODE_SOURCE_GRAMMAR } from "@gcode/codemode/source";
+import { defineTool, MemoryStorage, type ToolRegistration } from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { createCodemodeExtension } from "../src/codemode/codemode.ts";
 import { type CodemodeNamespace, codemodeDescription, codemodeSection } from "../src/codemode/describe.ts";
@@ -79,7 +79,7 @@ describe("code mode description and section", () => {
 		setup.faux.setResponses([fauxAssistantMessage([fauxText("hi")]) as AssistantMessage]);
 		const { harness, root } = await openChat(new MemoryStorage(), setup);
 		await (await root.submit({ type: "input", content: "go" }, context)).wait(context);
-		const system = (await allEntries(root)).find((entry) => entry.kind === "garmin-code-mini.system")!;
+		const system = (await allEntries(root)).find((entry) => entry.kind === "gcode.system")!;
 		const sections = (system.model![0] as { sections?: Record<string, string> }).sections!;
 		expect(sections.codemode).toContain("### `read`");
 		expect(sections.codemode).toContain("### `mcp__github__list_issues`");
@@ -87,7 +87,7 @@ describe("code mode description and section", () => {
 		expect(sections.codemode).not.toContain("mcp__github__get_issue");
 		// The code mode tool itself is not callable from scripts.
 		expect(sections.codemode).not.toContain("### `codemode`");
-		// The tool declaration carries the script grammar; garmin-code-mini-ai applies it only for models that support it.
+		// The tool declaration carries the script grammar; gcode-ai applies it only for models that support it.
 		const tools = (system.model![0] as { toolsAdded?: { name: string; constrainedSampling?: unknown }[] })
 			.toolsAdded!;
 		expect(tools.find((candidate) => candidate.name === "codemode")?.constrainedSampling).toEqual({

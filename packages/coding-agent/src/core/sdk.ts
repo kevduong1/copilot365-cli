@@ -1,7 +1,7 @@
 import { join } from "node:path";
-import { Agent, type AgentMessage, setDefaultStreamFn, type ThinkingLevel } from "@garmin-code-mini/agent-core";
-import type { ModelsSimpleStreamOptions } from "@garmin-code-mini/ai";
-import { clampThinkingLevel, type Message, type Model, streamSimple } from "@garmin-code-mini/ai/compat";
+import { Agent, type AgentMessage, setDefaultStreamFn, type ThinkingLevel } from "@gcode/agent-core";
+import type { ModelsSimpleStreamOptions } from "@gcode/ai";
+import { clampThinkingLevel, type Message, type Model, streamSimple } from "@gcode/ai/compat";
 import { getAgentDir } from "../config.ts";
 import { resolvePath } from "../utils/paths.ts";
 import { AgentSession } from "./agent-session.ts";
@@ -42,13 +42,13 @@ import { getBranchSelection } from "./virtual-models.ts";
 
 // Preserve the pre-0.81 fallback for extensions that construct Agent instances
 // or invoke low-level agent loops without supplying streamFn. Agent core remains
-// provider-agnostic and does not import garmin-code-mini-ai/compat itself.
+// provider-agnostic and does not import gcode-ai/compat itself.
 setDefaultStreamFn(streamSimple);
 
 export interface CreateAgentSessionOptions {
 	/** Working directory for project-local discovery. Default: process.cwd() */
 	cwd?: string;
-	/** Global config directory. Default: ~/.garmin-code-mini/agent */
+	/** Global config directory. Default: ~/.gcode/agent */
 	agentDir?: string;
 
 	/** Canonical model/auth runtime. Defaults to a runtime using agentDir/auth.json and models.json. */
@@ -72,7 +72,7 @@ export interface CreateAgentSessionOptions {
 	/**
 	 * Optional allowlist of tool names or patterns, where `*` matches any characters.
 	 *
-	 * When omitted, garmin-code-mini uses the resolved `defaultTools` setting for the initial
+	 * When omitted, gcode uses the resolved `defaultTools` setting for the initial
 	 * selection when configured. Otherwise it enables the default built-in tools
 	 * (read, bash, edit, write). Extension/custom tools remain enabled unless
 	 * `noTools` changes that default. When provided, only matching tools are
@@ -162,7 +162,7 @@ function getDefaultAgentDir(): string {
  * const { session } = await createAgentSession();
  *
  * // With explicit model
- * import { getModel } from '@garmin-code-mini/ai';
+ * import { getModel } from '@gcode/ai';
  * const { session } = await createAgentSession({
  *   model: getModel('anthropic', 'claude-opus-4-5'),
  *   thinkingLevel: 'high',

@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { getModel } from "@garmin-code-mini/ai/compat";
+import { getModel } from "@gcode/ai/compat";
 import { Type } from "typebox";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
@@ -18,10 +18,7 @@ describe("regression #3592: no-builtin-tools keeps extension tools enabled", () 
 	let agentDir: string;
 
 	beforeEach(() => {
-		tempDir = join(
-			tmpdir(),
-			`garmin-code-mini-no-builtin-tools-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-		);
+		tempDir = join(tmpdir(), `gcode-no-builtin-tools-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		agentDir = join(tempDir, "agent");
 		mkdirSync(agentDir, { recursive: true });
 	});
@@ -40,9 +37,9 @@ describe("regression #3592: no-builtin-tools keeps extension tools enabled", () 
 			agentDir,
 			settingsManager,
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_start", () => {
-						garminCodeMini.registerTool({
+				(gcode) => {
+					gcode.on("session_start", () => {
+						gcode.registerTool({
 							name: "dynamic_tool",
 							label: "Dynamic Tool",
 							description: "Tool registered from session_start",

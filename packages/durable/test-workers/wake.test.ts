@@ -1,7 +1,7 @@
 import { evictDurableObject, runDurableObjectAlarm, runInDurableObject } from "cloudflare:test";
 import { type DurableObjectState, type DurableObjectStub, env } from "cloudflare:workers";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import { AssistantEntry, type TaskId } from "@garmin-code-mini/durable";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import { AssistantEntry, type TaskId } from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { nativeTimer } from "../src/timers.ts";
 import type { TestSession } from "./worker.ts";

@@ -1,19 +1,19 @@
-# @garmin-code-mini/agent-core
+# @gcode/agent-core
 
-Stateful agent with tool execution and event streaming. Built on `@garmin-code-mini/ai`.
+Stateful agent with tool execution and event streaming. Built on `@gcode/ai`.
 
 ## Installation
 
 ```bash
-npm install @garmin-code-mini/agent-core
+npm install @gcode/agent-core
 ```
 
 ## Quick Start
 
 ```typescript
-import { Agent } from "@garmin-code-mini/agent-core";
-import { createModels } from "@garmin-code-mini/ai";
-import { anthropicProvider } from "@garmin-code-mini/ai/providers/anthropic";
+import { Agent } from "@gcode/agent-core";
+import { createModels } from "@gcode/ai";
+import { anthropicProvider } from "@gcode/ai/providers/anthropic";
 
 const models = createModels();
 models.setProvider(anthropicProvider());
@@ -232,8 +232,8 @@ const agent = new Agent({
   // Session ID for provider caching
   sessionId: "session-123",
 
-  // How requests identify the app to providers (garmin-code-mini-ai ClientIdentity), merged over
-  // DEFAULT_AGENT_IDENTITY ({ attribution: GARMIN_CODE_MINI_ATTRIBUTION }: provider attribution headers name garmin-code-mini).
+  // How requests identify the app to providers (gcode-ai ClientIdentity), merged over
+  // DEFAULT_AGENT_IDENTITY ({ attribution: GCODE_ATTRIBUTION }: provider attribution headers name gcode).
   // Pass your app's attribution, or null to send none.
   identity: { attribution: { name: "my-app", url: "https://my-app.example" } },
 
@@ -301,7 +301,7 @@ Access state via `agent.state`.
 
 Assigning `agent.state.tools = [...]` or `agent.state.messages = [...]` copies the top-level array before storing it. Mutating the returned array mutates the current agent state.
 
-The transcript owns the system prompt and tool declarations: the leading system message is the prompt, later system messages patch it (see `SystemMessage` in garmin-code-mini-ai). `agent.state.systemPrompt` is read-only and replays the transcript. `agent.state.tools` is the executable loadout; before every request the loop diffs it against the tools the transcript declares and, if they differ, announces the change in a system message (merged into a pending system message when one exists). garmin-code-mini-ai's `getCurrentSystemMessage(messages)` returns the replayed head, including declared tools, for any message array, including agent transcripts with custom message roles.
+The transcript owns the system prompt and tool declarations: the leading system message is the prompt, later system messages patch it (see `SystemMessage` in gcode-ai). `agent.state.systemPrompt` is read-only and replays the transcript. `agent.state.tools` is the executable loadout; before every request the loop diffs it against the tools the transcript declares and, if they differ, announces the change in a system message (merged into a pending system message when one exists). gcode-ai's `getCurrentSystemMessage(messages)` returns the replayed head, including declared tools, for any message array, including agent transcripts with custom message roles.
 
 To change the prompt mid-conversation, append a system message with `content` (added instructions) or `sections` (named replacements):
 
@@ -431,7 +431,7 @@ Follow-up messages are checked only when there are no more tool calls and no ste
 Extend `AgentMessage` via declaration merging:
 
 ```typescript
-declare module "@garmin-code-mini/agent-core" {
+declare module "@gcode/agent-core" {
   interface CustomAgentMessages {
     notification: { role: "notification"; text: string; timestamp: number };
   }
@@ -510,14 +510,14 @@ Return `terminate: true` from `execute()`, a blocked `beforeToolCall`, or `after
 
 ### MCP and Codemode
 
-`@garmin-code-mini/mcp` connects to MCP servers and `@garmin-code-mini/codemode` runs model-written JavaScript that calls tools. [examples/mcp-codemode](examples/mcp-codemode) wraps both as `AgentTool`s: one tool per MCP tool, and a `codemode` tool whose scripts call the agent's tools through `runToolCall()`, so `beforeToolCall` and `afterToolCall` apply to those calls too.
+`@gcode/mcp` connects to MCP servers and `@gcode/codemode` runs model-written JavaScript that calls tools. [examples/mcp-codemode](examples/mcp-codemode) wraps both as `AgentTool`s: one tool per MCP tool, and a `codemode` tool whose scripts call the agent's tools through `runToolCall()`, so `beforeToolCall` and `afterToolCall` apply to those calls too.
 
 ## Proxy Usage
 
 For browser apps that proxy through a backend:
 
 ```typescript
-import { Agent, streamProxy } from "@garmin-code-mini/agent-core";
+import { Agent, streamProxy } from "@gcode/agent-core";
 
 const agent = new Agent({
   streamFn: (model, context, options) =>
@@ -534,7 +534,7 @@ const agent = new Agent({
 For direct control without the Agent class:
 
 ```typescript
-import { agentLoop, agentLoopContinue } from "@garmin-code-mini/agent-core";
+import { agentLoop, agentLoopContinue } from "@gcode/agent-core";
 
 const context: AgentContext = {
   messages: [{ role: "system", content: "You are helpful.", timestamp: Date.now() }],

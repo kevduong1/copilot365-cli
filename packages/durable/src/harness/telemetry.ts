@@ -1,4 +1,4 @@
-import { defineTelemetrySchema } from "@garmin-code-mini/telemetry";
+import { defineTelemetrySchema } from "@gcode/telemetry";
 
 const entry = {
 	description: "A transcript entry was committed; content remains in the transcript.",
@@ -50,7 +50,7 @@ const submission = {
 export const DURABLE_TELEMETRY_SCHEMA = defineTelemetrySchema({
 	version: 1,
 	spans: {
-		"garmin-code-mini.durable.submit": {
+		"gcode.durable.submit": {
 			description:
 				"Public submission admission and its commit. Inputs start root traces linked to their callers; writes are children. Internal admissions emit phase events only.",
 			parents: { kind: "any" },
@@ -72,13 +72,13 @@ export const DURABLE_TELEMETRY_SCHEMA = defineTelemetrySchema({
 				},
 			},
 			events: {
-				"garmin-code-mini.durable.entry": entry,
-				"garmin-code-mini.durable.submission": submission,
-				"garmin-code-mini.durable.report": report,
+				"gcode.durable.entry": entry,
+				"gcode.durable.submission": submission,
+				"gcode.durable.report": report,
 			},
 			status: { default: "ok", errorWhen: "Admission failed." },
 		},
-		"garmin-code-mini.durable.phase": {
+		"gcode.durable.phase": {
 			description: "One task phase invocation, including its decision commit, never a wait or restart.",
 			parents: { kind: "any" },
 			startAttributes: {
@@ -99,14 +99,14 @@ export const DURABLE_TELEMETRY_SCHEMA = defineTelemetrySchema({
 				"tool.call_id": { type: "string", description: "Transcript tool call ID.", cardinality: "high" },
 			},
 			events: {
-				"garmin-code-mini.durable.entry": entry,
-				"garmin-code-mini.durable.submission": submission,
-				"garmin-code-mini.durable.report": report,
-				"garmin-code-mini.durable.checkpoint": {
+				"gcode.durable.entry": entry,
+				"gcode.durable.submission": submission,
+				"gcode.durable.report": report,
+				"gcode.durable.checkpoint": {
 					description: "The running checkpoint's phase changed while the invocation continued.",
 					attributes: { phase: { type: "string", required: true, description: "Committed checkpoint phase." } },
 				},
-				"garmin-code-mini.durable.replay": {
+				"gcode.durable.replay": {
 					description: "A nested tool call was answered from its stored result.",
 					attributes: { "tool.name": { type: "string", required: true, description: "Called tool name." } },
 				},
@@ -119,12 +119,12 @@ export const DURABLE_TELEMETRY_SCHEMA = defineTelemetrySchema({
 		},
 	},
 	metrics: {
-		"garmin-code-mini.durable.reports": {
+		"gcode.durable.reports": {
 			kind: "counter",
 			description: "Reports raised, grouped by their fixed ReportInfo type.",
 			attributes: { type: reportAttributes.type },
 		},
-		"garmin-code-mini.durable.phase.duration": {
+		"gcode.durable.phase.duration": {
 			kind: "histogram",
 			unit: "ms",
 			description: "Duration of a phase invocation and its decision commit.",
@@ -134,7 +134,7 @@ export const DURABLE_TELEMETRY_SCHEMA = defineTelemetrySchema({
 				outcome: { type: "string", required: true, description: "Phase outcome." },
 			},
 		},
-		"garmin-code-mini.durable.tasks.active": {
+		"gcode.durable.tasks.active": {
 			kind: "upDownCounter",
 			description: "Live tasks held by this Harness; decremented at terminal settlement or close.",
 			attributes: { task: { type: "string", required: true, description: "Registered task name." } },

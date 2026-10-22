@@ -6,8 +6,8 @@
  */
 
 import { createInterface } from "node:readline";
-import { type ImageContent, modelsAreEqual } from "@garmin-code-mini/ai";
-import { setCapabilityOverrides } from "@garmin-code-mini/tui";
+import { type ImageContent, modelsAreEqual } from "@gcode/ai";
+import { setCapabilityOverrides } from "@gcode/tui";
 import chalk from "chalk";
 import { type Args, type Mode, normalizeSessionName, parseArgs, printHelp } from "./cli/args.ts";
 import { processFileArguments } from "./cli/file-processor.ts";
@@ -796,9 +796,9 @@ export async function main(args: string[], options?: MainOptions) {
 		process.exit(1);
 	}
 
-	const startupBenchmark = isTruthyEnvFlag(process.env.GARMIN_CODE_MINI_STARTUP_BENCHMARK);
+	const startupBenchmark = isTruthyEnvFlag(process.env.GCODE_STARTUP_BENCHMARK);
 	if (startupBenchmark && appMode !== "interactive") {
-		console.error(chalk.red("Error: GARMIN_CODE_MINI_STARTUP_BENCHMARK only supports interactive mode"));
+		console.error(chalk.red("Error: GCODE_STARTUP_BENCHMARK only supports interactive mode"));
 		process.exit(1);
 	}
 

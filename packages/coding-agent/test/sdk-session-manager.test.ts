@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { getModel } from "@garmin-code-mini/ai/compat";
+import { getModel } from "@gcode/ai/compat";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createAgentSession } from "../src/core/sdk.ts";
 import { SessionManager } from "../src/core/session-manager.ts";
@@ -12,10 +12,7 @@ describe("createAgentSession session manager defaults", () => {
 	let agentDir: string;
 
 	beforeEach(() => {
-		tempDir = join(
-			tmpdir(),
-			`garmin-code-mini-sdk-session-test-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-		);
+		tempDir = join(tmpdir(), `gcode-sdk-session-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		cwd = join(tempDir, "project");
 		agentDir = join(tempDir, "agent");
 		mkdirSync(cwd, { recursive: true });
@@ -108,13 +105,13 @@ describe("createAgentSession session manager defaults", () => {
 		});
 		expect(session.sessionFile).toBeTruthy();
 		expect(session.systemPrompt).toContain(
-			"You can inspect GARMIN_CODE_MINI_* environment variables for current model and session details.",
+			"You can inspect GCODE_* environment variables for current model and session details.",
 		);
 
 		const bashTool = session.agent.state.tools.find((tool) => tool.name === "bash");
 		expect(bashTool).toBeTruthy();
 		const result = await bashTool!.execute("test", {
-			command: `printf '%s\\n' "$GARMIN_CODE_MINI_SESSION_ID" "$GARMIN_CODE_MINI_SESSION_FILE" "$GARMIN_CODE_MINI_PROVIDER" "$GARMIN_CODE_MINI_MODEL" "$GARMIN_CODE_MINI_REASONING_LEVEL"`,
+			command: `printf '%s\\n' "$GCODE_SESSION_ID" "$GCODE_SESSION_FILE" "$GCODE_PROVIDER" "$GCODE_MODEL" "$GCODE_REASONING_LEVEL"`,
 		});
 		const output = result.content
 			.filter((item): item is { type: "text"; text: string } => item.type === "text")

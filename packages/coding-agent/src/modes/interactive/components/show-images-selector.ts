@@ -1,4 +1,4 @@
-import { Container, type SelectItem, SelectList, type SelectListLayoutOptions } from "@garmin-code-mini/tui";
+import { Container, type SelectItem, SelectList, type SelectListLayoutOptions } from "@gcode/tui";
 import { getSelectListTheme } from "../theme/theme.ts";
 import { DynamicBorder } from "./dynamic-border.ts";
 

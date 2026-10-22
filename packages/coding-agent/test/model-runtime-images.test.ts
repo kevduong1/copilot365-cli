@@ -11,7 +11,7 @@ import {
 	type ImagesOptions,
 	InMemoryModelsStore,
 	type Model,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { afterEach, describe, expect, it } from "vitest";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import { ModelRuntime } from "../src/core/model-runtime.ts";
@@ -76,7 +76,7 @@ describe("ModelRuntime image generation", () => {
 	async function createRuntime(modelsJson?: object): Promise<ModelRuntime> {
 		let modelsPath: string | null = null;
 		if (modelsJson) {
-			const dir = mkdtempSync(join(tmpdir(), "garmin-code-mini-images-"));
+			const dir = mkdtempSync(join(tmpdir(), "gcode-images-"));
 			tempDirs.push(dir);
 			modelsPath = join(dir, "models.json");
 			writeFileSync(modelsPath, JSON.stringify(modelsJson));

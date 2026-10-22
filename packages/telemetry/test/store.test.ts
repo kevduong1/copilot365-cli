@@ -17,7 +17,7 @@ describe("in-memory store snapshots", () => {
 		let id = "";
 		await telemetry.startSpan({ name: "timed" }, (span) => {
 			const carrier = telemetry.inject(span)!;
-			id = `${carrier["garmin-code-mini-memory-scope"]}:${carrier["garmin-code-mini-memory-span"]}`;
+			id = `${carrier["gcode-memory-scope"]}:${carrier["gcode-memory-span"]}`;
 			clock.mockReturnValue(110);
 			span.addEvent("event", { count: 1 });
 			clock.mockReturnValue(125);

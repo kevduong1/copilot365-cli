@@ -35,7 +35,7 @@ function encodeSessionDir(dir: string): string {
 	return "--" + normalized.replace(/\//g, "-") + "--";
 }
 
-const sessionsBase = path.join(process.env.HOME!, ".garmin-code-mini/agent/sessions");
+const sessionsBase = path.join(process.env.HOME!, ".gcode/agent/sessions");
 const encodedDir = encodeSessionDir(directory);
 const sessionsDir = path.join(sessionsBase, encodedDir);
 

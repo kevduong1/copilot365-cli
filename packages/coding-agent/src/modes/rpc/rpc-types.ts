@@ -5,8 +5,8 @@
  * Responses and events are emitted as JSON lines on stdout.
  */
 
-import type { AgentMessage, ThinkingLevel } from "@garmin-code-mini/agent-core";
-import type { ImageContent, Model } from "@garmin-code-mini/ai";
+import type { AgentMessage, ThinkingLevel } from "@gcode/agent-core";
+import type { ImageContent, Model } from "@gcode/ai";
 import type { PromptDisposition, QueuedInputDisposition, SessionStats } from "../../core/agent-session.ts";
 import type { BashResult } from "../../core/bash-executor.ts";
 import type { CompactionResult } from "../../core/compaction/index.ts";

@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { VIRTUAL_MODULES } from "../../../src/core/extensions/virtual-modules.ts";
 
-// Regression test for #11156: extensions importing @garmin-code-mini/ai/models
+// Regression test for #11156: extensions importing @gcode/ai/models
 // (e.g. for clampThinkingLevel) failed with "Cannot find module" in embedded
 // runtimes because the subpath was missing from the virtual module map.
-describe("garmin-code-mini-ai/models virtual module", () => {
-	it("exposes the garmin-code-mini-ai /models entrypoint to extensions", () => {
-		const models = VIRTUAL_MODULES["@garmin-code-mini/ai/models"] as { clampThinkingLevel?: unknown } | undefined;
+describe("gcode-ai/models virtual module", () => {
+	it("exposes the gcode-ai /models entrypoint to extensions", () => {
+		const models = VIRTUAL_MODULES["@gcode/ai/models"] as { clampThinkingLevel?: unknown } | undefined;
 		expect(models).toBeDefined();
 		expect(typeof models?.clampThinkingLevel).toBe("function");
 	});
 
 	it("exposes the same module under the legacy @mariozechner scope", () => {
-		expect(VIRTUAL_MODULES["@garmin-code-mini/ai/models"]).toBe(VIRTUAL_MODULES["@garmin-code-mini/ai/models"]);
+		expect(VIRTUAL_MODULES["@gcode/ai/models"]).toBe(VIRTUAL_MODULES["@gcode/ai/models"]);
 	});
 });

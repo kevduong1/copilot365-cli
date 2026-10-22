@@ -1,5 +1,5 @@
 /**
- * MCP server configuration and the servers extensions register with `garminCodeMini.registerMcpServer()`.
+ * MCP server configuration and the servers extensions register with `gcode.registerMcpServer()`.
  *
  * The core only validates and stores registrations. No built-in extension connects to MCP servers.
  * A user-supplied extension may handle `mcp_servers_change` to implement its own connections.
@@ -89,7 +89,7 @@ export interface McpStdioServerConfig extends McpServerConfigBase {
 
 /** OAuth client settings for servers that do not support dynamic client registration. */
 export interface McpOAuthConfig {
-	/** Pre-registered client id. Without it, garmin-code-mini registers a client with the authorization server. */
+	/** Pre-registered client id. Without it, gcode registers a client with the authorization server. */
 	clientId?: string;
 	/** May reference environment variables (`${NAME}`) or commands (`!cmd`). */
 	clientSecret?: string;
@@ -108,7 +108,7 @@ export interface McpOAuthConfig {
 	scope?: string;
 	/**
 	 * `client_name` sent with dynamic client registration, for servers that only accept known clients.
-	 * Default: `garmin-code-mini`.
+	 * Default: `gcode`.
 	 */
 	clientName?: string;
 	/**
@@ -126,7 +126,7 @@ export interface McpOAuthConfig {
 
 const LOOPBACK_HOSTS = ["localhost", "127.0.0.1", "[::1]"];
 
-/** Whether a redirect URI can be served by garmin-code-mini's loopback callback server. */
+/** Whether a redirect URI can be served by gcode's loopback callback server. */
 export function isLoopbackRedirectUri(value: string): boolean {
 	if (!URL.canParse(value)) return false;
 	const url = new URL(value);
@@ -303,7 +303,7 @@ export function validateMcpServerConfig(name: string, raw: unknown): McpServerCo
 	return `server "${name}" needs either "command" (stdio) or "url" (streamable HTTP)`;
 }
 
-/** A server an extension registered with `garminCodeMini.registerMcpServer()`. */
+/** A server an extension registered with `gcode.registerMcpServer()`. */
 export interface RegisteredMcpServer {
 	name: string;
 	config: McpServerConfig;

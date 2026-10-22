@@ -1,4 +1,4 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
+import type { AgentTool } from "@gcode/agent-core";
 import {
 	type AssistantMessage,
 	type ClassifierModel,
@@ -6,7 +6,7 @@ import {
 	fauxAssistantMessage,
 	fauxProvider,
 	fauxToolCall,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import jevRouter from "../examples/extensions/jev-router.ts";
@@ -78,9 +78,9 @@ describe("jev-router example", () => {
 		const harness = await createHarness({
 			tools,
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.registerProvider(codex.provider);
-					garminCodeMini.registerProvider(typesafe);
+				(gcode) => {
+					gcode.registerProvider(codex.provider);
+					gcode.registerProvider(typesafe);
 				},
 				jevRouter,
 			],

@@ -3,11 +3,11 @@ import { appendFileSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { Model } from "@garmin-code-mini/ai";
-import { BACKGROUND_CONTEXT as context } from "@garmin-code-mini/chord/context";
-import type { ToolDiagnostic, ToolExecutionApi, ToolExecutionResult } from "@garmin-code-mini/durable";
-import { createNodePhotonImages } from "@garmin-code-mini/durable/images/node";
-import { createCodingTools } from "@garmin-code-mini/durable/tools";
+import type { Model } from "@gcode/ai";
+import { BACKGROUND_CONTEXT as context } from "@gcode/chord/context";
+import type { ToolDiagnostic, ToolExecutionApi, ToolExecutionResult } from "@gcode/durable";
+import { createNodePhotonImages } from "@gcode/durable/images/node";
+import { createCodingTools } from "@gcode/durable/tools";
 import { initSync, PhotonImage } from "@silvia-odwyer/photon/photon_rs.js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { getOrThrow } from "../src/env/index.ts";
@@ -17,7 +17,7 @@ import { imageDimensions } from "../src/tools/image.ts";
 import { DEFAULT_IMAGE_LIMITS, type ImageProcessor, toBase64 } from "../src/tools/image-processor.ts";
 import { createReadTool } from "../src/tools/read.ts";
 
-const directory = mkdtempSync(join(tmpdir(), "garmin-code-mini-durable-images-"));
+const directory = mkdtempSync(join(tmpdir(), "gcode-durable-images-"));
 let processor: ImageProcessor;
 
 beforeAll(async () => {

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type PlatformPath, posix, win32 } from "node:path";
 import { StringDecoder } from "node:string_decoder";
 import { fileURLToPath } from "node:url";
-import type { Context } from "@garmin-code-mini/chord";
+import type { Context } from "@gcode/chord";
 import {
 	type BinaryReader,
 	type DirReader,
@@ -27,7 +27,7 @@ import {
 	type TextLineReader,
 	type WatchChange,
 	type WatchTarget,
-} from "@garmin-code-mini/durable/env";
+} from "@gcode/durable/env";
 import { type Connection, type Json, nodePlatform, RemoteError, type RemoteInfo } from "./connection.ts";
 import { abortResult, toFileError } from "./errors.ts";
 import { listFilesOver } from "./list-files.ts";
@@ -50,7 +50,7 @@ const LINE_CHUNK = 64 * 1024;
 
 export interface RemoteExecutionEnvOptions {
 	connection: Connection;
-	/** The file namespace: equal ids see the same files (`FileSystem.id`), e.g. `garmin-code-mini-env:<env name>`. */
+	/** The file namespace: equal ids see the same files (`FileSystem.id`), e.g. `gcode-env:<env name>`. */
 	id: string;
 	cwd: string;
 	shellPath?: string;
@@ -348,7 +348,7 @@ class RemoteTextLineReader implements TextLineReader {
 }
 
 /**
- * An `ExecutionEnv` on another machine, reached through a garmin-code-mini-env daemon. Results match `NodeExecutionEnv` running on
+ * An `ExecutionEnv` on another machine, reached through a gcode-env daemon. Results match `NodeExecutionEnv` running on
  * that machine: the daemon performs the system calls, and this class applies Node's path, error, and result rules.
  */
 export class RemoteExecutionEnv implements ExecutionEnv {

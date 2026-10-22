@@ -4,7 +4,7 @@
  * Override settings using SettingsManager.
  */
 
-import { createAgentSession, SessionManager, SettingsManager } from "garmin-code-mini";
+import { createAgentSession, SessionManager, SettingsManager } from "gcode";
 
 const cwd = process.cwd();
 

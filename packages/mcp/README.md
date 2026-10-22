@@ -1,13 +1,13 @@
-# @garmin-code-mini/mcp
+# @gcode/mcp
 
-A small, standalone Model Context Protocol client. It does not depend on the official MCP SDK or other garmin-code-mini packages.
+A small, standalone Model Context Protocol client. It does not depend on the official MCP SDK or other gcode packages.
 
 The package provides a transport-neutral client core, stdio and Streamable HTTP transports, and an in-memory testing transport.
 
 ## Usage
 
 ```typescript
-import { McpClient, StdioTransport } from "@garmin-code-mini/mcp";
+import { McpClient, StdioTransport } from "@gcode/mcp";
 
 const transport = new StdioTransport({
 	command: "npx",
@@ -29,13 +29,13 @@ For a remote server, use `new StreamableHttpTransport({ url, headers })`. Fetch 
 
 ### Tools for an LLM
 
-`toLlmContent(result)` converts a `CallToolResult` to text and image content for a model, in the shape of `@garmin-code-mini/ai`'s `TextContent` and `ImageContent`. Text and images pass through, embedded text and image resources are unwrapped, and audio, resource links, and binary resources become short text placeholders. A result without content blocks but with `structuredContent` becomes its JSON.
+`toLlmContent(result)` converts a `CallToolResult` to text and image content for a model, in the shape of `@gcode/ai`'s `TextContent` and `ImageContent`. Text and images pass through, embedded text and image resources are unwrapped, and audio, resource links, and binary resources become short text placeholders. A result without content blocks but with `structuredContent` becomes its JSON.
 
-Wrapping an MCP tool as a `garmin-code-mini-agent-core` `AgentTool`:
+Wrapping an MCP tool as a `gcode-agent-core` `AgentTool`:
 
 ```typescript
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import { toLlmContent } from "@garmin-code-mini/mcp";
+import type { AgentTool } from "@gcode/agent-core";
+import { toLlmContent } from "@gcode/mcp";
 import { Type } from "typebox";
 
 const tools: AgentTool[] = (await client.listTools()).map((tool) => ({
@@ -53,21 +53,21 @@ const tools: AgentTool[] = (await client.listTools()).map((tool) => ({
 }));
 ```
 
-The [mcp-codemode example](https://github.com/earendil-works/garmin-code-mini/tree/main/packages/agent/examples/mcp-codemode) also forwards progress, passes `structuredContent` through, and lets `@garmin-code-mini/codemode` scripts call the tools.
+The [mcp-codemode example](https://github.com/earendil-works/gcode/tree/main/packages/agent/examples/mcp-codemode) also forwards progress, passes `structuredContent` through, and lets `@gcode/codemode` scripts call the tools.
 
 ### OAuth
 
-`@garmin-code-mini/mcp/oauth` provides the MCP OAuth client subset without depending on the official SDK:
+`@gcode/mcp/oauth` provides the MCP OAuth client subset without depending on the official SDK:
 
 ```typescript
-import { McpClient, StreamableHttpTransport } from "@garmin-code-mini/mcp";
+import { McpClient, StreamableHttpTransport } from "@gcode/mcp";
 import {
 	adaptOAuthProvider,
 	authorizeMcp,
 	McpOAuthAuthorizationRequiredError,
 	McpOAuthProvider,
 	OAuthCallbackServer,
-} from "@garmin-code-mini/mcp/oauth";
+} from "@gcode/mcp/oauth";
 
 const serverUrl = "https://mcp.example.com/mcp";
 const callback = await OAuthCallbackServer.listen();
@@ -133,4 +133,4 @@ Batch JSON-RPC messages, legacy HTTP+SSE, servers, sampling, and tasks are outsi
 
 ## Testing
 
-`@garmin-code-mini/mcp/testing` exports `createInMemoryTransportPair()` for client and adapter tests.
+`@gcode/mcp/testing` exports `createInMemoryTransportPair()` for client and adapter tests.

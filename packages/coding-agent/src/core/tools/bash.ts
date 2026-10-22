@@ -1,7 +1,7 @@
 import { constants } from "node:fs";
 import { access as fsAccess } from "node:fs/promises";
 import { constants as osConstants } from "node:os";
-import type { AgentTool } from "@garmin-code-mini/agent-core";
+import type { AgentTool } from "@gcode/agent-core";
 import { spawn } from "child_process";
 import { type Static, Type } from "typebox";
 import { waitForChildProcess } from "../../utils/child-process.ts";
@@ -44,7 +44,7 @@ const bashSchema = Type.Object({
 
 export const bashToolSystemPromptContribution = {
 	snippet: "Execute bash commands (ls, grep, find, etc.)",
-	guidelines: ["You can inspect GARMIN_CODE_MINI_* environment variables for current model and session details."],
+	guidelines: ["You can inspect GCODE_* environment variables for current model and session details."],
 } as const;
 
 export type BashToolInput = Static<typeof bashSchema>;
@@ -166,9 +166,9 @@ export function createLocalShellOperations(shellName: string, resolveShellConfig
 }
 
 /**
- * Create bash operations using garmin-code-mini's built-in local shell execution backend.
+ * Create bash operations using gcode's built-in local shell execution backend.
  *
- * This is useful for extensions that intercept user_bash and still want garmin-code-mini's
+ * This is useful for extensions that intercept user_bash and still want gcode's
  * standard local shell behavior while wrapping or rewriting commands.
  */
 export function createLocalBashOperations(options?: { shellPath?: string }): BashOperations {
@@ -191,21 +191,21 @@ function resolveSpawnContext(
 	ctx: ExtensionContext | undefined,
 ): BashSpawnContext {
 	const env = { ...getShellEnv() };
-	delete env.GARMIN_CODE_MINI_SESSION_ID;
-	delete env.GARMIN_CODE_MINI_SESSION_FILE;
-	delete env.GARMIN_CODE_MINI_PROVIDER;
-	delete env.GARMIN_CODE_MINI_MODEL;
-	delete env.GARMIN_CODE_MINI_REASONING_LEVEL;
+	delete env.GCODE_SESSION_ID;
+	delete env.GCODE_SESSION_FILE;
+	delete env.GCODE_PROVIDER;
+	delete env.GCODE_MODEL;
+	delete env.GCODE_REASONING_LEVEL;
 	if (exposeSessionEnvironment && ctx) {
 		const model = ctx.model;
-		env.GARMIN_CODE_MINI_SESSION_ID = ctx.sessionManager.getSessionId();
+		env.GCODE_SESSION_ID = ctx.sessionManager.getSessionId();
 		const sessionFile = ctx.sessionManager.getSessionFile();
-		if (sessionFile) env.GARMIN_CODE_MINI_SESSION_FILE = sessionFile;
+		if (sessionFile) env.GCODE_SESSION_FILE = sessionFile;
 		if (model) {
-			env.GARMIN_CODE_MINI_PROVIDER = model.provider;
-			env.GARMIN_CODE_MINI_MODEL = model.id;
+			env.GCODE_PROVIDER = model.provider;
+			env.GCODE_MODEL = model.id;
 		}
-		if (ctx.thinkingLevel) env.GARMIN_CODE_MINI_REASONING_LEVEL = ctx.thinkingLevel;
+		if (ctx.thinkingLevel) env.GCODE_REASONING_LEVEL = ctx.thinkingLevel;
 	}
 	const baseContext: BashSpawnContext = { command, cwd, env };
 	return spawnHook ? spawnHook(baseContext) : baseContext;
@@ -218,7 +218,7 @@ export interface BashToolOptions {
 	commandPrefix?: string;
 	/** Optional explicit shell path from settings */
 	shellPath?: string;
-	/** Expose current garmin-code-mini session metadata as GARMIN_CODE_MINI_* environment variables. Default: true */
+	/** Expose current gcode session metadata as GCODE_* environment variables. Default: true */
 	exposeSessionEnvironment?: boolean;
 	/** Hook to adjust command, cwd, or env before execution */
 	spawnHook?: BashSpawnHook;
@@ -421,7 +421,7 @@ const bashToolConfig: ShellToolConfig = {
 	prompt: "$",
 	promptSnippet: bashToolSystemPromptContribution.snippet,
 	promptGuidelines: bashToolSystemPromptContribution.guidelines,
-	tempFilePrefix: "garmin-code-mini-bash",
+	tempFilePrefix: "gcode-bash",
 };
 
 export function createBashToolDefinition(

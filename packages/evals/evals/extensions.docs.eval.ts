@@ -1,4 +1,4 @@
-import { contentText } from "@garmin-code-mini/ai";
+import { contentText } from "@gcode/ai";
 import { describeEval, StructuredOutputJudge, ToolCallJudge } from "vitest-evals";
 import { createPiDocumentationEvalHarness, DOCUMENTATION_EVAL_TOOLS } from "../src/harness.ts";
 
@@ -47,7 +47,7 @@ describeEval(
 				{
 					type: "prompt",
 					content:
-						"Configure this running garmin-code-mini installation with an extension containing a hello tool that takes a name and returns a greeting. Do not create project source. For example, passing Bob should return `Hello, Bob!`.",
+						"Configure this running gcode installation with an extension containing a hello tool that takes a name and returns a greeting. Do not create project source. For example, passing Bob should return `Hello, Bob!`.",
 				},
 				{ type: "reload" },
 				{

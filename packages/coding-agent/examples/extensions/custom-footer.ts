@@ -8,14 +8,14 @@
  * Token stats come from ctx.sessionManager/ctx.model (already accessible).
  */
 
-import type { AssistantMessage } from "@garmin-code-mini/ai";
-import { truncateToWidth, visibleWidth } from "@garmin-code-mini/tui";
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { AssistantMessage } from "@gcode/ai";
+import { truncateToWidth, visibleWidth } from "@gcode/tui";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	let enabled = false;
 
-	garminCodeMini.registerCommand("footer", {
+	gcode.registerCommand("footer", {
 		description: "Toggle custom footer",
 		handler: async (_args, ctx) => {
 			enabled = !enabled;

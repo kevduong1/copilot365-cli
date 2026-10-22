@@ -1,0 +1,19 @@
+---
+name: interactive-testing
+description: Test and debug gcode's interactive mode in a controlled tmux terminal. Use for TUI behavior checks and interactive release smoke tests.
+---
+
+# Testing gcode Interactive Mode with tmux
+
+Run the TUI in a controlled terminal (from the repo root, two directories above this skill):
+
+```bash
+tmux new-session -d -s gcode-test -x 80 -y 24
+tmux send-keys -t gcode-test "./gcode-test.sh" Enter
+sleep 3 && tmux capture-pane -t gcode-test -p     # capture after startup
+tmux send-keys -t gcode-test "your prompt here" Enter
+tmux send-keys -t gcode-test Escape               # special keys (also C-o for ctrl+o, etc.)
+tmux kill-session -t gcode-test
+```
+
+For release smoke tests, start the tmux session with `-c /tmp` and replace `./gcode-test.sh` with the absolute path to the release binary. Test both Node and Bun binaries separately, submit a prompt, and wait for the model reply; startup alone is not a passing smoke test.

@@ -1,15 +1,15 @@
 # Extension Examples
 
-Example extensions for garmin-code-mini-coding-agent.
+Example extensions for gcode-coding-agent.
 
 ## Usage
 
 ```bash
 # Load an extension with --extension flag
-garmin-code-mini --extension examples/extensions/permission-gate.ts
+gcode --extension examples/extensions/permission-gate.ts
 
 # Or copy to extensions directory for auto-discovery
-cp permission-gate.ts ~/.garmin-code-mini/agent/extensions/
+cp permission-gate.ts ~/.gcode/agent/extensions/
 ```
 
 ## Examples
@@ -60,7 +60,7 @@ cp permission-gate.ts ~/.garmin-code-mini/agent/extensions/
 | `model-status.ts` | Shows model changes in status bar via `model_select` hook |
 | `snake.ts` | Snake game with custom UI, keyboard handling, and session persistence |
 | `tic-tac-toe.ts` | Tic-tac-toe vs the agent with `executionMode: "sequential"` tools to prevent race conditions on shared cursor state |
-| `send-user-message.ts` | Demonstrates `garminCodeMini.sendUserMessage()` for sending user messages from extensions |
+| `send-user-message.ts` | Demonstrates `gcode.sendUserMessage()` for sending user messages from extensions |
 | `timed-confirm.ts` | Demonstrates AbortSignal for auto-dismissing `ctx.ui.confirm()` and `ctx.ui.select()` dialogs |
 | `rpc-demo.ts` | Exercises all RPC-supported extension UI methods; pair with [`examples/rpc-extension-ui.ts`](../rpc-extension-ui.ts) |
 | `modal-editor.ts` | Custom vim-like modal editor via `ctx.ui.setEditorComponent()` |
@@ -99,7 +99,7 @@ cp permission-gate.ts ~/.garmin-code-mini/agent/extensions/
 
 | Extension | Description |
 |-----------|-------------|
-| `mac-system-theme.ts` | Syncs garmin-code-mini theme with macOS dark/light mode |
+| `mac-system-theme.ts` | Syncs gcode theme with macOS dark/light mode |
 
 ### Resources
 
@@ -114,7 +114,7 @@ cp permission-gate.ts ~/.garmin-code-mini/agent/extensions/
 | `message-renderer.ts` | Custom message rendering with colors and expandable details via `registerMessageRenderer` |
 | `entry-renderer.ts` | TUI-only session entry rendering via `appendEntry` and `registerEntryRenderer` |
 | `debug-provider.ts` | Toggle raw provider stream capture with `/debug-provider` and inspect each assistant message in a TUI-only session entry |
-| `event-bus.ts` | Inter-extension communication via `garminCodeMini.events` |
+| `event-bus.ts` | Inter-extension communication via `gcode.events` |
 
 ### Session Metadata
 
@@ -128,7 +128,7 @@ cp permission-gate.ts ~/.garmin-code-mini/agent/extensions/
 | Extension | Description |
 |-----------|-------------|
 | `custom-provider-anthropic/` | Custom Anthropic provider with OAuth support and custom streaming implementation |
-| `custom-provider-gitlab-duo/` | GitLab Duo provider using garmin-code-mini-ai's built-in Anthropic/OpenAI streaming via proxy |
+| `custom-provider-gitlab-duo/` | GitLab Duo provider using gcode-ai's built-in Anthropic/OpenAI streaming via proxy |
 | `jev-router.ts` | Virtual model via `registerVirtualModel` that plans on Codex Sol or Terra (picked by the Jev classifier) and switches to Luna after the first edit |
 
 ### External Dependencies
@@ -143,12 +143,12 @@ cp permission-gate.ts ~/.garmin-code-mini/agent/extensions/
 See [docs/extensions.md](../../docs/extensions.md) for full documentation.
 
 ```typescript
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 import { Type } from "typebox";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
   // Subscribe to lifecycle events
-  garminCodeMini.on("tool_call", async (event, ctx) => {
+  gcode.on("tool_call", async (event, ctx) => {
     if (event.toolName === "bash" && event.input.command?.includes("rm -rf")) {
       const ok = await ctx.ui.confirm("Dangerous!", "Allow rm -rf?");
       if (!ok) return { block: true, reason: "Blocked by user" };
@@ -156,7 +156,7 @@ export default function (garminCodeMini: ExtensionAPI) {
   });
 
   // Register custom tools
-  garminCodeMini.registerTool({
+  gcode.registerTool({
     name: "greet",
     label: "Greeting",
     description: "Generate a greeting",
@@ -172,7 +172,7 @@ export default function (garminCodeMini: ExtensionAPI) {
   });
 
   // Register commands
-  garminCodeMini.registerCommand("hello", {
+  gcode.registerCommand("hello", {
     description: "Say hello",
     handler: async (args, ctx) => {
       ctx.ui.notify("Hello!", "info");
@@ -185,7 +185,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 
 **Use StringEnum for string parameters** (required for Google API compatibility):
 ```typescript
-import { StringEnum } from "@garmin-code-mini/ai";
+import { StringEnum } from "@gcode/ai";
 
 // Good
 action: StringEnum(["list", "add"] as const)
@@ -203,7 +203,7 @@ return {
 };
 
 // Reconstruct on session events
-garminCodeMini.on("session_start", async (_event, ctx) => {
+gcode.on("session_start", async (_event, ctx) => {
   for (const entry of ctx.sessionManager.getBranch()) {
     if (entry.type === "message" && entry.message.toolName === "my_tool") {
       const details = entry.message.details;

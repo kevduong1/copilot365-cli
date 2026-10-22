@@ -3,7 +3,7 @@ owner: badlogic
 ---
 # durable
 
-garmin-code-mini-durable and the new harness packages.
+gcode-durable and the new harness packages.
 
 In: durable, env and env daemons, storage, chord.
 

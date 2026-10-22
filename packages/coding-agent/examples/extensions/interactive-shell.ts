@@ -5,7 +5,7 @@
  * with full terminal access. The TUI suspends while they run.
  *
  * Usage:
- *   garmin-code-mini -e examples/extensions/interactive-shell.ts
+ *   gcode -e examples/extensions/interactive-shell.ts
  *
  *   !vim file.txt        # Auto-detected as interactive
  *   !i any-command       # Force interactive mode with !i prefix
@@ -21,7 +21,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
 // Default interactive commands - editors, pagers, git ops, TUIs
 const DEFAULT_INTERACTIVE_COMMANDS = [
@@ -128,8 +128,8 @@ function isInteractiveCommand(command: string): boolean {
 	return false;
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("user_bash", async (event, ctx) => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("user_bash", async (event, ctx) => {
 		let command = event.command;
 		let forceInteractive = false;
 

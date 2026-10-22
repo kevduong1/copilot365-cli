@@ -1,11 +1,11 @@
 /**
- * Temporary compatibility entrypoint preserving the old global garmin-code-mini-ai API
+ * Temporary compatibility entrypoint preserving the old global gcode-ai API
  * surface: api-dispatch `stream()`/`complete()` with env API key injection,
  * the api-registry, generated catalog reads (`getModel`/`getModels`/
  * `getProviders`), per-API lazy stream wrappers, and image generation.
  *
- * Existing apps switch imports from "@garmin-code-mini/ai" to
- * "@garmin-code-mini/ai/compat" unchanged; new code uses `createModels()`
+ * Existing apps switch imports from "@gcode/ai" to
+ * "@gcode/ai/compat" unchanged; new code uses `createModels()`
  * and the provider factories. This module is deleted with the coding-agent
  * ModelManager migration.
  */
@@ -37,13 +37,13 @@ import type {
 } from "./types.ts";
 import { normalizeContext } from "./utils/transcript.ts";
 
-/** @deprecated Static catalog read. Use `getBuiltinModel` from "@garmin-code-mini/ai/providers/all" or `Models.getModel()`. */
+/** @deprecated Static catalog read. Use `getBuiltinModel` from "@gcode/ai/providers/all" or `Models.getModel()`. */
 export const getModel = getBuiltinModel;
 
-/** @deprecated Static catalog read. Use `getBuiltinModels` from "@garmin-code-mini/ai/providers/all" or `Models.getModels()`. */
+/** @deprecated Static catalog read. Use `getBuiltinModels` from "@gcode/ai/providers/all" or `Models.getModels()`. */
 export const getModels = getBuiltinModels;
 
-/** @deprecated Static catalog read. Use `getBuiltinProviders` from "@garmin-code-mini/ai/providers/all" or `Models.getProviders()`. */
+/** @deprecated Static catalog read. Use `getBuiltinProviders` from "@gcode/ai/providers/all" or `Models.getProviders()`. */
 export const getProviders = getBuiltinProviders;
 
 export type ApiStreamFunction = (

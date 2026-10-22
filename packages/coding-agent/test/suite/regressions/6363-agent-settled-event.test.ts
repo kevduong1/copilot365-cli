@@ -1,5 +1,5 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import { fauxAssistantMessage, fauxToolCall } from "@garmin-code-mini/ai";
+import type { AgentTool } from "@gcode/agent-core";
+import { fauxAssistantMessage, fauxToolCall } from "@gcode/ai";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, getUserTexts, type Harness } from "../harness.ts";
@@ -32,11 +32,11 @@ describe("regression #6363: agent settled event and idle waiting", () => {
 		const harness = await createHarness({
 			settings: { retry: { enabled: true, maxRetries: 3, baseDelayMs: 1 } },
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("agent_end", () => {
+				(gcode) => {
+					gcode.on("agent_end", () => {
 						extensionEvents.push("agent_end");
 					});
-					garminCodeMini.on("agent_settled", (_event, ctx) => {
+					gcode.on("agent_settled", (_event, ctx) => {
 						extensionEvents.push(`agent_settled:${ctx.isIdle()}`);
 					});
 				},
@@ -66,13 +66,13 @@ describe("regression #6363: agent settled event and idle waiting", () => {
 		const settledIdleStates: boolean[] = [];
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("agent_end", () => {
+				(gcode) => {
+					gcode.on("agent_end", () => {
 						if (queuedFollowUp) return;
 						queuedFollowUp = true;
-						garminCodeMini.sendUserMessage("status follow-up", { deliverAs: "followUp" });
+						gcode.sendUserMessage("status follow-up", { deliverAs: "followUp" });
 					});
-					garminCodeMini.on("agent_settled", (_event, ctx) => {
+					gcode.on("agent_settled", (_event, ctx) => {
 						settledIdleStates.push(ctx.isIdle());
 					});
 				},
@@ -102,8 +102,8 @@ describe("regression #6363: agent settled event and idle waiting", () => {
 		const harness = await createHarness({
 			tools: [createWaitTool(released)],
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.registerCommand("after-idle", {
+				(gcode) => {
+					gcode.registerCommand("after-idle", {
 						description: "Wait for idle",
 						handler: async (_args, ctx) => {
 							markCommandStarted();

@@ -1,5 +1,5 @@
-import type { Context } from "@garmin-code-mini/chord";
-import { FileError, type FileWatcher, type WatchChange, type WatchTarget } from "@garmin-code-mini/durable/env";
+import type { Context } from "@gcode/chord";
+import { FileError, type FileWatcher, type WatchChange, type WatchTarget } from "@gcode/durable/env";
 import { type Connection, isConnectionLost } from "./connection.ts";
 import { toFileError } from "./errors.ts";
 

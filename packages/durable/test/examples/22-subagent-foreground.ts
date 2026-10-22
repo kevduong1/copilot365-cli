@@ -1,16 +1,16 @@
 // A foreground subagent tool: the parent's tool call creates a child conversation it owns, runs one task there, and
 // returns the child's answer. Aborting the tool call aborts the child. A UI finds the child through the tool's running
 // details and shows its events under the call.
-// Uses the local endpoint when GARMIN_CODE_MINI_MODEL is set, and a scripted faux model otherwise.
+// Uses the local endpoint when GCODE_MODEL is set, and a scripted faux model otherwise.
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/22-subagent-foreground.ts
 
-import { type AssistantMessage, type FauxResponseStep, Type } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
-import type { Context } from "@garmin-code-mini/chord";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { type AssistantMessage, type FauxResponseStep, Type } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@gcode/ai/providers/faux";
+import { localProvider } from "@gcode/ai/providers/local";
+import type { Context } from "@gcode/chord";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import {
 	type AgentEvent,
 	AssistantEntry,
@@ -80,8 +80,8 @@ const Subagent: Extension = defineExtension({
 // ─── Host setup ─────────────────────────────────────────────────────────────
 
 const models = createModels();
-let model = { provider: "local", modelId: process.env.GARMIN_CODE_MINI_MODEL || "local-model" };
-if (process.env.GARMIN_CODE_MINI_MODEL !== undefined) {
+let model = { provider: "local", modelId: process.env.GCODE_MODEL || "local-model" };
+if (process.env.GCODE_MODEL !== undefined) {
 	models.setProvider(localProvider());
 } else {
 	// The parent delegates, the child answers, and the parent reports.
@@ -103,7 +103,7 @@ const root = await harness.root(context, { agent: { model } });
 // ─── UI: the parent's events, with each subagent's events indented under its call ───
 
 const print = (indent: string, event: AgentEvent): void => {
-	if (event.type === "message_end" && event.entry.kind === "garmin-code-mini.assistant") {
+	if (event.type === "message_end" && event.entry.kind === "gcode.assistant") {
 		const message = event.entry.model?.[0] as AssistantMessage;
 		const text = message.content.flatMap((c) => (c.type === "text" ? [c.text] : [])).join("");
 		if (text !== "") console.log(`${indent}assistant: ${text}`);

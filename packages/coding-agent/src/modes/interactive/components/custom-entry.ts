@@ -1,5 +1,5 @@
-import type { Component } from "@garmin-code-mini/tui";
-import { Box, Container, Spacer, Text } from "@garmin-code-mini/tui";
+import type { Component } from "@gcode/tui";
+import { Box, Container, Spacer, Text } from "@gcode/tui";
 import type { EntryRenderer } from "../../../core/extensions/types.ts";
 import type { CustomEntry } from "../../../core/session-manager.ts";
 import { theme } from "../theme/theme.ts";

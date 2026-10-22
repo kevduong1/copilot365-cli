@@ -1,13 +1,13 @@
 /**
- * Syncs garmin-code-mini theme with macOS system appearance (dark/light mode).
+ * Syncs gcode theme with macOS system appearance (dark/light mode).
  *
  * Usage:
- *   garmin-code-mini -e examples/extensions/mac-system-theme.ts
+ *   gcode -e examples/extensions/mac-system-theme.ts
  */
 
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
 const execAsync = promisify(exec);
 
@@ -22,10 +22,10 @@ async function isDarkMode(): Promise<boolean> {
 	}
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 
-	garminCodeMini.on("session_start", async (_event, ctx) => {
+	gcode.on("session_start", async (_event, ctx) => {
 		let currentTheme = (await isDarkMode()) ? "dark" : "light";
 		ctx.ui.setTheme(currentTheme);
 
@@ -38,7 +38,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		}, 2000);
 	});
 
-	garminCodeMini.on("session_shutdown", () => {
+	gcode.on("session_shutdown", () => {
 		if (intervalId) {
 			clearInterval(intervalId);
 			intervalId = null;

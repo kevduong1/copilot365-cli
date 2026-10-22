@@ -10,15 +10,15 @@
  * which can be cheaper/faster than the main conversation model.
  *
  * Usage:
- *   garmin-code-mini --extension examples/extensions/custom-compaction.ts
+ *   gcode --extension examples/extensions/custom-compaction.ts
  */
 
-import { uuidv7 } from "@garmin-code-mini/ai";
-import type { ExtensionAPI } from "garmin-code-mini";
-import { convertToLlm, serializeConversation } from "garmin-code-mini";
+import { uuidv7 } from "@gcode/ai";
+import type { ExtensionAPI } from "gcode";
+import { convertToLlm, serializeConversation } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("session_before_compact", async (event, ctx) => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("session_before_compact", async (event, ctx) => {
 		ctx.ui.notify("Custom compaction extension triggered", "info");
 
 		const { preparation, branchEntries: _, signal } = event;

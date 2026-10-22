@@ -1,4 +1,4 @@
-import type { Usage } from "@garmin-code-mini/ai";
+import type { Usage } from "@gcode/ai";
 import type { AgentSessionEvent } from "../core/agent-session.ts";
 
 type WithoutPartial<T> = T extends { partial: unknown } ? Omit<T, "partial"> : T;

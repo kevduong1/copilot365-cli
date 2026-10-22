@@ -1,5 +1,5 @@
 import { Worker } from "node:worker_threads";
-import * as codemode from "@garmin-code-mini/codemode";
+import * as codemode from "@gcode/codemode";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { executeCodemode } from "../src/extensions/codemode/execute.ts";
 
@@ -147,8 +147,8 @@ describe("codemode worker admission", () => {
 	});
 
 	// #11184: in-process hosts with many sessions can raise the limit.
-	it("reads the limit from GARMIN_CODE_MINI_CODEMODE_MAX_WORKERS", async () => {
-		vi.stubEnv("GARMIN_CODE_MINI_CODEMODE_MAX_WORKERS", "3");
+	it("reads the limit from GCODE_CODEMODE_MAX_WORKERS", async () => {
+		vi.stubEnv("GCODE_CODEMODE_MAX_WORKERS", "3");
 		const results: Awaited<ReturnType<typeof run>>[] = [];
 		const pending = Array.from({ length: 4 }, () => run("return 1").then((result) => results.push(result)));
 		await vi.waitFor(() => expect(results).toHaveLength(3));
@@ -160,8 +160,8 @@ describe("codemode worker admission", () => {
 		expect(results.every((result) => result.isError === undefined)).toBe(true);
 	});
 
-	it("ignores an invalid GARMIN_CODE_MINI_CODEMODE_MAX_WORKERS", async () => {
-		vi.stubEnv("GARMIN_CODE_MINI_CODEMODE_MAX_WORKERS", "0");
+	it("ignores an invalid GCODE_CODEMODE_MAX_WORKERS", async () => {
+		vi.stubEnv("GCODE_CODEMODE_MAX_WORKERS", "0");
 		const results: Awaited<ReturnType<typeof run>>[] = [];
 		const pending = Array.from({ length: 3 }, () => run("return 1").then((result) => results.push(result)));
 		await vi.waitFor(() => expect(results).toHaveLength(2));

@@ -1,4 +1,4 @@
-import type { ThinkingLevel } from "@garmin-code-mini/agent-core";
+import type { ThinkingLevel } from "@gcode/agent-core";
 import {
 	Container,
 	type Focusable,
@@ -10,7 +10,7 @@ import {
 	type SelectListLayoutOptions,
 	Spacer,
 	Text,
-} from "@garmin-code-mini/tui";
+} from "@gcode/tui";
 import { getSelectListTheme, theme } from "../theme/theme.ts";
 import { DynamicBorder } from "./dynamic-border.ts";
 import { keyDisplayText } from "./keybinding-hints.ts";

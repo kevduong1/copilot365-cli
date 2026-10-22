@@ -9,17 +9,17 @@
  */
 
 import * as fs from "node:fs";
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("session_start", async (_event, ctx) => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("session_start", async (_event, ctx) => {
 		const triggerFile = "/tmp/agent-trigger.txt";
 
 		fs.watch(triggerFile, () => {
 			try {
 				const content = fs.readFileSync(triggerFile, "utf-8").trim();
 				if (content) {
-					garminCodeMini.sendMessage(
+					gcode.sendMessage(
 						{
 							customType: "file-trigger",
 							content: `External trigger: ${content}`,

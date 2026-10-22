@@ -13,7 +13,7 @@ import type {
 	ToolResultMessage,
 	TranscriptContext,
 	Usage,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import type { Static, TSchema } from "typebox";
 
 /**
@@ -344,7 +344,7 @@ export interface AgentLoopConfig extends SimpleStreamOptions {
 /**
  * Thinking/reasoning level for models that support it.
  * Note: "xhigh" and "max" are only supported by selected model families. Use model
- * thinking-level metadata from @garmin-code-mini/ai to detect support for a concrete model.
+ * thinking-level metadata from @gcode/ai to detect support for a concrete model.
  */
 export type ThinkingLevel = "off" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
 

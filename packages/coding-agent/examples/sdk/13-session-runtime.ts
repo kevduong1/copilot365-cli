@@ -15,7 +15,7 @@ import {
 	createAgentSessionServices,
 	getAgentDir,
 	SessionManager,
-} from "garmin-code-mini";
+} from "gcode";
 
 const createRuntime: CreateAgentSessionRuntimeFactory = async ({ cwd, sessionManager, sessionStartEvent }) => {
 	const services = await createAgentSessionServices({ cwd });

@@ -1,11 +1,5 @@
-import { Agent } from "@garmin-code-mini/agent-core";
-import {
-	type AssistantMessage,
-	getModel,
-	streamSimple,
-	type ToolResultMessage,
-	type Usage,
-} from "@garmin-code-mini/ai/compat";
+import { Agent } from "@gcode/agent-core";
+import { type AssistantMessage, getModel, streamSimple, type ToolResultMessage, type Usage } from "@gcode/ai/compat";
 import { describe, expect, it } from "vitest";
 import { AgentSession } from "../src/core/agent-session.ts";
 import { AuthStorage } from "../src/core/auth-storage.ts";

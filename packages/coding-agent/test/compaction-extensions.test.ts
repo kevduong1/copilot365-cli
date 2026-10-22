@@ -6,8 +6,8 @@ import { createModelRegistry, getModelRuntime } from "./model-runtime-test-utils
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Agent } from "@garmin-code-mini/agent-core";
-import { getModel, streamSimple } from "@garmin-code-mini/ai/compat";
+import { Agent } from "@gcode/agent-core";
+import { getModel, streamSimple } from "@gcode/ai/compat";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AgentSession } from "../src/core/agent-session.ts";
 import { AuthStorage } from "../src/core/auth-storage.ts";
@@ -32,7 +32,7 @@ describe.skipIf(!API_KEY)("Compaction extensions", () => {
 	let capturedEvents: SessionEvent[];
 
 	beforeEach(async () => {
-		tempDir = join(tmpdir(), `garmin-code-mini-compaction-extensions-test-${Date.now()}`);
+		tempDir = join(tmpdir(), `gcode-compaction-extensions-test-${Date.now()}`);
 		mkdirSync(tempDir, { recursive: true });
 		capturedEvents = [];
 	});

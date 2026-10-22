@@ -12,10 +12,10 @@
  * The generated prompt appears as a draft in the editor for review/editing.
  */
 
-import type { AgentMessage } from "@garmin-code-mini/agent-core";
-import { type Message, uuidv7 } from "@garmin-code-mini/ai";
-import type { ExtensionAPI, SessionEntry } from "garmin-code-mini";
-import { BorderedLoader, convertToLlm, serializeConversation } from "garmin-code-mini";
+import type { AgentMessage } from "@gcode/agent-core";
+import { type Message, uuidv7 } from "@gcode/ai";
+import type { ExtensionAPI, SessionEntry } from "gcode";
+import { BorderedLoader, convertToLlm, serializeConversation } from "gcode";
 
 const SYSTEM_PROMPT = `You are a context transfer assistant. Given a conversation history and the user's goal for a new thread, generate a focused prompt that:
 
@@ -77,8 +77,8 @@ function getHandoffMessages(branch: SessionEntry[]): AgentMessage[] {
 	return compactedBranch.map(entryToMessage).filter((message) => message !== undefined);
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerCommand("handoff", {
+export default function (gcode: ExtensionAPI) {
+	gcode.registerCommand("handoff", {
 		description: "Transfer context to a new focused session",
 		handler: async (args, ctx) => {
 			if (ctx.mode !== "tui") {

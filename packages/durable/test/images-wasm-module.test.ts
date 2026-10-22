@@ -1,8 +1,8 @@
 // Its own file, so Photon is not yet initialized: vitest gives each file fresh modules, and Photon loads only once.
 import { readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
-import { createPhotonImages } from "@garmin-code-mini/durable/images";
-import { DEFAULT_IMAGE_LIMITS } from "@garmin-code-mini/durable/tools";
+import { createPhotonImages } from "@gcode/durable/images";
+import { DEFAULT_IMAGE_LIMITS } from "@gcode/durable/tools";
 import { expect, it } from "vitest";
 
 it("createPhotonImages takes a compiled WebAssembly module, as Cloudflare Workers pass it", async () => {

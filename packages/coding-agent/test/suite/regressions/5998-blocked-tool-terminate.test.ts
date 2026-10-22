@@ -1,5 +1,5 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import { fauxAssistantMessage, fauxToolCall } from "@garmin-code-mini/ai";
+import type { AgentTool } from "@gcode/agent-core";
+import { fauxAssistantMessage, fauxToolCall } from "@gcode/ai";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, getAssistantTexts, type Harness } from "../harness.ts";
@@ -26,8 +26,8 @@ describe("#5998 blocked tool termination", () => {
 		const harness = await createHarness({
 			tools: [echoTool],
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("tool_call", async () => ({
+				(gcode) => {
+					gcode.on("tool_call", async () => ({
 						block: true,
 						reason: "Blocked by terminating policy",
 						terminate: true,

@@ -1,11 +1,11 @@
 # DOOM Overlay Demo
 
-Play DOOM as an overlay in garmin-code-mini. Demonstrates that the overlay system can handle real-time game rendering at 35 FPS.
+Play DOOM as an overlay in gcode. Demonstrates that the overlay system can handle real-time game rendering at 35 FPS.
 
 ## Usage
 
 ```bash
-garmin-code-mini --extension ./examples/extensions/doom-overlay
+gcode --extension ./examples/extensions/doom-overlay
 ```
 
 Then run:
@@ -43,4 +43,4 @@ Height is calculated from width to maintain DOOM's 3.2:1 aspect ratio (accountin
 
 - [id Software](https://github.com/id-Software/DOOM) for the original DOOM
 - [doomgeneric](https://github.com/ozkl/doomgeneric) for the portable DOOM implementation
-- [garmin-code-mini-doom](https://github.com/badlogic/garmin-code-mini-doom) for the original garmin-code-mini integration
+- [gcode-doom](https://github.com/badlogic/gcode-doom) for the original gcode integration

@@ -4,9 +4,9 @@ import type {
 	ReplicatedStateSource,
 	ReplicatedStateSourceAttachment,
 	ReplicatedStateSourceFrame,
-} from "@garmin-code-mini/chord";
-import { withoutAbortSignal } from "@garmin-code-mini/chord/context";
-import type { Op } from "@garmin-code-mini/chord/delta";
+} from "@gcode/chord";
+import { withoutAbortSignal } from "@gcode/chord/context";
+import type { Op } from "@gcode/chord/delta";
 import { errorMessage } from "../errors.ts";
 import type { JsonObject, WatchEnd, WatchHandle } from "../types.ts";
 

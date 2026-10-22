@@ -1,4 +1,4 @@
-import type { ImageContent } from "@garmin-code-mini/ai";
+import type { ImageContent } from "@gcode/ai";
 import type { Args } from "./args.ts";
 
 export interface InitialMessageInput {

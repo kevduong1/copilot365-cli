@@ -5,7 +5,7 @@
  * and after compaction the session is reloaded.
  */
 
-import type { AgentMessage, StreamFn, ThinkingLevel } from "@garmin-code-mini/agent-core";
+import type { AgentMessage, StreamFn, ThinkingLevel } from "@gcode/agent-core";
 import {
 	contentText,
 	getCurrentSystemMessage,
@@ -14,7 +14,7 @@ import {
 	type RetryPolicy,
 	retryAssistantCall,
 	uuidv7,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import type {
 	AssistantMessage,
 	Model,
@@ -22,8 +22,8 @@ import type {
 	SystemMessage,
 	TranscriptContext,
 	Usage,
-} from "@garmin-code-mini/ai/compat";
-import { completeSimple } from "@garmin-code-mini/ai/compat";
+} from "@gcode/ai/compat";
+import { completeSimple } from "@gcode/ai/compat";
 import { convertToLlm } from "../messages.ts";
 import {
 	buildSessionProjection,
@@ -64,7 +64,7 @@ function extractFileOperations(
 ): FileOperations {
 	const fileOps = createFileOps();
 
-	// Collect from previous compaction's details (if garmin-code-mini-generated)
+	// Collect from previous compaction's details (if gcode-generated)
 	if (prevCompactionIndex >= 0) {
 		const prevCompaction = entries[prevCompactionIndex] as CompactionEntry;
 		if (!prevCompaction.fromHook && prevCompaction.details) {

@@ -1,7 +1,7 @@
 /**
  * Gondolin Tool Routing Example
  *
- * Runs garmin-code-mini's built-in tools inside a local Gondolin micro-VM. The host working
+ * Runs gcode's built-in tools inside a local Gondolin micro-VM. The host working
  * directory is mounted at /workspace in the guest. File changes under
  * /workspace write through to the host; other guest filesystem changes are
  * isolated to the VM.
@@ -12,7 +12,7 @@
  *
  * Usage:
  *   cd /path/to/project
- *   garmin-code-mini -e /path/to/garmin-code-mini/packages/coding-agent/examples/extensions/gondolin
+ *   gcode -e /path/to/gcode/packages/coding-agent/examples/extensions/gondolin
  *
  * Requirements:
  *   - Node.js >= 23.6.0 for @earendil-works/gondolin
@@ -21,7 +21,7 @@
 
 import path from "node:path";
 import { RealFSProvider, VM } from "@earendil-works/gondolin";
-import type { ExtensionAPI, ExtensionContext } from "garmin-code-mini";
+import type { ExtensionAPI, ExtensionContext } from "gcode";
 import {
 	type BashOperations,
 	createBashTool,
@@ -42,7 +42,7 @@ import {
 	truncateHead,
 	truncateLine,
 	type WriteOperations,
-} from "garmin-code-mini";
+} from "gcode";
 
 const GUEST_WORKSPACE = "/workspace";
 const DEFAULT_GREP_LIMIT = 100;
@@ -362,7 +362,7 @@ function createGondolinBashOps(vm: VM, localCwd: string, shellPath: string): Bas
 	};
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	const localCwd = process.cwd();
 	const localRead = createReadTool(localCwd);
 	const localWrite = createWriteTool(localCwd);
@@ -379,7 +379,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	async function startVm(ctx?: ExtensionContext): Promise<VM> {
 		ctx?.ui.setStatus("gondolin", ctx.ui.theme.fg("accent", `Gondolin: starting ${GUEST_WORKSPACE}`));
 		const created = await VM.create({
-			sessionLabel: `garmin-code-mini ${path.basename(localCwd)}`,
+			sessionLabel: `gcode ${path.basename(localCwd)}`,
 			vfs: {
 				mounts: {
 					[GUEST_WORKSPACE]: new RealFSProvider(localCwd),
@@ -407,11 +407,11 @@ export default function (garminCodeMini: ExtensionAPI) {
 		return vmStarting;
 	}
 
-	garminCodeMini.on("session_start", async (_event, ctx) => {
+	gcode.on("session_start", async (_event, ctx) => {
 		await ensureVm(ctx);
 	});
 
-	garminCodeMini.on("session_shutdown", async (_event, ctx) => {
+	gcode.on("session_shutdown", async (_event, ctx) => {
 		const activeVm = vm;
 		vm = undefined;
 		vmStarting = undefined;
@@ -424,7 +424,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		}
 	});
 
-	garminCodeMini.registerCommand("gondolin", {
+	gcode.registerCommand("gondolin", {
 		description: "Show Gondolin VM status",
 		handler: async (_args, ctx) => {
 			const activeVm = await ensureVm(ctx);
@@ -440,7 +440,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...localRead,
 		async execute(id, params, signal, onUpdate, ctx) {
 			const activeVm = await ensureVm(ctx);
@@ -451,7 +451,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...localWrite,
 		async execute(id, params, signal, onUpdate, ctx) {
 			const activeVm = await ensureVm(ctx);
@@ -462,7 +462,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...localEdit,
 		async execute(id, params, signal, onUpdate, ctx) {
 			const activeVm = await ensureVm(ctx);
@@ -473,7 +473,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...localBash,
 		async execute(id, params, signal, onUpdate, ctx) {
 			const activeVm = await ensureVm(ctx);
@@ -484,7 +484,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...localLs,
 		async execute(id, params, signal, onUpdate, ctx) {
 			const activeVm = await ensureVm(ctx);
@@ -495,7 +495,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...localFind,
 		async execute(id, params, signal, onUpdate, ctx) {
 			const activeVm = await ensureVm(ctx);
@@ -506,7 +506,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...localGrep,
 		async execute(_id, params, signal, _onUpdate, ctx) {
 			const activeVm = await ensureVm(ctx);
@@ -514,12 +514,12 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.on("user_bash", async (_event, ctx) => {
+	gcode.on("user_bash", async (_event, ctx) => {
 		const activeVm = await ensureVm(ctx);
 		return { operations: createGondolinBashOps(activeVm, localCwd, shellPath) };
 	});
 
-	garminCodeMini.on("before_agent_start", async (event, ctx) => {
+	gcode.on("before_agent_start", async (event, ctx) => {
 		await ensureVm(ctx);
 		const localLine = `Current working directory: ${localCwd}`;
 		const guestLine = `Current working directory: ${GUEST_WORKSPACE} (Gondolin VM; host workspace mounted from ${localCwd})`;

@@ -48,9 +48,7 @@ describe("buildSystemPrompt", () => {
 				skills: [],
 			});
 
-			expect(defaultPrompt.startsWith("You are an expert coding assistant operating inside garmin-code-mini")).toBe(
-				true,
-			);
+			expect(defaultPrompt.startsWith("You are an expert coding assistant operating inside gcode")).toBe(true);
 			expect(customPrompt.startsWith("You are Exact.\n\n<cwd>")).toBe(true);
 		});
 
@@ -110,7 +108,7 @@ describe("buildSystemPrompt", () => {
 			expect(prompt).toContain(expected);
 		});
 
-		test("instructs models to resolve garmin-code-mini docs and examples under absolute base paths", () => {
+		test("instructs models to resolve gcode docs and examples under absolute base paths", () => {
 			const prompt = buildSystemPrompt({
 				contextFiles: [],
 				skills: [],
@@ -118,7 +116,7 @@ describe("buildSystemPrompt", () => {
 			});
 
 			expect(prompt).toContain(
-				"- When reading garmin-code-mini docs or examples, resolve docs/... under Additional docs and examples/... under Examples, not the current working directory",
+				"- When reading gcode docs or examples, resolve docs/... under Additional docs and examples/... under Examples, not the current working directory",
 			);
 			expect(prompt).toContain("environment variables (docs/environment-variables.md), MCP servers (docs/mcp.md)");
 		});

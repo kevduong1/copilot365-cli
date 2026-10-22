@@ -3,7 +3,7 @@ owner: davidbrai
 ---
 # providers
 
-How garmin-code-mini-ai talks to model APIs.
+How gcode-ai talks to model APIs.
 
 In:
 - Request building and message conversion or replay: thinking blocks, signatures, tool call IDs, roles.

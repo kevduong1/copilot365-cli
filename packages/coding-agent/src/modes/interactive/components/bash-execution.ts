@@ -2,7 +2,7 @@
  * Component for displaying bash command execution with streaming output.
  */
 
-import { Container, Loader, Spacer, Text, type TUI } from "@garmin-code-mini/tui";
+import { Container, Loader, Spacer, Text, type TUI } from "@gcode/tui";
 import {
 	DEFAULT_MAX_BYTES,
 	DEFAULT_MAX_LINES,

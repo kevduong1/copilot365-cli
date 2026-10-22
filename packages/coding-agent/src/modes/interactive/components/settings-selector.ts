@@ -1,5 +1,5 @@
-import type { ThinkingLevel } from "@garmin-code-mini/agent-core";
-import { getSupportedThinkingLevels, type Model, type Transport } from "@garmin-code-mini/ai";
+import type { ThinkingLevel } from "@gcode/agent-core";
+import { getSupportedThinkingLevels, type Model, type Transport } from "@gcode/ai";
 import {
 	type Component,
 	Container,
@@ -11,7 +11,7 @@ import {
 	Spacer,
 	Text,
 	type WheelScrollLines,
-} from "@garmin-code-mini/tui";
+} from "@gcode/tui";
 import { formatHttpIdleTimeoutMs, HTTP_IDLE_TIMEOUT_CHOICES } from "../../../core/http-dispatcher.ts";
 import {
 	CACHE_WARMING_MODES,
@@ -742,7 +742,7 @@ export class SettingsSelectorComponent extends Container {
 		items.splice(skillCommandsIndex + 1, 0, {
 			id: "show-hardware-cursor",
 			label: "Show hardware cursor",
-			description: "Use the terminal cursor instead of garmin-code-mini's drawn cursor",
+			description: "Use the terminal cursor instead of gcode's drawn cursor",
 			currentValue: config.showHardwareCursor ? "true" : "false",
 			values: ["true", "false"],
 		});

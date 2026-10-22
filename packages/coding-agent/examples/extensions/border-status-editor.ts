@@ -1,6 +1,6 @@
-import type { Component, EditorTheme, TUI } from "@garmin-code-mini/tui";
-import { truncateToWidth, visibleWidth } from "@garmin-code-mini/tui";
-import { CustomEditor, type ExtensionAPI, type ExtensionContext, type KeybindingsManager } from "garmin-code-mini";
+import type { Component, EditorTheme, TUI } from "@gcode/tui";
+import { truncateToWidth, visibleWidth } from "@gcode/tui";
+import { CustomEditor, type ExtensionAPI, type ExtensionContext, type KeybindingsManager } from "gcode";
 
 function fitBorder(
 	left: string,
@@ -63,7 +63,7 @@ class EmptyFooter implements Component {
 	invalidate(): void {}
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	let isWorking = false;
 	let spinnerIndex = 0;
 	let spinnerTimer: ReturnType<typeof setInterval> | undefined;
@@ -77,7 +77,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		}
 	};
 
-	garminCodeMini.on("agent_start", () => {
+	gcode.on("agent_start", () => {
 		isWorking = true;
 		stopSpinner();
 		spinnerTimer = setInterval(() => {
@@ -87,27 +87,25 @@ export default function (garminCodeMini: ExtensionAPI) {
 		activeTui?.requestRender();
 	});
 
-	garminCodeMini.on("agent_settled", () => {
+	gcode.on("agent_settled", () => {
 		isWorking = false;
 		stopSpinner();
 		activeTui?.requestRender();
 	});
 
-	garminCodeMini.on("session_shutdown", () => {
+	gcode.on("session_shutdown", () => {
 		stopSpinner();
 		activeTui = undefined;
 	});
 
-	garminCodeMini.on("session_start", (_event, ctx) => {
+	gcode.on("session_start", (_event, ctx) => {
 		ctx.ui.setWorkingVisible(false);
 		ctx.ui.setFooter(() => new EmptyFooter());
 
 		let branch: string | undefined;
 
 		const refreshBranch = async () => {
-			const result = await garminCodeMini
-				.exec("git", ["branch", "--show-current"], { cwd: ctx.cwd })
-				.catch(() => undefined);
+			const result = await gcode.exec("git", ["branch", "--show-current"], { cwd: ctx.cwd }).catch(() => undefined);
 			const stdout = result?.stdout.trim();
 			branch = stdout && stdout.length > 0 ? stdout : undefined;
 			activeTui?.requestRender();
@@ -126,7 +124,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 
 				const thm = ctx.ui.theme;
 				const model = ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : "no model";
-				const thinking = garminCodeMini.getThinkingLevel();
+				const thinking = gcode.getThinkingLevel();
 				const topLeft = isWorking ? thm.fg("accent", ` ${spinnerFrames[spinnerIndex]} `) : "";
 				const topRight = "";
 				const bottomLeft = thm.fg("muted", ` ${model} · ${formatThinking(thinking)} `);

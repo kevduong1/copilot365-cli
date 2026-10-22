@@ -5,7 +5,7 @@ import {
 	type KeyId,
 	TUI_KEYBINDINGS,
 	KeybindingsManager as TuiKeybindingsManager,
-} from "@garmin-code-mini/tui";
+} from "@gcode/tui";
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { Compile } from "typebox/compile";
@@ -173,7 +173,7 @@ const APP_KEYBINDINGS = {
 export type AppKeybinding = keyof typeof APP_KEYBINDINGS;
 export type AppKeybindings = { [K in AppKeybinding]: true };
 
-declare module "@garmin-code-mini/tui" {
+declare module "@gcode/tui" {
 	interface Keybindings extends AppKeybindings {}
 }
 

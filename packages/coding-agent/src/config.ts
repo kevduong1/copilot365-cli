@@ -24,8 +24,8 @@ export const isBunBinary =
 export const isBunRuntime = !!process.versions.bun;
 
 /** Detect the esbuild-bundled Node.js distribution. */
-declare const GARMIN_CODE_MINI_BUNDLED_NODE: boolean;
-export const isBundledNode = typeof GARMIN_CODE_MINI_BUNDLED_NODE !== "undefined" && GARMIN_CODE_MINI_BUNDLED_NODE;
+declare const GCODE_BUNDLED_NODE: boolean;
+export const isBundledNode = typeof GCODE_BUNDLED_NODE !== "undefined" && GCODE_BUNDLED_NODE;
 
 // =============================================================================
 // Package Asset Paths (shipped with executable)
@@ -56,7 +56,7 @@ export function findNodePackageDir(startDir: string): string {
 
 export function getPackageDir(): string {
 	// Allow override via environment variable (useful for Nix/Guix where store paths tokenize poorly)
-	const envDir = process.env.GARMIN_CODE_MINI_PACKAGE_DIR;
+	const envDir = process.env.GCODE_PACKAGE_DIR;
 	if (envDir) {
 		return normalizePath(envDir);
 	}
@@ -176,7 +176,7 @@ export function resolveCodemodeWorkerSpecifier(
 let codemodeWorkerDataUrl: URL | undefined;
 
 /**
- * Get the codemode worker entry, or undefined to use the worker that ships next to garmin-code-mini-codemode.
+ * Get the codemode worker entry, or undefined to use the worker that ships next to gcode-codemode.
  * The Bun and Node release builds both pass the worker as an extra entrypoint.
  */
 export function getCodemodeWorkerSpecifier(): string | URL | undefined {
@@ -193,7 +193,7 @@ export function getCodemodeWorkerSpecifier(): string | URL | undefined {
 export type InstallChange = { kind: "updated"; version: string } | { kind: "removed" };
 
 /**
- * Detect that the package this process runs from changed on disk, for example after `garmin-code-mini update`
+ * Detect that the package this process runs from changed on disk, for example after `gcode update`
  * in another terminal. Code loaded on demand can then be missing or from another version.
  *
  * Checks the package.json read at startup. Resolving it again would walk up past a deleted install
@@ -214,13 +214,13 @@ export function detectInstallChange(packageJsonPath = startupPackageJsonPath): I
 }
 
 // =============================================================================
-// App Config (from package.json garminCodeMiniConfig)
+// App Config (from package.json gcodeConfig)
 // =============================================================================
 
 interface PackageJson {
 	name?: string;
 	version?: string;
-	garminCodeMiniConfig?: {
+	gcodeConfig?: {
 		name?: string;
 		configDir?: string;
 	};
@@ -238,25 +238,25 @@ try {
 	if (err.code !== "ENOENT") throw e;
 }
 
-const garminCodeMiniConfigName: string | undefined = pkg.garminCodeMiniConfig?.name;
-export const PACKAGE_NAME: string = pkg.name || "garmin-code-mini";
-export const APP_NAME: string = garminCodeMiniConfigName || "garmin-code-mini";
-export const APP_TITLE: string = "GARMIN CODE MINI";
-export const CONFIG_DIR_NAME: string = pkg.garminCodeMiniConfig?.configDir || ".garmin-code-mini";
+const gcodeConfigName: string | undefined = pkg.gcodeConfig?.name;
+export const PACKAGE_NAME: string = pkg.name || "gcode";
+export const APP_NAME: string = gcodeConfigName || "gcode";
+export const APP_TITLE: string = "GCODE";
+export const CONFIG_DIR_NAME: string = pkg.gcodeConfig?.configDir || ".gcode";
 export const VERSION: string = pkg.version || "0.0.0";
 
-export const ENV_AGENT_DIR = "GARMIN_CODE_MINI_AGENT_DIR";
-export const ENV_SESSION_DIR = "GARMIN_CODE_MINI_SESSION_DIR";
+export const ENV_AGENT_DIR = "GCODE_AGENT_DIR";
+export const ENV_SESSION_DIR = "GCODE_SESSION_DIR";
 
 export function expandTildePath(path: string): string {
 	return normalizePath(path);
 }
 
 // =============================================================================
-// User Config Paths (~/.garmin-code-mini/agent/*)
+// User Config Paths (~/.gcode/agent/*)
 // =============================================================================
 
-/** Get the agent config directory (e.g., ~/.garmin-code-mini/agent/) */
+/** Get the agent config directory (e.g., ~/.gcode/agent/) */
 export function getAgentDir(): string {
 	const envDir = process.env[ENV_AGENT_DIR];
 	if (envDir) {

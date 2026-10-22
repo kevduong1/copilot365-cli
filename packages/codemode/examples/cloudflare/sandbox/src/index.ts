@@ -1,6 +1,6 @@
 // The whole sandbox Worker: one Durable Object class that runs codemode scripts for callers bound to
 // it. Only Workers with a binding can reach the class; HTTP requests get a 404.
-export { CodemodeSandboxDurableObject as CodemodeSandbox } from "@garmin-code-mini/codemode/cloudflare";
+export { CodemodeSandboxDurableObject as CodemodeSandbox } from "@gcode/codemode/cloudflare";
 
 export default {
 	fetch: () => new Response("Not found", { status: 404 }),

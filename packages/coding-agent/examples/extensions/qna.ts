@@ -7,9 +7,9 @@
  * 3. Loads the result into the editor for user to fill in answers
  */
 
-import type { UserMessage } from "@garmin-code-mini/ai";
-import type { ExtensionAPI } from "garmin-code-mini";
-import { BorderedLoader } from "garmin-code-mini";
+import type { UserMessage } from "@gcode/ai";
+import type { ExtensionAPI } from "gcode";
+import { BorderedLoader } from "gcode";
 
 const SYSTEM_PROMPT = `You are a question extractor. Given text from a conversation, extract any questions that need answering and format them for the user to fill in.
 
@@ -27,8 +27,8 @@ A:
 
 Keep questions in the order they appeared. Be concise.`;
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerCommand("qna", {
+export default function (gcode: ExtensionAPI) {
+	gcode.registerCommand("qna", {
 		description: "Extract questions from last assistant message into editor",
 		handler: async (_args, ctx) => {
 			if (ctx.mode !== "tui") {

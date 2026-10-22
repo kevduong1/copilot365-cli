@@ -1,4 +1,4 @@
-import type { Context, JsonValue } from "@garmin-code-mini/chord";
+import type { Context, JsonValue } from "@gcode/chord";
 import type { FileError, FileSystem } from "../../env/index.ts";
 import { StorageRequestError } from "../../errors.ts";
 import { idFromNumber, seqFromNumber } from "../../ids.ts";

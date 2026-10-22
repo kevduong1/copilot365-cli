@@ -1,8 +1,8 @@
 /**
  * Send User Message Example
  *
- * Demonstrates garminCodeMini.sendUserMessage() for sending user messages from extensions.
- * Unlike garminCodeMini.sendMessage() which sends custom messages, sendUserMessage() sends
+ * Demonstrates gcode.sendUserMessage() for sending user messages from extensions.
+ * Unlike gcode.sendMessage() which sends custom messages, sendUserMessage() sends
  * actual user messages that appear in the conversation as if typed by the user.
  *
  * Usage:
@@ -11,11 +11,11 @@
  *   /followup And then?   - Sends while streaming with followUp delivery
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	// Simple command that sends a user message
-	garminCodeMini.registerCommand("ask", {
+	gcode.registerCommand("ask", {
 		description: "Send a user message to the agent",
 		handler: async (args, ctx) => {
 			if (!args.trim()) {
@@ -30,12 +30,12 @@ export default function (garminCodeMini: ExtensionAPI) {
 				return;
 			}
 
-			garminCodeMini.sendUserMessage(args);
+			gcode.sendUserMessage(args);
 		},
 	});
 
 	// Command that steers the agent mid-conversation
-	garminCodeMini.registerCommand("steer", {
+	gcode.registerCommand("steer", {
 		description: "Send a steering message (interrupts current processing)",
 		handler: async (args, ctx) => {
 			if (!args.trim()) {
@@ -45,16 +45,16 @@ export default function (garminCodeMini: ExtensionAPI) {
 
 			if (ctx.isIdle()) {
 				// Not streaming, just send normally
-				garminCodeMini.sendUserMessage(args);
+				gcode.sendUserMessage(args);
 			} else {
 				// Streaming - use steer to interrupt
-				garminCodeMini.sendUserMessage(args, { deliverAs: "steer" });
+				gcode.sendUserMessage(args, { deliverAs: "steer" });
 			}
 		},
 	});
 
 	// Command that queues a follow-up message
-	garminCodeMini.registerCommand("followup", {
+	gcode.registerCommand("followup", {
 		description: "Queue a follow-up message (waits for current processing)",
 		handler: async (args, ctx) => {
 			if (!args.trim()) {
@@ -64,17 +64,17 @@ export default function (garminCodeMini: ExtensionAPI) {
 
 			if (ctx.isIdle()) {
 				// Not streaming, just send normally
-				garminCodeMini.sendUserMessage(args);
+				gcode.sendUserMessage(args);
 			} else {
 				// Streaming - queue as follow-up
-				garminCodeMini.sendUserMessage(args, { deliverAs: "followUp" });
+				gcode.sendUserMessage(args, { deliverAs: "followUp" });
 				ctx.ui.notify("Follow-up queued", "info");
 			}
 		},
 	});
 
 	// Example with content array (text + images would go here)
-	garminCodeMini.registerCommand("askwith", {
+	gcode.registerCommand("askwith", {
 		description: "Send a user message with structured content",
 		handler: async (args, ctx) => {
 			if (!args.trim()) {
@@ -88,7 +88,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 			}
 
 			// sendUserMessage accepts string or (TextContent | ImageContent)[]
-			garminCodeMini.sendUserMessage([
+			gcode.sendUserMessage([
 				{ type: "text", text: `User request: ${args}` },
 				{ type: "text", text: "Please respond concisely." },
 			]);

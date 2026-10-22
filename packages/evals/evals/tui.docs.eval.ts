@@ -1,6 +1,6 @@
 import { setTimeout } from "node:timers/promises";
 import { stripVTControlCharacters } from "node:util";
-import type { AssistantMessage } from "@garmin-code-mini/ai";
+import type { AssistantMessage } from "@gcode/ai";
 import {
 	type AgentSession,
 	AgentSessionRuntime,
@@ -8,7 +8,7 @@ import {
 	InteractiveMode,
 	SessionManager,
 	createAgentSessionFromServices,
-} from "garmin-code-mini";
+} from "gcode";
 import { Levenshtein } from "autoevals";
 import { createJudge, describeEval } from "vitest-evals";
 import { createPiDocumentationEvalHarness, type PiCodingAgentInput } from "../src/harness.ts";
@@ -136,8 +136,8 @@ async function inspectContextFooter(session: AgentSession, agentDir: string): Pr
 	});
 	const terminal = new RecordingTerminal();
 	const mode = new InteractiveMode(runtime, { tuiMode: "regular", terminal });
-	const previousOffline = process.env.GARMIN_CODE_MINI_OFFLINE;
-	process.env.GARMIN_CODE_MINI_OFFLINE = "1";
+	const previousOffline = process.env.GCODE_OFFLINE;
+	process.env.GCODE_OFFLINE = "1";
 	try {
 		oracleSession.sessionManager.appendMessage({
 			...createContextMessage(model, 0),
@@ -178,8 +178,8 @@ async function inspectContextFooter(session: AgentSession, agentDir: string): Pr
 			try {
 				await runtime.dispose();
 			} finally {
-				if (previousOffline === undefined) delete process.env.GARMIN_CODE_MINI_OFFLINE;
-				else process.env.GARMIN_CODE_MINI_OFFLINE = previousOffline;
+				if (previousOffline === undefined) delete process.env.GCODE_OFFLINE;
+				else process.env.GCODE_OFFLINE = previousOffline;
 			}
 		}
 	}
@@ -255,7 +255,7 @@ describeEval(
 				{
 					type: "prompt",
 					content:
-						"Change the garmin-code-mini footer replacing the built-in context info, e.g. `42.2%/272k (auto)`, with a ten-cell progress bar to make it show ████░░░░░░ 42% instead. Clamp percentages to the 0-100 range. Just replace the context. Otherwise leave everything else the same.",
+						"Change the gcode footer replacing the built-in context info, e.g. `42.2%/272k (auto)`, with a ten-cell progress bar to make it show ████░░░░░░ 42% instead. Clamp percentages to the 0-100 range. Just replace the context. Otherwise leave everything else the same.",
 				},
 				{ type: "reload" },
 			]);

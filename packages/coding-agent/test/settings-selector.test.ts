@@ -1,4 +1,4 @@
-import { setKeybindings } from "@garmin-code-mini/tui";
+import { setKeybindings } from "@gcode/tui";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { KeybindingsManager } from "../src/core/keybindings.ts";
 import {

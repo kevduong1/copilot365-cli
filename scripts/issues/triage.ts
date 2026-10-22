@@ -1,12 +1,12 @@
-// Triage agent on garmin-code-mini-durable: one durable conversation per issue. Results and decisions live in a durable document,
+// Triage agent on gcode-durable: one durable conversation per issue. Results and decisions live in a durable document,
 // so a restart resumes unfinished triage runs and keeps every decision.
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import { type ModelThinkingLevel, StringEnum, Type } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { anthropicProvider } from "@garmin-code-mini/ai/providers/anthropic";
-import { openaiCodexProvider } from "@garmin-code-mini/ai/providers/openai-codex";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import { type ModelThinkingLevel, StringEnum, Type } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { anthropicProvider } from "@gcode/ai/providers/anthropic";
+import { openaiCodexProvider } from "@gcode/ai/providers/openai-codex";
 import { AuthStorage } from "../../packages/coding-agent/src/core/auth-storage.ts";
 import {
 	type ConversationId,

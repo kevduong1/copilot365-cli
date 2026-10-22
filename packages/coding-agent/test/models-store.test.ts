@@ -1,15 +1,12 @@
 import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { Model } from "@garmin-code-mini/ai";
+import type { Model } from "@gcode/ai";
 import lockfile from "proper-lockfile";
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { FileModelsStore } from "../src/core/models-store.ts";
 
-const sharedTempDir = join(
-	tmpdir(),
-	`garmin-code-mini-models-store-shared-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-);
+const sharedTempDir = join(tmpdir(), `gcode-models-store-shared-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 const sharedModelsPath = join(sharedTempDir, "models-store.json");
 
 beforeAll(() => {

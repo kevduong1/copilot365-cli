@@ -1,7 +1,7 @@
-import type { Message, Models } from "@garmin-code-mini/ai";
-import type { AttachedReplicatedState, Context, Draft, JsonValue } from "@garmin-code-mini/chord";
-import type { Op } from "@garmin-code-mini/chord/delta";
-import type { TelemetryCarrier } from "@garmin-code-mini/telemetry";
+import type { Message, Models } from "@gcode/ai";
+import type { AttachedReplicatedState, Context, Draft, JsonValue } from "@gcode/chord";
+import type { Op } from "@gcode/chord/delta";
+import type { TelemetryCarrier } from "@gcode/telemetry";
 import type { ExecutionEnv } from "./env/index.ts";
 import type {
 	Agent,

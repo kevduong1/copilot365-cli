@@ -7,7 +7,7 @@ import {
 	type SchemaTelemetrySpan,
 	type TelemetryMetrics,
 	type TelemetrySpan,
-} from "@garmin-code-mini/telemetry";
+} from "@gcode/telemetry";
 import type { LazyStreamObserver } from "./api/lazy.ts";
 import type { Api, Model } from "./types.ts";
 
@@ -37,8 +37,8 @@ const request = {
 		"response.id": { type: "string", description: "Provider response identifier.", cardinality: "high" },
 	},
 	events: {
-		"garmin-code-mini.ai.first_chunk": { description: "First normalized stream event delivered.", attributes: {} },
-		"garmin-code-mini.ai.block": {
+		"gcode.ai.first_chunk": { description: "First normalized stream event delivered.", attributes: {} },
+		"gcode.ai.block": {
 			description: "A completed content block; content is never recorded.",
 			attributes: {
 				type: {
@@ -59,30 +59,30 @@ const request = {
 	},
 } as const;
 
-/** garmin-code-mini-owned request metadata, bounded error status, events, and low-cardinality metrics. */
+/** gcode-owned request metadata, bounded error status, events, and low-cardinality metrics. */
 export const AI_TELEMETRY_SCHEMA = defineTelemetrySchema({
 	version: 1,
 	spans: {
-		"garmin-code-mini.ai.request": request,
-		"garmin-code-mini.ai.poll": {
+		"gcode.ai.request": request,
+		"gcode.ai.poll": {
 			...request,
 			description: "One deferred-response poll, not the deferred request's lifetime.",
 		},
 	},
 	metrics: {
-		"garmin-code-mini.ai.request.duration": {
+		"gcode.ai.request.duration": {
 			kind: "histogram",
 			description: "Logical request or poll duration.",
 			unit: "ms",
 			attributes: { provider, model, stop: { ...stop, required: true } },
 		},
-		"garmin-code-mini.ai.first_chunk.duration": {
+		"gcode.ai.first_chunk.duration": {
 			kind: "histogram",
 			description: "Time to the first normalized stream event.",
 			unit: "ms",
 			attributes: { provider, model },
 		},
-		"garmin-code-mini.ai.tokens": {
+		"gcode.ai.tokens": {
 			kind: "counter",
 			description: "Reported model token usage; pending and deferred polls are excluded.",
 			unit: "token",
@@ -97,7 +97,7 @@ export const AI_TELEMETRY_SCHEMA = defineTelemetrySchema({
 				},
 			},
 		},
-		"garmin-code-mini.ai.cost": {
+		"gcode.ai.cost": {
 			kind: "counter",
 			description: "Reported model cost; pending and deferred polls are excluded.",
 			unit: "USD",
@@ -106,15 +106,15 @@ export const AI_TELEMETRY_SCHEMA = defineTelemetrySchema({
 	},
 });
 
-type RequestSpan = SchemaTelemetrySpan<typeof AI_TELEMETRY_SCHEMA, "garmin-code-mini.ai.request">;
+type RequestSpan = SchemaTelemetrySpan<typeof AI_TELEMETRY_SCHEMA, "gcode.ai.request">;
 
 function createInstruments(adapter: TelemetryMetrics) {
 	const metrics = createTypedMetrics(adapter, [AI_TELEMETRY_SCHEMA]);
 	return {
-		requestDuration: metrics.histogram("garmin-code-mini.ai.request.duration"),
-		firstChunkDuration: metrics.histogram("garmin-code-mini.ai.first_chunk.duration"),
-		tokens: metrics.counter("garmin-code-mini.ai.tokens"),
-		cost: metrics.counter("garmin-code-mini.ai.cost"),
+		requestDuration: metrics.histogram("gcode.ai.request.duration"),
+		firstChunkDuration: metrics.histogram("gcode.ai.first_chunk.duration"),
+		tokens: metrics.counter("gcode.ai.tokens"),
+		cost: metrics.counter("gcode.ai.cost"),
 	};
 }
 
@@ -151,20 +151,20 @@ export function observeModelRequest(
 		...(typeof options?.reasoning === "string" ? { reasoning: options.reasoning } : {}),
 	};
 	const start = createTypedSpanStarter(options?.telemetry ?? NOOP_TELEMETRY_CONTEXT, [AI_TELEMETRY_SCHEMA]);
-	if (poll) void start("garmin-code-mini.ai.poll", startAttributes, run);
-	else void start("garmin-code-mini.ai.request", startAttributes, run);
+	if (poll) void start("gcode.ai.poll", startAttributes, run);
+	else void start("gcode.ai.request", startAttributes, run);
 
 	return {
 		onEvent(event) {
 			if (first) {
 				first = false;
-				span.addEvent("garmin-code-mini.ai.first_chunk");
+				span.addEvent("gcode.ai.first_chunk");
 				firstChunkDuration.record(performance.now() - started, attributes, span);
 			}
 			if (event.type === "toolcall_delta") {
 				toolChars.set(event.contentIndex, (toolChars.get(event.contentIndex) ?? 0) + event.delta.length);
 			} else if (event.type === "text_end" || event.type === "thinking_end") {
-				span.addEvent("garmin-code-mini.ai.block", {
+				span.addEvent("gcode.ai.block", {
 					type: event.type === "text_end" ? "text" : "thinking",
 					index: event.contentIndex,
 					chars: event.content.length,
@@ -172,7 +172,7 @@ export function observeModelRequest(
 			} else if (event.type === "toolcall_end") {
 				const chars = toolChars.get(event.contentIndex) ?? 0;
 				toolChars.delete(event.contentIndex);
-				span.addEvent("garmin-code-mini.ai.block", {
+				span.addEvent("gcode.ai.block", {
 					type: "tool_call",
 					index: event.contentIndex,
 					chars,

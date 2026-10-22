@@ -1,19 +1,19 @@
 /**
  * Commands Extension
  *
- * Demonstrates the garminCodeMini.getCommands() API by providing a /commands command
+ * Demonstrates the gcode.getCommands() API by providing a /commands command
  * that lists all available slash commands in the current session.
  *
  * Usage:
- * 1. Copy this file to ~/.garmin-code-mini/agent/extensions/ or your project's .garmin-code-mini/extensions/
+ * 1. Copy this file to ~/.gcode/agent/extensions/ or your project's .gcode/extensions/
  * 2. Use /commands to see available commands
  * 3. Use /commands extensions to filter by source
  */
 
-import type { ExtensionAPI, SlashCommandInfo } from "garmin-code-mini";
+import type { ExtensionAPI, SlashCommandInfo } from "gcode";
 
-export default function commandsExtension(garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerCommand("commands", {
+export default function commandsExtension(gcode: ExtensionAPI) {
+	gcode.registerCommand("commands", {
 		description: "List available slash commands",
 		getArgumentCompletions: (prefix) => {
 			const sources = ["extension", "prompt", "skill"];
@@ -21,7 +21,7 @@ export default function commandsExtension(garminCodeMini: ExtensionAPI) {
 			return filtered.length > 0 ? filtered.map((s) => ({ value: s, label: s })) : null;
 		},
 		handler: async (args, ctx) => {
-			const commands = garminCodeMini.getCommands();
+			const commands = gcode.getCommands();
 			const sourceFilter = args.trim() as "extension" | "prompt" | "skill" | "";
 
 			// Filter by source if specified

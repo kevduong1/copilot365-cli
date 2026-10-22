@@ -1,8 +1,8 @@
-# Run garmin-code-mini on Windows
+# Run gcode on Windows
 
-Run garmin-code-mini either as a native Windows process or inside Windows Subsystem for Linux (WSL). Native Windows uses Git Bash by default for Bash commands and can optionally expose PowerShell to the model. garmin-code-mini inside WSL uses the Linux environment and its Bash installation.
+Run gcode either as a native Windows process or inside Windows Subsystem for Linux (WSL). Native Windows uses Git Bash by default for Bash commands and can optionally expose PowerShell to the model. gcode inside WSL uses the Linux environment and its Bash installation.
 
-Follow the main [Quickstart](quickstart.md) to install and authenticate garmin-code-mini. Use this page to choose and configure its command environment.
+Follow the main [Quickstart](quickstart.md) to install and authenticate gcode. Use this page to choose and configure its command environment.
 
 ## Choose native Windows or WSL
 
@@ -16,20 +16,20 @@ Follow the main [Quickstart](quickstart.md) to install and authenticate garmin-c
 
 For most native Windows users, installing [Git for Windows](https://git-scm.com/download/win) is sufficient.
 
-garmin-code-mini resolves Bash in this order:
+gcode resolves Bash in this order:
 
-1. `shellPath` from `~/.garmin-code-mini/agent/settings.json`
+1. `shellPath` from `~/.gcode/agent/settings.json`
 2. Git Bash at `%ProgramFiles%\Git\bin\bash.exe`
 3. Git Bash at `%ProgramFiles(x86)%\Git\bin\bash.exe`
 4. `bash.exe` on `PATH`, including Cygwin, MSYS2, or legacy WSL Bash
 
-Start garmin-code-mini and enter this command to verify the shell:
+Start gcode and enter this command to verify the shell:
 
 ```text
 !printf 'Bash is working\n'
 ```
 
-If garmin-code-mini cannot find Bash, it reports the locations it checked. Install Git for Windows, put another Bash executable on `PATH`, or configure `shellPath`.
+If gcode cannot find Bash, it reports the locations it checked. Install Git for Windows, put another Bash executable on `PATH`, or configure `shellPath`.
 
 ## Let the model use PowerShell
 
@@ -42,7 +42,7 @@ PowerShell discovery checks these locations in order:
 3. `powershell.exe` on `PATH`
 4. `%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe`
 
-To replace the model-facing `bash` tool with `powershell`, add this to `~/.garmin-code-mini/agent/settings.json`:
+To replace the model-facing `bash` tool with `powershell`, add this to `~/.gcode/agent/settings.json`:
 
 ```json
 {
@@ -52,7 +52,7 @@ To replace the model-facing `bash` tool with `powershell`, add this to `~/.garmi
 
 `["-bash", "+powershell"]` does the same while keeping any other default tools you configured.
 
-Restart garmin-code-mini, then ask it to run a harmless PowerShell command. The `!` and `!!` editor commands continue to use Bash. The `powershell` tool is available only when garmin-code-mini runs as a native Windows process.
+Restart gcode, then ask it to run a harmless PowerShell command. The `!` and `!!` editor commands continue to use Bash. The `powershell` tool is available only when gcode runs as a native Windows process.
 
 See [Settings](settings.md#tools) for other tool combinations.
 
@@ -60,11 +60,11 @@ See [Settings](settings.md#tools) for other tool combinations.
 
 WSL path conversion on Windows and extra Git branch polling in WSL recognize `/mnt/<drive>`, not custom mount roots.
 
-When using the legacy WSL `bash.exe` launcher from Windows, garmin-code-mini sends commands over stdin to avoid command-line quoting problems.
+When using the legacy WSL `bash.exe` launcher from Windows, gcode sends commands over stdin to avoid command-line quoting problems.
 
 ## Use a custom Bash executable
 
-Set `shellPath` when Bash is installed somewhere garmin-code-mini does not discover automatically:
+Set `shellPath` when Bash is installed somewhere gcode does not discover automatically:
 
 ```json
 {
@@ -78,4 +78,4 @@ See [Configure shell commands](shell-aliases.md) for command prefixes, aliases, 
 
 ## Configure Windows Terminal
 
-Windows Terminal reserves or rewrites some modified keys. See [Windows Terminal](terminal-setup.md#windows-terminal) to configure `Shift+Enter` and `Alt+Enter`, and [Keybindings](keybindings.md) for garmin-code-mini's Windows and WSL shortcut defaults.
+Windows Terminal reserves or rewrites some modified keys. See [Windows Terminal](terminal-setup.md#windows-terminal) to configure `Shift+Enter` and `Alt+Enter`, and [Keybindings](keybindings.md) for gcode's Windows and WSL shortcut defaults.

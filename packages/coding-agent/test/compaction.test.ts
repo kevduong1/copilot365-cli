@@ -1,6 +1,6 @@
-import type { AgentMessage } from "@garmin-code-mini/agent-core";
-import type { AssistantMessage, Usage } from "@garmin-code-mini/ai/compat";
-import { getModel } from "@garmin-code-mini/ai/compat";
+import type { AgentMessage } from "@gcode/agent-core";
+import type { AssistantMessage, Usage } from "@gcode/ai/compat";
+import { getModel } from "@gcode/ai/compat";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { beforeEach, describe, expect, it } from "vitest";

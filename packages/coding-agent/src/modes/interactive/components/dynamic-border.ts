@@ -1,4 +1,4 @@
-import type { Component } from "@garmin-code-mini/tui";
+import type { Component } from "@gcode/tui";
 import { theme } from "../theme/theme.ts";
 
 /**

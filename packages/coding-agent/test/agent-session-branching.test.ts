@@ -10,7 +10,7 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { getModel } from "@garmin-code-mini/ai/compat";
+import { getModel } from "@gcode/ai/compat";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { AgentSession } from "../src/core/agent-session.ts";
 import {
@@ -31,7 +31,7 @@ describe.skipIf(!API_KEY)("AgentSession forking", () => {
 	let sessionManager: SessionManager;
 
 	beforeEach(() => {
-		tempDir = join(tmpdir(), `garmin-code-mini-branching-test-${Date.now()}`);
+		tempDir = join(tmpdir(), `gcode-branching-test-${Date.now()}`);
 		mkdirSync(tempDir, { recursive: true });
 	});
 

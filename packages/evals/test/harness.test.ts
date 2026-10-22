@@ -1,5 +1,5 @@
 import { homedir } from "node:os";
-import { getDocsPath, getExamplesPath, getReadmePath } from "garmin-code-mini";
+import { getDocsPath, getExamplesPath, getReadmePath } from "gcode";
 import { describe, expect, it, vi } from "vitest";
 import { buildSystemPrompt } from "../../coding-agent/src/core/system-prompt.ts";
 import {
@@ -17,7 +17,7 @@ describe("resolveModelSelection", () => {
 		expect(
 			resolveModelSelection(
 				{ provider: "anthropic", id: "claude-opus-4-6" },
-				{ GARMIN_CODE_MINI_PROVIDER: "openai-codex", GARMIN_CODE_MINI_MODEL: "gpt-5.6-sol" },
+				{ GCODE_PROVIDER: "openai-codex", GCODE_MODEL: "gpt-5.6-sol" },
 			),
 		).toEqual({ provider: "anthropic", id: "claude-opus-4-6" });
 	});
@@ -25,8 +25,8 @@ describe("resolveModelSelection", () => {
 	it("uses trimmed environment defaults", () => {
 		expect(
 			resolveModelSelection(undefined, {
-				GARMIN_CODE_MINI_PROVIDER: " openai-codex ",
-				GARMIN_CODE_MINI_MODEL: " gpt-5.6-sol ",
+				GCODE_PROVIDER: " openai-codex ",
+				GCODE_MODEL: " gpt-5.6-sol ",
 			}),
 		).toEqual({
 			provider: "openai-codex",
@@ -34,7 +34,7 @@ describe("resolveModelSelection", () => {
 		});
 	});
 
-	it.each([{}, { GARMIN_CODE_MINI_PROVIDER: "openai-codex" }, { GARMIN_CODE_MINI_MODEL: "gpt-5.6-sol" }])(
+	it.each([{}, { GCODE_PROVIDER: "openai-codex" }, { GCODE_MODEL: "gpt-5.6-sol" }])(
 		"rejects incomplete model selection",
 		(environment) => {
 			expect(() => resolveModelSelection(undefined, environment)).toThrow("Select a harness model explicitly");
@@ -44,21 +44,21 @@ describe("resolveModelSelection", () => {
 
 describe("isolateProcessEnvironment", () => {
 	it("removes runner metadata and restores the process environment", () => {
-		vi.stubEnv("GARMIN_CODE_MINI_EVAL_VARIANT", "with_docs");
-		vi.stubEnv("GARMIN_CODE_MINI_EVAL_ARTIFACT_DIR", "/tmp/artifacts");
+		vi.stubEnv("GCODE_EVAL_VARIANT", "with_docs");
+		vi.stubEnv("GCODE_EVAL_ARTIFACT_DIR", "/tmp/artifacts");
 		const oldHome = process.env.HOME;
 		try {
 			const restore = applyIsolatedEnvironment("/tmp/eval-home", "/tmp/eval-agent");
 			try {
 				expect(homedir()).toBe("/tmp/eval-home");
-				expect(process.env.GARMIN_CODE_MINI_AGENT_DIR).toBe("/tmp/eval-agent");
-				expect(process.env.GARMIN_CODE_MINI_EVAL_VARIANT).toBeUndefined();
-				expect(process.env.GARMIN_CODE_MINI_EVAL_ARTIFACT_DIR).toBeUndefined();
+				expect(process.env.GCODE_AGENT_DIR).toBe("/tmp/eval-agent");
+				expect(process.env.GCODE_EVAL_VARIANT).toBeUndefined();
+				expect(process.env.GCODE_EVAL_ARTIFACT_DIR).toBeUndefined();
 			} finally {
 				restore();
 			}
 			expect(process.env.HOME).toBe(oldHome);
-			expect(process.env.GARMIN_CODE_MINI_EVAL_VARIANT).toBe("with_docs");
+			expect(process.env.GCODE_EVAL_VARIANT).toBe("with_docs");
 		} finally {
 			vi.unstubAllEnvs();
 		}
@@ -71,15 +71,15 @@ describe("documentation variant", () => {
 	});
 
 	it.each([undefined, "", "other"])("rejects invalid variant %s", (variant) => {
-		expect(() => resolveDocumentationVariant(variant)).toThrow("GARMIN_CODE_MINI_EVAL_VARIANT");
+		expect(() => resolveDocumentationVariant(variant)).toThrow("GCODE_EVAL_VARIANT");
 	});
 
-	it("strips only the documentation routing section from the default garmin-code-mini prompt", () => {
+	it("strips only the documentation routing section from the default gcode prompt", () => {
 		const prompt = buildSystemPrompt({
 			cwd: "/workspace",
 			selectedTools: [...DOCUMENTATION_EVAL_TOOLS],
 		});
-		expect(prompt).toContain("\n<docs>\ngarmin-code-mini documentation (read only");
+		expect(prompt).toContain("\n<docs>\ngcode documentation (read only");
 		expect(prompt).toContain("\n<rules>\n");
 		expect(prompt).toContain("\n<cwd>\n/workspace\n</cwd>");
 		expect(prompt).toContain("docs/models.md");
@@ -88,7 +88,7 @@ describe("documentation variant", () => {
 		expect(stripped).toContain("\n<rules>\n");
 		expect(stripped).toContain("\n<cwd>\n/workspace\n</cwd>");
 		expect(stripped).not.toContain("<docs>");
-		expect(stripped).not.toContain("garmin-code-mini documentation");
+		expect(stripped).not.toContain("gcode documentation");
 		expect(stripped).not.toContain("docs/models.md");
 		expect(stripped).not.toContain(getReadmePath());
 		expect(stripped).not.toContain(getDocsPath());
@@ -109,8 +109,8 @@ describe("documentation variant", () => {
 	});
 
 	it("fails closed when prompt markers are missing", () => {
-		expect(() => excludePiDocumentation("Instructions")).toThrow("no garmin-code-mini documentation section");
-		expect(() => excludePiDocumentation("\n<docs>\ngarmin-code-mini documentation\n</docs>")).toThrow(
+		expect(() => excludePiDocumentation("Instructions")).toThrow("no gcode documentation section");
+		expect(() => excludePiDocumentation("\n<docs>\ngcode documentation\n</docs>")).toThrow(
 			"no working-directory section",
 		);
 	});

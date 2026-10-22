@@ -4,7 +4,7 @@
  * Context files provide project-specific instructions loaded into the system prompt.
  */
 
-import { createAgentSession, DefaultResourceLoader, getAgentDir, SessionManager } from "garmin-code-mini";
+import { createAgentSession, DefaultResourceLoader, getAgentDir, SessionManager } from "gcode";
 
 // Disable context files entirely by returning an empty list in agentsFilesOverride.
 const loader = new DefaultResourceLoader({

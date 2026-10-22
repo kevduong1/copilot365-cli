@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Developer wrapper that runs garmin-code-mini from this checkout's latest `npm run build`.
-# Development invocations use GARMIN_CODE_MINI_EXPERIMENTAL=1 by default. Pass --stable to use
-# the next garmin-code-mini executable on PATH; `garmin-code-mini update` also uses stable so self-update
+# Developer wrapper that runs gcode from this checkout's latest `npm run build`.
+# Development invocations use GCODE_EXPERIMENTAL=1 by default. Pass --stable to use
+# the next gcode executable on PATH; `gcode update` also uses stable so self-update
 # works.
 #
 # From the repository root, install with:
 #   mkdir -p "$HOME/.local/bin"
-#   ln -s "$PWD/scripts/auto-garmin-code-mini.sh" "$HOME/.local/bin/garmin-code-mini"
+#   ln -s "$PWD/scripts/auto-gcode.sh" "$HOME/.local/bin/gcode"
 #
-# ~/.local/bin must appear before the stable garmin-code-mini installation on PATH.
+# ~/.local/bin must appear before the stable gcode installation on PATH.
 
 # Resolve this script through symlinks so repo_dir points at the development
-# checkout rather than the directory containing the `garmin-code-mini` symlink.
+# checkout rather than the directory containing the `gcode` symlink.
 script_path="${BASH_SOURCE[0]}"
 while [[ -L "$script_path" ]]; do
 	script_dir="$(cd -P "$(dirname "$script_path")" && pwd)"
@@ -33,7 +33,7 @@ find_stable_pi() {
 	IFS=: read -r -a path_entries <<< "${PATH:-}"
 	for path_entry in "${path_entries[@]}"; do
 		[[ -n "$path_entry" ]] || path_entry=.
-		candidate="$path_entry/garmin-code-mini"
+		candidate="$path_entry/gcode"
 		[[ -x "$candidate" && ! -d "$candidate" ]] || continue
 		[[ "$candidate" -ef "$script_path" ]] && continue
 		candidate_dir="$(cd -P "$(dirname "$candidate")" && pwd)" || continue
@@ -59,7 +59,7 @@ fi
 
 if [[ "$use_stable" == true ]]; then
 	if ! stable_pi="$(find_stable_pi)"; then
-		echo "error: could not find a stable garmin-code-mini executable after the auto-garmin-code-mini wrapper on PATH" >&2
+		echo "error: could not find a stable gcode executable after the auto-gcode wrapper on PATH" >&2
 		exit 1
 	fi
 	exec "$stable_pi" ${args[@]+"${args[@]}"}
@@ -67,9 +67,9 @@ fi
 
 dev_pi="$repo_dir/packages/coding-agent/dist/bundle/cli.js"
 if [[ ! -x "$dev_pi" ]]; then
-	echo "error: development garmin-code-mini build not found; run \`npm run build\` in $repo_dir" >&2
+	echo "error: development gcode build not found; run \`npm run build\` in $repo_dir" >&2
 	exit 1
 fi
 
-export GARMIN_CODE_MINI_EXPERIMENTAL="${GARMIN_CODE_MINI_EXPERIMENTAL:-1}"
+export GCODE_EXPERIMENTAL="${GCODE_EXPERIMENTAL:-1}"
 exec "$dev_pi" ${args[@]+"${args[@]}"}

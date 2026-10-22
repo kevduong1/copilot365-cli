@@ -1,4 +1,4 @@
-import { NOOP_TELEMETRY_CONTEXT, type SpanOptions, type TelemetrySpan } from "@garmin-code-mini/telemetry";
+import { NOOP_TELEMETRY_CONTEXT, type SpanOptions, type TelemetrySpan } from "@gcode/telemetry";
 
 /** Typed identity for one value carried by a {@link Context}. */
 export interface ContextKey<T> {

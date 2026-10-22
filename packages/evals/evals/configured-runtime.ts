@@ -1,6 +1,6 @@
 import { join } from "node:path";
-import { type Api, type Context, contentText, type Model, type ModelsSimpleStreamOptions } from "@garmin-code-mini/ai";
-import { ModelRuntime } from "garmin-code-mini";
+import { type Api, type Context, contentText, type Model, type ModelsSimpleStreamOptions } from "@gcode/ai";
+import { ModelRuntime } from "gcode";
 
 type ModelFields = {
 	id: string;

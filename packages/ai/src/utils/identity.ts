@@ -1,11 +1,11 @@
 import type { Models, MutableModels } from "../models.ts";
-import { GARMIN_CODE_MINI_AI_VERSION } from "./version.ts";
+import { GCODE_AI_VERSION } from "./version.ts";
 
 /**
  * The `User-Agent` sent to providers:
- * - `"detailed"`: `garmin-code-mini/<version> (<platform>; <runtime>/<runtime version>; <arch>)`, or `garmin-code-mini/<version> (browser)`
+ * - `"detailed"`: `gcode/<version> (<platform>; <runtime>/<runtime version>; <arch>)`, or `gcode/<version> (browser)`
  *   outside Node.js and Bun.
- * - `"short"`: `garmin-code-mini`.
+ * - `"short"`: `gcode`.
  * - `{ custom }`: the given value.
  */
 export type UserAgentMode = "short" | "detailed" | { custom: string };
@@ -20,23 +20,23 @@ export interface ClientAttribution {
 	categories?: string[];
 }
 
-/** garmin-code-mini's attribution, used by garmin-code-mini-agent-core, garmin-code-mini-durable, and the coding agent. */
-export const GARMIN_CODE_MINI_ATTRIBUTION: ClientAttribution = {
-	name: "garmin-code-mini",
+/** gcode's attribution, used by gcode-agent-core, gcode-durable, and the coding agent. */
+export const GCODE_ATTRIBUTION: ClientAttribution = {
+	name: "gcode",
 	url: "http://localhost",
 	categories: ["cli-agent"],
 };
 
 /**
- * How garmin-code-mini-ai identifies the calling app to providers. Every field is optional; absent fields use garmin-code-mini-ai's defaults:
- * a detailed `User-Agent` with garmin-code-mini-ai's version and no attribution headers. Plain JSON, so it can be persisted.
+ * How gcode-ai identifies the calling app to providers. Every field is optional; absent fields use gcode-ai's defaults:
+ * a detailed `User-Agent` with gcode-ai's version and no attribution headers. Plain JSON, so it can be persisted.
  */
 export interface ClientIdentity {
 	/** Default: `"detailed"`. */
 	userAgent?: UserAgentMode;
 	/** Provider attribution headers. Absent or `null`: none; `null` also turns off attribution set by a merged identity. */
 	attribution?: ClientAttribution | null;
-	/** Version in the detailed `User-Agent`. Default: the garmin-code-mini-ai version. */
+	/** Version in the detailed `User-Agent`. Default: the gcode-ai version. */
 	version?: string;
 }
 
@@ -61,7 +61,7 @@ export function mergeClientIdentity(...sources: (ClientIdentity | undefined)[]):
 
 /** The version in the detailed `User-Agent`. */
 export function getClientVersion(identity?: ClientIdentity): string {
-	return identity?.version ?? GARMIN_CODE_MINI_AI_VERSION;
+	return identity?.version ?? GCODE_AI_VERSION;
 }
 
 function runtimeDescription(): string | undefined {
@@ -76,8 +76,8 @@ function runtimeDescription(): string | undefined {
 export function formatUserAgent(identity?: ClientIdentity): string {
 	const mode = identity?.userAgent ?? "detailed";
 	if (typeof mode === "object") return mode.custom;
-	if (mode === "short") return "garmin-code-mini";
-	const product = `garmin-code-mini/${getClientVersion(identity)}`;
+	if (mode === "short") return "gcode";
+	const product = `gcode/${getClientVersion(identity)}`;
 	const runtime = runtimeDescription();
 	return runtime ? `${product} (${process.platform}; ${runtime}; ${process.arch})` : `${product} (browser)`;
 }

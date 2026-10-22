@@ -1,4 +1,4 @@
-import { Editor, type EditorOptions, type EditorTheme, type TUI, visibleWidth } from "@garmin-code-mini/tui";
+import { Editor, type EditorOptions, type EditorTheme, type TUI, visibleWidth } from "@gcode/tui";
 import type { AppKeybinding, KeybindingsManager } from "../../../core/keybindings.ts";
 import type { StatusIndicator } from "./status-indicator.ts";
 

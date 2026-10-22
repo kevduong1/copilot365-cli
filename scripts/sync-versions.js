@@ -48,7 +48,7 @@ for (const pkg of workspacePackages) {
 		}
 
 		for (const [dependencyName, currentSpecifier] of Object.entries(dependencies)) {
-			// Registry aliases such as `npm:@garmin-code-mini/ai@0.1.2` are never workspace-linked,
+			// Registry aliases such as `npm:@gcode/ai@0.1.2` are never workspace-linked,
 			// so lockstep bumping them would point at a version that is not published yet.
 			const newSpecifier = versionMap.get(dependencyName);
 			if (!newSpecifier || currentSpecifier === newSpecifier || currentSpecifier.startsWith("npm:")) {
@@ -76,11 +76,11 @@ if (totalUpdates === 0) {
 	console.log(`\nUpdated ${totalUpdates} dependency version(s).`);
 }
 
-// garmin-code-mini-ai reports its version in the User-Agent without reading package.json, which browsers cannot do.
-const aiPackage = workspacePackages.find((pkg) => pkg.data.name === "@garmin-code-mini/ai");
+// gcode-ai reports its version in the User-Agent without reading package.json, which browsers cannot do.
+const aiPackage = workspacePackages.find((pkg) => pkg.data.name === "@gcode/ai");
 const aiVersionPath = aiPackage && join(dirname(aiPackage.path), "src", "utils", "version.ts");
 if (aiVersionPath && existsSync(aiVersionPath)) {
-	const content = `// The @garmin-code-mini/ai package version. scripts/sync-versions.js keeps it in sync with package.json.\nexport const GARMIN_CODE_MINI_AI_VERSION = ${JSON.stringify(aiPackage.data.version)};\n`;
+	const content = `// The @gcode/ai package version. scripts/sync-versions.js keeps it in sync with package.json.\nexport const GCODE_AI_VERSION = ${JSON.stringify(aiPackage.data.version)};\n`;
 	if (readFileSync(aiVersionPath, "utf8") !== content) {
 		writeFileSync(aiVersionPath, content);
 		console.log(`\nUpdated ${aiVersionPath} to ${aiPackage.data.version}.`);

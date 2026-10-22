@@ -1,8 +1,8 @@
 // A Durable Object that hosts a Harness the way an application would: opened in the constructor, woken by its alarm
 // through `onWake`. Tests drive it with `runInDurableObject()`, evict it, and run its alarm.
 import { DurableObject, type DurableObjectState } from "cloudflare:workers";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import { createModels, type FauxResponseStep, fauxAssistantMessage, fauxProvider } from "@garmin-code-mini/ai";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import { createModels, type FauxResponseStep, fauxAssistantMessage, fauxProvider } from "@gcode/ai";
 import {
 	type Conversation,
 	createRegistry,
@@ -11,8 +11,8 @@ import {
 	Harness,
 	type TaskId,
 	type Wake,
-} from "@garmin-code-mini/durable";
-import { openDurableObjectSqliteStorage } from "@garmin-code-mini/durable/storage/sqlite/cloudflare";
+} from "@gcode/durable";
+import { openDurableObjectSqliteStorage } from "@gcode/durable/storage/sqlite/cloudflare";
 
 const context = BACKGROUND_CONTEXT;
 
@@ -151,5 +151,5 @@ export class TestSession extends DurableObject {
 }
 
 export default {
-	fetch: () => new Response("garmin-code-mini-durable test worker"),
+	fetch: () => new Response("gcode-durable test worker"),
 };

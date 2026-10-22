@@ -1,4 +1,4 @@
-import { fuzzyMatch } from "@garmin-code-mini/tui";
+import { fuzzyMatch } from "@gcode/tui";
 import type { SessionInfo } from "../../../core/session-manager.ts";
 
 export type SortMode = "threaded" | "recent" | "relevance";

@@ -1,16 +1,16 @@
 /**
  * An Agent with the tools of an MCP server plus a codemode tool that calls them from JavaScript.
  *
- *   GARMIN_CODE_MINI_MODEL=... node packages/agent/examples/mcp-codemode/main.ts \
+ *   GCODE_MODEL=... node packages/agent/examples/mcp-codemode/main.ts \
  *     npx -y @modelcontextprotocol/server-filesystem .
  *
  * The arguments are the command that starts a stdio MCP server.
  */
 
-import { Agent } from "@garmin-code-mini/agent-core";
-import { createModels } from "@garmin-code-mini/ai";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
-import { McpClient, StdioTransport } from "@garmin-code-mini/mcp";
+import { Agent } from "@gcode/agent-core";
+import { createModels } from "@gcode/ai";
+import { localProvider } from "@gcode/ai/providers/local";
+import { McpClient, StdioTransport } from "@gcode/mcp";
 import { createCodemodeTool, createMcpTools, createNestedToolRunner } from "./tools.ts";
 
 const [command, ...args] = process.argv.slice(2);
@@ -21,10 +21,10 @@ if (!command) {
 
 const models = createModels();
 models.setProvider(localProvider());
-const model = models.getModel("local", process.env.GARMIN_CODE_MINI_MODEL || "local-model");
+const model = models.getModel("local", process.env.GCODE_MODEL || "local-model");
 if (!model) throw new Error("Model not found");
 
-const client = new McpClient({ name: "garmin-code-mini-agent-example", version: "1.0.0" });
+const client = new McpClient({ name: "gcode-agent-example", version: "1.0.0" });
 await client.connect(new StdioTransport({ command, args }));
 
 try {

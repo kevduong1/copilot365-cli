@@ -1,4 +1,4 @@
-import { createModels, fauxAssistantMessage, Type } from "@garmin-code-mini/ai";
+import { createModels, fauxAssistantMessage, Type } from "@gcode/ai";
 import {
 	type AnyTask,
 	createRegistry,
@@ -13,7 +13,7 @@ import {
 	type SetTimer,
 	section,
 	wrapTool,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { chatSetup } from "./chat-support.ts";
 import { ControlledStorage, context } from "./session-support.ts";
@@ -154,7 +154,7 @@ describe("reports", () => {
 		const root = await harness.root(context, { agent: { model: { provider: "faux", modelId: "faux-1" } } });
 		await (await root.submit({ type: "input", content: "hi" }, context)).wait(context);
 		const infoOf = (message: string) => reports.find((report) => report.message === message)?.info;
-		const generation = { kind: "garmin-code-mini.generation", conversationId: root.id };
+		const generation = { kind: "gcode.generation", conversationId: root.id };
 		expect(infoOf("env")).toMatchObject({ type: "host_error", callback: "env", task: generation });
 		expect(infoOf("section")).toMatchObject({ type: "extension_error", extension: "sections", task: generation });
 		expect(infoOf("hook")).toMatchObject({ type: "extension_error", extension: "hooks", task: generation });

@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { registerEnvConformance } from "@garmin-code-mini/durable/testing";
+import { registerEnvConformance } from "@gcode/durable/testing";
 import { afterAll, describe, expect, it } from "vitest";
 import { Connection } from "../src/connection.ts";
 import { LocalExecutionEnv } from "../src/list-files.ts";
@@ -18,12 +18,12 @@ registerEnvConformance(
 	{ describe, expect, it },
 	"RemoteExecutionEnv over a pipe",
 	async (use) => {
-		const cwd = mkdtempSync(join(tmpdir(), "garmin-code-mini-env-conformance-"));
+		const cwd = mkdtempSync(join(tmpdir(), "gcode-env-conformance-"));
 		try {
 			await use(
 				new RemoteExecutionEnv({
 					connection,
-					id: "garmin-code-mini-env:test",
+					id: "gcode-env:test",
 					cwd,
 					watch: { pollIntervalMs: 100 },
 				}),
@@ -41,7 +41,7 @@ registerEnvConformance(
 	{ describe, expect, it },
 	"LocalExecutionEnv",
 	async (use) => {
-		const cwd = mkdtempSync(join(tmpdir(), "garmin-code-mini-env-local-conformance-"));
+		const cwd = mkdtempSync(join(tmpdir(), "gcode-env-local-conformance-"));
 		try {
 			await use(new LocalExecutionEnv({ connection, cwd, watch: { pollIntervalMs: 100 } }));
 		} finally {

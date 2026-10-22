@@ -6,16 +6,16 @@ import { createInMemoryModelRegistry, createModelRegistry, getModelRuntime } fro
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { AgentMessage, AgentTool } from "@garmin-code-mini/agent-core";
-import { Agent } from "@garmin-code-mini/agent-core";
+import type { AgentMessage, AgentTool } from "@gcode/agent-core";
+import { Agent } from "@gcode/agent-core";
 import type {
 	FauxModelDefinition,
 	FauxProviderRegistration,
 	FauxResponseStep,
 	Model,
 	ToolResultMessage,
-} from "@garmin-code-mini/ai/compat";
-import { registerFauxProvider, streamSimple } from "@garmin-code-mini/ai/compat";
+} from "@gcode/ai/compat";
+import { registerFauxProvider, streamSimple } from "@gcode/ai/compat";
 import { AgentSession, type AgentSessionEvent } from "../../src/core/agent-session.ts";
 import { AuthStorage } from "../../src/core/auth-storage.ts";
 import type { ExtensionRunner, ExtensionUIContext } from "../../src/core/extensions/index.ts";
@@ -143,7 +143,7 @@ export interface Harness {
 }
 
 function createTempDir(): string {
-	const tempDir = join(tmpdir(), `garmin-code-mini-suite-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+	const tempDir = join(tmpdir(), `gcode-suite-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 	mkdirSync(tempDir, { recursive: true });
 	return tempDir;
 }

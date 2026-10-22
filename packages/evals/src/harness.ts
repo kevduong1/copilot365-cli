@@ -5,8 +5,8 @@ import { chmod, chown, lstat, mkdir, mkdtemp, readdir, readFile, rm, writeFile }
 import { tmpdir } from "node:os";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 import { performance } from "node:perf_hooks";
-import { contentText, InMemoryCredentialStore } from "@garmin-code-mini/ai";
-import { getCurrentSystemPrompt } from "@garmin-code-mini/ai/utils/transcript";
+import { contentText, InMemoryCredentialStore } from "@gcode/ai";
+import { getCurrentSystemPrompt } from "@gcode/ai/utils/transcript";
 import {
 	type AgentSession,
 	type CreateAgentSessionOptions,
@@ -17,7 +17,7 @@ import {
 	ModelRuntime,
 	readStoredCredential,
 	SessionManager,
-} from "garmin-code-mini";
+} from "gcode";
 import {
 	attachHarnessRunToError,
 	createHarness,
@@ -32,7 +32,7 @@ import {
 	type UsageSummary,
 } from "vitest-evals/harness";
 import type { DocumentationVariant } from "./plan.ts";
-import { GARMIN_CODE_MINI_SESSION_SNAPSHOT_ARTIFACT } from "./report.ts";
+import { GCODE_SESSION_SNAPSHOT_ARTIFACT } from "./report.ts";
 
 type PiRunDiagnostics = {
 	events: TranscriptEvent[];
@@ -69,23 +69,21 @@ export type PiCodingAgentHarnessWithOutput<TOutput extends JsonValue> = PiCoding
 
 export function resolveModelSelection(
 	explicitModel: PiCodingAgentModelSelection | undefined,
-	environment: { GARMIN_CODE_MINI_PROVIDER?: string; GARMIN_CODE_MINI_MODEL?: string } = process.env,
+	environment: { GCODE_PROVIDER?: string; GCODE_MODEL?: string } = process.env,
 ): PiCodingAgentModelSelection {
-	const provider = (explicitModel?.provider ?? environment.GARMIN_CODE_MINI_PROVIDER)?.trim();
-	const id = (explicitModel?.id ?? environment.GARMIN_CODE_MINI_MODEL)?.trim();
+	const provider = (explicitModel?.provider ?? environment.GCODE_PROVIDER)?.trim();
+	const id = (explicitModel?.id ?? environment.GCODE_MODEL)?.trim();
 	if (!provider || !id) {
-		throw new Error(
-			"Select a harness model explicitly or set both GARMIN_CODE_MINI_PROVIDER and GARMIN_CODE_MINI_MODEL as defaults.",
-		);
+		throw new Error("Select a harness model explicitly or set both GCODE_PROVIDER and GCODE_MODEL as defaults.");
 	}
 	return { provider, id };
 }
 
 export function applyIsolatedEnvironment(home: string, agentDir: string): () => void {
-	const overrides = { HOME: home, USERPROFILE: home, GARMIN_CODE_MINI_AGENT_DIR: agentDir };
+	const overrides = { HOME: home, USERPROFILE: home, GCODE_AGENT_DIR: agentDir };
 	const previous = new Map<string, string | undefined>();
 	for (const name of Object.keys(process.env)) {
-		if (!name.startsWith("GARMIN_CODE_MINI_EVAL_")) continue;
+		if (!name.startsWith("GCODE_EVAL_")) continue;
 		previous.set(name, process.env[name]);
 		delete process.env[name];
 	}
@@ -103,9 +101,7 @@ export function applyIsolatedEnvironment(home: string, agentDir: string): () => 
 
 type SandboxIdentity = { uid: number; gid: number };
 
-function parseSandboxId(
-	name: "GARMIN_CODE_MINI_EVAL_SANDBOX_UID" | "GARMIN_CODE_MINI_EVAL_SANDBOX_GID",
-): number | undefined {
+function parseSandboxId(name: "GCODE_EVAL_SANDBOX_UID" | "GCODE_EVAL_SANDBOX_GID"): number | undefined {
 	const value = process.env[name];
 	if (value === undefined) return undefined;
 	const id = Number(value);
@@ -114,11 +110,11 @@ function parseSandboxId(
 }
 
 function resolveSandboxIdentity(): SandboxIdentity | undefined {
-	const uid = parseSandboxId("GARMIN_CODE_MINI_EVAL_SANDBOX_UID");
-	const gid = parseSandboxId("GARMIN_CODE_MINI_EVAL_SANDBOX_GID");
+	const uid = parseSandboxId("GCODE_EVAL_SANDBOX_UID");
+	const gid = parseSandboxId("GCODE_EVAL_SANDBOX_GID");
 	if (uid === undefined && gid === undefined) return undefined;
 	if (uid === undefined || gid === undefined) {
-		throw new Error("Set both GARMIN_CODE_MINI_EVAL_SANDBOX_UID and GARMIN_CODE_MINI_EVAL_SANDBOX_GID, or neither.");
+		throw new Error("Set both GCODE_EVAL_SANDBOX_UID and GCODE_EVAL_SANDBOX_GID, or neither.");
 	}
 	return { uid, gid };
 }
@@ -264,11 +260,11 @@ export function verifySystemPrompt(
 ): string {
 	if (options.expectedPiDocumentation === undefined) return systemPrompt;
 	if (!systemPrompt.includes("\n<rules>\n")) {
-		throw new Error(`garmin-code-mini system prompt lost its rules in the ${options.name} eval variant.`);
+		throw new Error(`gcode system prompt lost its rules in the ${options.name} eval variant.`);
 	}
-	const hasDocumentation = systemPrompt.includes("\n<docs>\ngarmin-code-mini documentation (read only");
+	const hasDocumentation = systemPrompt.includes("\n<docs>\ngcode documentation (read only");
 	if (hasDocumentation !== options.expectedPiDocumentation) {
-		throw new Error(`garmin-code-mini system prompt does not match the ${options.name} eval variant.`);
+		throw new Error(`gcode system prompt does not match the ${options.name} eval variant.`);
 	}
 	return systemPrompt;
 }
@@ -284,10 +280,10 @@ async function runPiCodingAgent<TOutput extends JsonValue>(
 	const selection = resolveModelSelection(options.model);
 	const hostAgentDir = getAgentDir();
 	const sandboxIdentity = resolveSandboxIdentity();
-	const root = await mkdtemp(join(tmpdir(), "garmin-code-mini-eval-"));
+	const root = await mkdtemp(join(tmpdir(), "gcode-eval-"));
 	const workspace = join(root, "workspace");
 	const isolatedHome = join(root, "home");
-	const agentDir = join(isolatedHome, ".garmin-code-mini", "agent");
+	const agentDir = join(isolatedHome, ".gcode", "agent");
 	const extensionFactories: InlineExtension[] = [];
 	let forcedSystemPrompt: string | undefined;
 	if (options.transformSystemPrompt) {
@@ -295,8 +291,8 @@ async function runPiCodingAgent<TOutput extends JsonValue>(
 		extensionFactories.push({
 			name: "eval-system-prompt-transform",
 			hidden: true,
-			factory: (garminCodeMini) => {
-				garminCodeMini.on("before_agent_start", ({ systemPrompt }) => {
+			factory: (gcode) => {
+				gcode.on("before_agent_start", ({ systemPrompt }) => {
 					forcedSystemPrompt = transform(systemPrompt);
 					return { systemPrompt: forcedSystemPrompt };
 				});
@@ -387,7 +383,7 @@ async function runPiCodingAgent<TOutput extends JsonValue>(
 			if (abortPromise) await abortPromise;
 		}
 		if (response === undefined) {
-			throw new Error("garmin-code-mini eval input must include at least one prompt step.");
+			throw new Error("gcode eval input must include at least one prompt step.");
 		}
 		// A forced prompt is not recorded in the transcript, so use the one the transform
 		// extension sent; otherwise the replayed transcript prompt is what the provider received.
@@ -424,10 +420,10 @@ async function runPiCodingAgent<TOutput extends JsonValue>(
 		if (sessionManager) {
 			const sessionPath = sessionManager.getSessionFile();
 			if (!sessionPath || !existsSync(sessionPath)) {
-				cleanupErrors.push(new Error("garmin-code-mini eval produced no session file."));
+				cleanupErrors.push(new Error("gcode eval produced no session file."));
 			} else {
 				try {
-					setArtifact(GARMIN_CODE_MINI_SESSION_SNAPSHOT_ARTIFACT, await readFile(sessionPath, "utf8"));
+					setArtifact(GCODE_SESSION_SNAPSHOT_ARTIFACT, await readFile(sessionPath, "utf8"));
 				} catch (error) {
 					cleanupErrors.push(error);
 				}
@@ -468,7 +464,7 @@ async function runPiCodingAgent<TOutput extends JsonValue>(
 		}
 		throw failure;
 	}
-	if (!result) throw new Error("garmin-code-mini eval completed without a result.");
+	if (!result) throw new Error("gcode eval completed without a result.");
 	return { ...result, timings: { totalMs: performance.now() - startedAt } };
 }
 
@@ -480,7 +476,7 @@ export function createPiCodingAgentHarness<TOutput extends JsonValue>(
 	options: PiCodingAgentHarnessOptions | PiCodingAgentHarnessWithOutput<TOutput> = {},
 ): Harness<PiCodingAgentInput, string | TOutput> {
 	return createHarness<PiCodingAgentInput, string | TOutput>({
-		name: options.name ?? "garmin-code-mini-coding-agent",
+		name: options.name ?? "gcode-coding-agent",
 		run: ({ input, signal, setArtifact }) => runPiCodingAgent(input, signal, setArtifact, options),
 	});
 }
@@ -489,24 +485,22 @@ export function createPiCodingAgentHarness<TOutput extends JsonValue>(
 export const DOCUMENTATION_EVAL_TOOLS = ["read", "write", "edit", "grep", "find", "ls"] as const;
 
 export function resolveDocumentationVariant(
-	value: string | undefined = process.env.GARMIN_CODE_MINI_EVAL_VARIANT,
+	value: string | undefined = process.env.GCODE_EVAL_VARIANT,
 ): DocumentationVariant {
 	if (value === "without_docs" || value === "with_docs") return value;
-	throw new TypeError('GARMIN_CODE_MINI_EVAL_VARIANT must be "without_docs" or "with_docs".');
+	throw new TypeError('GCODE_EVAL_VARIANT must be "without_docs" or "with_docs".');
 }
 
 export function excludePiDocumentation(defaultPrompt: string): string {
 	const documentationStartMarker = "\n<docs>\n";
 	const documentationEndMarker = "\n</docs>";
 	const documentationStart = defaultPrompt.indexOf(documentationStartMarker);
-	if (documentationStart === -1)
-		throw new Error("Default garmin-code-mini system prompt has no garmin-code-mini documentation section.");
+	if (documentationStart === -1) throw new Error("Default gcode system prompt has no gcode documentation section.");
 	const documentationEnd = defaultPrompt.indexOf(documentationEndMarker, documentationStart);
 	if (documentationEnd === -1)
-		throw new Error("Default garmin-code-mini system prompt has no complete garmin-code-mini documentation section.");
+		throw new Error("Default gcode system prompt has no complete gcode documentation section.");
 	const cwdStart = defaultPrompt.lastIndexOf("\n<cwd>\n");
-	if (cwdStart < documentationEnd)
-		throw new Error("Default garmin-code-mini system prompt has no working-directory section.");
+	if (cwdStart < documentationEnd) throw new Error("Default gcode system prompt has no working-directory section.");
 	return (
 		defaultPrompt.slice(0, documentationStart) + defaultPrompt.slice(documentationEnd + documentationEndMarker.length)
 	);
@@ -530,7 +524,7 @@ export function createPiDocumentationEvalHarness(
 export function createPiDocumentationEvalHarness<TOutput extends JsonValue>(
 	options: DocumentationHarnessOptions | DocumentationHarnessWithOutput<TOutput> = {},
 ) {
-	if (process.env.GARMIN_CODE_MINI_EVAL_CONTAINER !== "1" || !resolveSandboxIdentity()) {
+	if (process.env.GCODE_EVAL_CONTAINER !== "1" || !resolveSandboxIdentity()) {
 		throw new Error("Documentation evals must run in the isolated container sandbox.");
 	}
 	const variant = resolveDocumentationVariant();

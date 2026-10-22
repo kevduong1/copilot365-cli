@@ -1,14 +1,14 @@
 /**
- * garmin-code-mini Notify Extension
+ * gcode Notify Extension
  *
- * Sends a native terminal notification when garmin-code-mini agent is done and waiting for input.
+ * Sends a native terminal notification when gcode agent is done and waiting for input.
  * Supports multiple terminal protocols:
  * - OSC 777: Ghostty, iTerm2, WezTerm, rxvt-unicode
  * - OSC 99: Kitty
  * - Windows toast: Windows Terminal (WSL)
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
 function windowsToastScript(title: string, body: string): string {
 	const type = "Windows.UI.Notifications";
@@ -48,10 +48,10 @@ function notify(title: string, body: string): void {
 	}
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
-	// `agent_end` fires after each low-level run; garmin-code-mini may still retry, compact,
+export default function (gcode: ExtensionAPI) {
+	// `agent_end` fires after each low-level run; gcode may still retry, compact,
 	// or continue with queued follow-ups. Notify only after the full run settles.
-	garminCodeMini.on("agent_settled", async () => {
-		notify("garmin-code-mini", "Ready for input");
+	gcode.on("agent_settled", async () => {
+		notify("gcode", "Ready for input");
 	});
 }

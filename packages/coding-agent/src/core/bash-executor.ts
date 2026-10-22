@@ -63,7 +63,7 @@ export async function executeBashWithOperations(
 		if (tempFilePath) {
 			return;
 		}
-		({ path: tempFilePath, stream: tempFileStream } = createOutputFileStream("garmin-code-mini-bash", ".log"));
+		({ path: tempFilePath, stream: tempFileStream } = createOutputFileStream("gcode-bash", ".log"));
 		for (const chunk of outputChunks) {
 			tempFileStream.write(chunk);
 		}

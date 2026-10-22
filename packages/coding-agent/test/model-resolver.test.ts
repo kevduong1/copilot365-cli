@@ -1,11 +1,11 @@
 import { mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Agent } from "@garmin-code-mini/agent-core";
-import type { Api, Model } from "@garmin-code-mini/ai";
-import { streamSimple } from "@garmin-code-mini/ai/compat";
-import { getBuiltinModels, getBuiltinProviders } from "@garmin-code-mini/ai/providers/all";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
+import { Agent } from "@gcode/agent-core";
+import type { Api, Model } from "@gcode/ai";
+import { streamSimple } from "@gcode/ai/compat";
+import { getBuiltinModels, getBuiltinProviders } from "@gcode/ai/providers/all";
+import { localProvider } from "@gcode/ai/providers/local";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { AgentSession } from "../src/core/agent-session.ts";
 import { AuthStorage } from "../src/core/auth-storage.ts";
@@ -687,7 +687,7 @@ describe("resolveCliModel", () => {
 
 describe("default model selection", () => {
 	test("defaults include only the local provider", () => {
-		expect(defaultModelPerProvider).toEqual({ local: process.env.GARMIN_CODE_MINI_MODEL?.trim() || "local-model" });
+		expect(defaultModelPerProvider).toEqual({ local: process.env.GCODE_MODEL?.trim() || "local-model" });
 	});
 
 	test("built-in chat providers have defaults in their generated catalogs", () => {
@@ -784,10 +784,7 @@ describe("default model selection", () => {
 		});
 
 		async function createSession(options: { scoped: boolean; persistedScope?: string[] }) {
-			const tempDir = join(
-				tmpdir(),
-				`garmin-code-mini-default-scope-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-			);
+			const tempDir = join(tmpdir(), `gcode-default-scope-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 			mkdirSync(tempDir, { recursive: true });
 			tempDirs.push(tempDir);
 

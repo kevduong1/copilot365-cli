@@ -11,7 +11,7 @@ import {
 	getAgentDir,
 	type PromptTemplate,
 	SessionManager,
-} from "garmin-code-mini";
+} from "gcode";
 
 // Define custom templates
 const deployTemplate: PromptTemplate = {
@@ -36,7 +36,7 @@ const loader = new DefaultResourceLoader({
 });
 await loader.reload();
 
-// Discover templates from cwd/.garmin-code-mini/prompts/ and ~/.garmin-code-mini/agent/prompts/
+// Discover templates from cwd/.gcode/prompts/ and ~/.gcode/agent/prompts/
 const discovered = loader.getPrompts().prompts;
 console.log("Discovered prompt templates:");
 for (const template of discovered) {

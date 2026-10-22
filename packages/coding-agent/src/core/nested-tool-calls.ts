@@ -14,8 +14,8 @@ import type {
 	AgentToolCallOutcome,
 	AgentToolResult,
 	AgentToolUpdateCallback,
-} from "@garmin-code-mini/agent-core";
-import type { JsonObject, NestedToolCallRecord, NestedToolCalls, TextContent, Usage } from "@garmin-code-mini/ai";
+} from "@gcode/agent-core";
+import type { JsonObject, NestedToolCallRecord, NestedToolCalls, TextContent, Usage } from "@gcode/ai";
 import { combineUsage } from "./usage-totals.ts";
 
 /**

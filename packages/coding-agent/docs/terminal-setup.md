@@ -1,22 +1,22 @@
 # Configure your terminal
 
-Most modern terminals work with garmin-code-mini without additional setup. Use this page when modified keys, scrolling, links, images, colors, or input-method editor (IME) positioning do not behave as expected.
+Most modern terminals work with gcode without additional setup. Use this page when modified keys, scrolling, links, images, colors, or input-method editor (IME) positioning do not behave as expected.
 
-garmin-code-mini uses extended-key protocols so terminals can distinguish combinations such as `Shift+Enter` and `Alt+Enter` from plain `Enter`. Terminal proxies, multiplexers, and built-in IDE terminals can change or discard that information.
+gcode uses extended-key protocols so terminals can distinguish combinations such as `Shift+Enter` and `Alt+Enter` from plain `Enter`. Terminal proxies, multiplexers, and built-in IDE terminals can change or discard that information.
 
 ## Troubleshooting
 
 | Symptom | Start here |
 |---|---|
-| `Shift+Enter` submits instead of inserting a line | Your terminal's section below; for tmux, see [Run garmin-code-mini in tmux](tmux.md) |
+| `Shift+Enter` submits instead of inserting a line | Your terminal's section below; for tmux, see [Run gcode in tmux](tmux.md) |
 | `Alt+Enter` does not queue a follow-up | [WezTerm](#wezterm), [Alacritty](#alacritty), or [Windows Terminal](#windows-terminal) |
 | Fullscreen scrolling is unusually slow | [iTerm2](#iterm2) |
 | Links work but show no hover preview | [Ghostty](#ghostty) |
 | Inline images or colors are not detected | [Override detected capabilities](#override-detected-capabilities) |
 | An IME candidate window appears in the wrong place | [WezTerm](#wezterm) or [IntelliJ IDEA](#intellij-idea-integrated-terminal) |
-| Modified keys fail only inside tmux | [Run garmin-code-mini in tmux](tmux.md) |
+| Modified keys fail only inside tmux | [Run gcode in tmux](tmux.md) |
 
-Use `/hotkeys` to inspect garmin-code-mini's active shortcuts. See [Keybindings](keybindings.md) to change them.
+Use `/hotkeys` to inspect gcode's active shortcuts. See [Keybindings](keybindings.md) to change them.
 
 ## Kitty
 
@@ -28,7 +28,7 @@ Regular terminal mode works without additional configuration.
 
 ### Fix slow fullscreen scrolling
 
-In fullscreen mode, garmin-code-mini owns the viewport, so iTerm2 sends mouse-wheel reports instead of scrolling native terminal history. Fast trackpad gestures can then move only about one line at a time.
+In fullscreen mode, gcode owns the viewport, so iTerm2 sends mouse-wheel reports instead of scrolling native terminal history. Fast trackpad gestures can then move only about one line at a time.
 
 To change this behavior:
 
@@ -40,9 +40,9 @@ This is an iTerm2-wide setting and can also change native trackpad scrolling. Th
 
 ## Apple Terminal
 
-garmin-code-mini enables enhanced key reporting when available. If Terminal.app still sends plain Return for `Shift+Enter`, garmin-code-mini uses a local macOS modifier fallback and treats it as `Shift+Enter`.
+gcode enables enhanced key reporting when available. If Terminal.app still sends plain Return for `Shift+Enter`, gcode uses a local macOS modifier fallback and treats it as `Shift+Enter`.
 
-The fallback works only when garmin-code-mini runs on the same Mac as Terminal.app. It cannot inspect the local modifier state when garmin-code-mini runs on another machine over SSH.
+The fallback works only when gcode runs on the same Mac as Terminal.app. It cannot inspect the local modifier state when gcode runs on another machine over SSH.
 
 ## Ghostty
 
@@ -60,11 +60,11 @@ Older Claude Code configurations may contain:
 keybind = shift+enter=text:\n
 ```
 
-This sends a raw linefeed, which garmin-code-mini cannot distinguish from `Ctrl+J`. Remove the mapping if an older Claude Code installation is the only reason you added it. garmin-code-mini already binds `Ctrl+J` as a newline alternative, so the mapping may appear to work while still preventing garmin-code-mini and tmux from receiving a real `Shift+Enter` event.
+This sends a raw linefeed, which gcode cannot distinguish from `Ctrl+J`. Remove the mapping if an older Claude Code installation is the only reason you added it. gcode already binds `Ctrl+J` as a newline alternative, so the mapping may appear to work while still preventing gcode and tmux from receiving a real `Shift+Enter` event.
 
 ### Open links in fullscreen mode
 
-Links remain clickable in fullscreen mode, but Ghostty does not show its normal hover underline or URL preview while garmin-code-mini captures mouse input. Hold `Shift+Command` on macOS or `Shift+Ctrl` on Linux to use Ghostty's native link handling.
+Links remain clickable in fullscreen mode, but Ghostty does not show its normal hover underline or URL preview while gcode captures mouse input. Hold `Shift+Command` on macOS or `Shift+Ctrl` on Linux to use Ghostty's native link handling.
 
 ## WezTerm
 
@@ -79,7 +79,7 @@ return config
 
 ### Forward Alt+Enter on macOS
 
-WezTerm binds `Option+Enter` to fullscreen by default on macOS. To use it for garmin-code-mini's follow-up queue, add this entry to your `config.keys` table:
+WezTerm binds `Option+Enter` to fullscreen by default on macOS. To use it for gcode's follow-up queue, add this entry to your `config.keys` table:
 
 ```lua
 {
@@ -106,18 +106,18 @@ return config
 
 ### Position an IME candidate window in WSL
 
-If CJK IME candidates do not follow garmin-code-mini's text cursor in WSL, show the hardware cursor:
+If CJK IME candidates do not follow gcode's text cursor in WSL, show the hardware cursor:
 
 ```bash
-export GARMIN_CODE_MINI_HARDWARE_CURSOR=1
-garmin-code-mini
+export GCODE_HARDWARE_CURSOR=1
+gcode
 ```
 
-You can instead set `showHardwareCursor` to `true` in garmin-code-mini settings.
+You can instead set `showHardwareCursor` to `true` in gcode settings.
 
 ## Alacritty
 
-Alacritty normally reports `Shift+Enter`. On macOS, `Option+Enter` can arrive as plain `Enter`. Add this to `~/.config/alacritty/alacritty.toml` to forward it to garmin-code-mini:
+Alacritty normally reports `Shift+Enter`. On macOS, `Option+Enter` can arrive as plain `Enter`. Add this to `~/.config/alacritty/alacritty.toml` to forward it to gcode:
 
 ```toml
 [[keyboard.bindings]]
@@ -166,7 +166,7 @@ Add these bindings to Zed's `keymap.json`:
 
 ## Windows Terminal
 
-Windows Terminal uses garmin-code-mini's Windows and WSL shortcut defaults. See [Keybindings](keybindings.md) for the complete list.
+Windows Terminal uses gcode's Windows and WSL shortcut defaults. See [Keybindings](keybindings.md) for the complete list.
 
 ### Forward Shift+Enter
 
@@ -179,13 +179,13 @@ Open Windows Terminal's `settings.json` with `Ctrl+Shift+,` or **Settings > Open
 }
 ```
 
-Fully close and reopen Windows Terminal, then verify that `Shift+Enter` inserts a new line in garmin-code-mini.
+Fully close and reopen Windows Terminal, then verify that `Shift+Enter` inserts a new line in gcode.
 
 ### Use Alt+Enter for follow-ups
 
-Windows Terminal binds `Alt+Enter` to fullscreen by default. garmin-code-mini therefore uses `Ctrl+Q` for follow-ups on Windows and WSL.
+Windows Terminal binds `Alt+Enter` to fullscreen by default. gcode therefore uses `Ctrl+Q` for follow-ups on Windows and WSL.
 
-To use `Alt+Enter` instead, configure Windows Terminal to forward the key and bind `app.message.followUp` to `alt+enter` in garmin-code-mini's `keybindings.json`. See [Keybindings](keybindings.md#assign-keybindings).
+To use `Alt+Enter` instead, configure Windows Terminal to forward the key and bind `app.message.followUp` to `alt+enter` in gcode's `keybindings.json`. See [Keybindings](keybindings.md#assign-keybindings).
 
 ## xfce4-terminal and Terminator
 
@@ -195,32 +195,32 @@ Use a terminal with modern extended-key support when you need those shortcuts, s
 
 ## IntelliJ IDEA integrated terminal
 
-IntelliJ IDEA's built-in terminal cannot reliably distinguish `Shift+Enter` from plain `Enter`. Use `Ctrl+J` for a newline or run garmin-code-mini in a terminal with modern extended-key support.
+IntelliJ IDEA's built-in terminal cannot reliably distinguish `Shift+Enter` from plain `Enter`. Use `Ctrl+J` for a newline or run gcode in a terminal with modern extended-key support.
 
 If an IME candidate window does not follow the text cursor, show the hardware cursor:
 
 ```bash
-export GARMIN_CODE_MINI_HARDWARE_CURSOR=1
-garmin-code-mini
+export GCODE_HARDWARE_CURSOR=1
+gcode
 ```
 
 ## Override detected capabilities
 
-garmin-code-mini automatically detects OSC 8 hyperlinks, inline image protocols, and truecolor support. A terminal proxy or multiplexer can make that detection inaccurate.
+gcode automatically detects OSC 8 hyperlinks, inline image protocols, and truecolor support. A terminal proxy or multiplexer can make that detection inaccurate.
 
 | Capability | Environment variable | Setting |
 |---|---|---|
-| Hyperlinks | `GARMIN_CODE_MINI_HYPERLINKS=1\|0\|auto` | `terminal.hyperlinks: true\|false\|"auto"` |
-| Inline images | `GARMIN_CODE_MINI_IMAGE_PROTOCOL=kitty\|iterm2\|none\|auto` | `terminal.images: "kitty"\|"iterm2"\|false\|"auto"` |
-| Truecolor | `GARMIN_CODE_MINI_TRUE_COLOR=1\|0\|auto` | `terminal.trueColor: true\|false\|"auto"` |
+| Hyperlinks | `GCODE_HYPERLINKS=1\|0\|auto` | `terminal.hyperlinks: true\|false\|"auto"` |
+| Inline images | `GCODE_IMAGE_PROTOCOL=kitty\|iterm2\|none\|auto` | `terminal.images: "kitty"\|"iterm2"\|false\|"auto"` |
+| Truecolor | `GCODE_TRUE_COLOR=1\|0\|auto` | `terminal.trueColor: true\|false\|"auto"` |
 
 Settings take precedence over environment variables. An unset value or `auto` preserves automatic detection.
 
-Only force a capability supported by the complete terminal path. Unsupported escape sequences can corrupt rendering. See [Environment Variables](environment-variables.md#garmin-code-mini-process-configuration) and [Settings](settings.md) for the canonical value definitions.
+Only force a capability supported by the complete terminal path. Unsupported escape sequences can corrupt rendering. See [Environment Variables](environment-variables.md#gcode-process-configuration) and [Settings](settings.md) for the canonical value definitions.
 
 ## Program status
 
-garmin-code-mini reports its state with the [Program Status Protocol (OSC 7501)](https://www.superlogical.com/rex/docs/build/program-status), so terminals and agent dashboards can show whether it is working, waiting for you, done, or failed:
+gcode reports its state with the [Program Status Protocol (OSC 7501)](https://www.superlogical.com/rex/docs/build/program-status), so terminals and agent dashboards can show whether it is working, waiting for you, done, or failed:
 
 | State | When |
 |---|---|
@@ -228,6 +228,6 @@ garmin-code-mini reports its state with the [Program Status Protocol (OSC 7501)]
 | `blocked` | An extension dialog or login waits for you. The message is the dialog title. |
 | `done` | A run finished. The message is the session name. |
 | `error` | A run ended with an error that is not retried. The message is the first line of the error. |
-| `idle` | garmin-code-mini started, or you cancelled the run. |
+| `idle` | gcode started, or you cancelled the run. |
 
-Reports never contain prompts or model output. garmin-code-mini sends them only after the terminal answers the protocol's support query; tmux and screen do not forward them. Set `GARMIN_CODE_MINI_PROGRAM_STATUS=1` to send reports without asking, or `GARMIN_CODE_MINI_PROGRAM_STATUS=0` to turn them off.
+Reports never contain prompts or model output. gcode sends them only after the terminal answers the protocol's support query; tmux and screen do not forward them. Set `GCODE_PROGRAM_STATUS=1` to send reports without asking, or `GCODE_PROGRAM_STATUS=0` to turn them off.

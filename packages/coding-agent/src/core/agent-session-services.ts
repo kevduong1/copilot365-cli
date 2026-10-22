@@ -1,6 +1,6 @@
 import { join } from "node:path";
-import type { ThinkingLevel } from "@garmin-code-mini/agent-core";
-import type { Model } from "@garmin-code-mini/ai";
+import type { ThinkingLevel } from "@gcode/agent-core";
+import type { Model } from "@gcode/ai";
 import { getAgentDir } from "../config.ts";
 import { resolvePath } from "../utils/paths.ts";
 import type { SessionStartEvent, ToolDefinition } from "./extensions/index.ts";

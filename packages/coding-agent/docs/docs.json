@@ -12,8 +12,8 @@
           "path": "quickstart.md"
         },
         {
-          "title": "How garmin-code-mini Works",
-          "path": "how-garmin-code-mini-works.md"
+          "title": "How gcode Works",
+          "path": "how-gcode-works.md"
         }
       ]
     },
@@ -21,10 +21,10 @@
       "title": "Guides",
       "items": [
         {
-          "title": "Run garmin-code-mini",
+          "title": "Run gcode",
           "items": [
             {
-              "title": "Use garmin-code-mini in the Terminal",
+              "title": "Use gcode in the Terminal",
               "path": "usage.md"
             },
             {
@@ -36,11 +36,11 @@
               "path": "sessions.md"
             },
             {
-              "title": "Run garmin-code-mini Safely",
+              "title": "Run gcode Safely",
               "path": "security.md"
             },
             {
-              "title": "Isolate garmin-code-mini",
+              "title": "Isolate gcode",
               "path": "containerization.md"
             },
             {
@@ -56,24 +56,24 @@
               "path": "shell-aliases.md"
             },
             {
-              "title": "Run garmin-code-mini in tmux",
+              "title": "Run gcode in tmux",
               "path": "tmux.md"
             },
             {
-              "title": "Run garmin-code-mini on Windows",
+              "title": "Run gcode on Windows",
               "path": "windows.md"
             },
             {
-              "title": "Run garmin-code-mini on Android",
+              "title": "Run gcode on Android",
               "path": "termux.md"
             }
           ]
         },
         {
-          "title": "Customize garmin-code-mini",
+          "title": "Customize gcode",
           "items": [
             {
-              "title": "Configure garmin-code-mini",
+              "title": "Configure gcode",
               "path": "configuration.md"
             },
             {
@@ -89,13 +89,13 @@
               "path": "themes.md"
             },
             {
-              "title": "Use garmin-code-mini Packages",
+              "title": "Use gcode Packages",
               "path": "packages.md"
             }
           ]
         },
         {
-          "title": "Build on garmin-code-mini",
+          "title": "Build on gcode",
           "items": [
             {
               "title": "Build Extensions",

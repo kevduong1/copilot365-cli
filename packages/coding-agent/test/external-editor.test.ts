@@ -18,7 +18,7 @@ async function runExternalEditor(fixtureFlag?: "--fail" | "--empty"): Promise<{
 	result: ExternalEditorResult;
 	capture: EditorCapture;
 }> {
-	const testDirectory = mkdtempSync(join(tmpdir(), "garmin-code-mini-external-editor-test-"));
+	const testDirectory = mkdtempSync(join(tmpdir(), "gcode-external-editor-test-"));
 	const capturePath = join(testDirectory, "capture.json");
 	try {
 		const result = await editInExternalEditor({
@@ -39,7 +39,7 @@ describe("editInExternalEditor", () => {
 
 		expect(result).toEqual({ status: "complete", content: "edited" });
 		expect(dirname(directory)).toBe(tmpdir());
-		expect(basename(directory)).toMatch(/^garmin-code-mini-editor-.+$/);
+		expect(basename(directory)).toMatch(/^gcode-editor-.+$/);
 		expect(basename(capture.filePath)).toBe("prompt.md");
 		expect(capture.entries).toEqual(["prompt.md"]);
 		expect(capture.content).toBe("original");

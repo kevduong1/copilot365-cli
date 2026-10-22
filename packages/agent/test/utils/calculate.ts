@@ -1,4 +1,4 @@
-import type { Usage } from "@garmin-code-mini/ai";
+import type { Usage } from "@gcode/ai";
 import { type Static, Type } from "typebox";
 import type { AgentTool, AgentToolResult } from "../../src/types.ts";
 

@@ -5,8 +5,8 @@
  * without paying for an extra follow-up LLM turn.
  */
 
-import { Text } from "@garmin-code-mini/tui";
-import { defineTool, type ExtensionAPI } from "garmin-code-mini";
+import { Text } from "@gcode/tui";
+import { defineTool, type ExtensionAPI } from "gcode";
 import { Type } from "typebox";
 
 interface StructuredOutputDetails {
@@ -60,6 +60,6 @@ const structuredOutputTool = defineTool({
 	},
 });
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerTool(structuredOutputTool);
+export default function (gcode: ExtensionAPI) {
+	gcode.registerTool(structuredOutputTool);
 }

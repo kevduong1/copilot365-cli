@@ -1,6 +1,6 @@
-import { type Context, type JsonValue, replicatedState } from "@garmin-code-mini/chord";
-import { awaitWithContext, BACKGROUND_CONTEXT, withoutAbortSignal } from "@garmin-code-mini/chord/context";
-import { type Op, track } from "@garmin-code-mini/chord/delta";
+import { type Context, type JsonValue, replicatedState } from "@gcode/chord";
+import { awaitWithContext, BACKGROUND_CONTEXT, withoutAbortSignal } from "@gcode/chord/context";
+import { type Op, track } from "@gcode/chord/delta";
 import {
 	type AnyDocToken,
 	addressId,
@@ -778,7 +778,7 @@ export class SessionImpl implements Session {
 		for (const write of writes) {
 			switch (write.type) {
 				case "entry":
-					context.telemetry.addEvent("garmin-code-mini.durable.entry", {
+					context.telemetry.addEvent("gcode.durable.entry", {
 						"entry.id": write.value.id,
 						"entry.kind": write.value.kind,
 					});
@@ -786,7 +786,7 @@ export class SessionImpl implements Session {
 					break;
 				case "submission":
 					if (write.value.status === "done" || write.value.status === "unanswered") {
-						context.telemetry.addEvent("garmin-code-mini.durable.submission", {
+						context.telemetry.addEvent("gcode.durable.submission", {
 							"submission.id": write.value.id,
 							status: write.value.status,
 							"answer.entry_id": write.value.answer,

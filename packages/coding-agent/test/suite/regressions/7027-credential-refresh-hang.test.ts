@@ -1,5 +1,5 @@
-import type { Provider } from "@garmin-code-mini/ai";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
+import type { Provider } from "@gcode/ai";
+import { localProvider } from "@gcode/ai/providers/local";
 import { describe, expect, it } from "vitest";
 import { AuthStorage } from "../../../src/core/auth-storage.ts";
 import { ModelRuntime } from "../../../src/core/model-runtime.ts";

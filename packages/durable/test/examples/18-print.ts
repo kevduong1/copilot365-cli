@@ -1,13 +1,13 @@
-// Print mode: submit one prompt and print its answer, like `garmin-code-mini -p`. The host awaits its own Submission, not global
-// idle. Uses the local endpoint when GARMIN_CODE_MINI_MODEL is set, and a scripted faux model otherwise.
+// Print mode: submit one prompt and print its answer, like `gcode -p`. The host awaits its own Submission, not global
+// idle. Uses the local endpoint when GCODE_MODEL is set, and a scripted faux model otherwise.
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/18-print.ts "What is in this directory?"
 
-import type { AssistantMessage } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import type { AssistantMessage } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@gcode/ai/providers/faux";
+import { localProvider } from "@gcode/ai/providers/local";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { NodeExecutionEnv } from "../../src/env/node.ts";
 import { AssistantEntry, createRegistry, defineExtension, Harness, MemoryStorage, section } from "../../src/index.ts";
 import { createBashTool, createReadTool } from "../../src/tools/index.ts";
@@ -16,8 +16,8 @@ const context = BACKGROUND_CONTEXT;
 const prompt = process.argv[2] ?? "What is in this directory?";
 
 const models = createModels();
-let model = { provider: "local", modelId: process.env.GARMIN_CODE_MINI_MODEL || "local-model" };
-if (process.env.GARMIN_CODE_MINI_MODEL !== undefined) {
+let model = { provider: "local", modelId: process.env.GCODE_MODEL || "local-model" };
+if (process.env.GCODE_MODEL !== undefined) {
 	models.setProvider(localProvider());
 } else {
 	const faux = fauxProvider();

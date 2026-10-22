@@ -15,9 +15,9 @@
  */
 
 import { mkdtemp, writeFile } from "node:fs/promises";
-import { Text } from "@garmin-code-mini/tui";
+import { Text } from "@gcode/tui";
 import { execSync } from "child_process";
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 import {
 	DEFAULT_MAX_BYTES,
 	DEFAULT_MAX_LINES,
@@ -25,7 +25,7 @@ import {
 	type TruncationResult,
 	truncateHead,
 	withFileMutationQueue,
-} from "garmin-code-mini";
+} from "gcode";
 import { tmpdir } from "os";
 import { join } from "path";
 import { Type } from "typebox";
@@ -45,8 +45,8 @@ interface RgDetails {
 	fullOutputPath?: string;
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerTool({
+export default function (gcode: ExtensionAPI) {
+	gcode.registerTool({
 		name: "rg",
 		label: "ripgrep",
 		// Document the truncation limits in the tool description so the LLM knows
@@ -109,7 +109,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 
 			if (truncation.truncated) {
 				// Save full output to a temp file so LLM can access it if needed
-				const tempDir = await mkdtemp(join(tmpdir(), "garmin-code-mini-rg-"));
+				const tempDir = await mkdtemp(join(tmpdir(), "gcode-rg-"));
 				const tempFile = join(tempDir, "output.txt");
 				await withFileMutationQueue(tempFile, async () => {
 					await writeFile(tempFile, output, "utf8");

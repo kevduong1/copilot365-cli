@@ -6,10 +6,10 @@
 import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { ToolResultMessage } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import type { ToolResultMessage } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { NodeExecutionEnv } from "../../src/env/node.ts";
 import {
 	AssistantEntry,
@@ -24,7 +24,7 @@ import { openNodeJsonlStorage } from "../../src/storage/jsonl/node.ts";
 import { type BashToolInput, CodingTools } from "../../src/tools/index.ts";
 
 const context = BACKGROUND_CONTEXT;
-const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-example-"));
+const directory = await mkdtemp(join(tmpdir(), "gcode-durable-example-"));
 await writeFile(join(directory, "notes.txt"), "hello world\n");
 
 // The faux provider plays the model: four tool-calling answers, then a final answer.
@@ -75,7 +75,7 @@ const harness = await Harness.open(
 );
 const root = await harness.root(context, { agent: { model: { provider: "faux", modelId: "faux-1" }, cwd: directory } });
 
-// Each tool call runs as a durable garmin-code-mini.tool task owned by the generation, which waits for them and continues the run with the next generation.
+// Each tool call runs as a durable gcode.tool task owned by the generation, which waits for them and continues the run with the next generation.
 const settled = await (await root.submit({ type: "input", content: "Greet durable instead." }, context)).wait(context);
 console.log("status:", settled.status);
 const transcript = await root.entries({}, 20, undefined, context);

@@ -9,7 +9,7 @@ import {
 	type Storage,
 	type TaskId,
 	type Wake,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { afterEach, describe, expect, it } from "vitest";
 import { openNodeSqliteStorage } from "../src/storage/sqlite/node.ts";
 import { context, flush } from "./session-support.ts";
@@ -23,7 +23,7 @@ afterEach(async () => {
 });
 
 async function sqlitePath(): Promise<string> {
-	const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-sleep-"));
+	const directory = await mkdtemp(join(tmpdir(), "gcode-durable-sleep-"));
 	directories.add(directory);
 	return join(directory, "session.sqlite");
 }

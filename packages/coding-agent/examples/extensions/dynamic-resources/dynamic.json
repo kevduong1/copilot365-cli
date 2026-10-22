@@ -1,5 +1,5 @@
 {
-	"$schema": "https://garmin-code-mini.dev/schemas/theme.schema.json",
+	"$schema": "https://gcode.dev/schemas/theme.schema.json",
 	"name": "dynamic-resources",
 	"vars": {
 		"cyan": "#00d7ff",

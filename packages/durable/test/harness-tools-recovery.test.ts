@@ -8,8 +8,8 @@ import {
 	fauxToolCall,
 	type ToolResultMessage,
 	Type,
-} from "@garmin-code-mini/ai";
-import type { JsonValue } from "@garmin-code-mini/chord";
+} from "@gcode/ai";
+import type { JsonValue } from "@gcode/chord";
 import {
 	defineTool,
 	type EntryRecord,
@@ -20,7 +20,7 @@ import {
 	type ToolRegistration,
 	ToolResultEntry,
 	ToolTask,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { afterEach, describe, expect, it } from "vitest";
 import type { ExecutionEnv } from "../src/env/index.ts";
 import { NodeExecutionEnv } from "../src/env/node.ts";
@@ -39,7 +39,7 @@ afterEach(async () => {
 });
 
 async function sqlitePath(): Promise<string> {
-	const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-tools-"));
+	const directory = await mkdtemp(join(tmpdir(), "gcode-durable-tools-"));
 	directories.add(directory);
 	return join(directory, "session.sqlite");
 }
@@ -277,11 +277,11 @@ describe("tool recovery", () => {
 		expect((await (await opened.harness.submission(id, context))!.wait(context)).status).toBe("done");
 		expect(observed).toBe(2);
 		expect((await allEntries(opened.root)).map((entry) => entry.kind)).toEqual([
-			"garmin-code-mini.user",
-			"garmin-code-mini.system",
-			"garmin-code-mini.assistant",
-			"garmin-code-mini.tool-result",
-			"garmin-code-mini.assistant",
+			"gcode.user",
+			"gcode.system",
+			"gcode.assistant",
+			"gcode.tool-result",
+			"gcode.assistant",
 		]);
 		await opened.harness.close(context);
 	});
@@ -330,7 +330,7 @@ describe("tool recovery", () => {
 		expect(results(await allEntries(opened.root))).toEqual([]);
 		expect(requests).toEqual(["Tool result unavailable: history ends before this call completed."]);
 		const tasks = await opened.harness.commit((tx) => tx.scanTasks({ conversationId: opened.root.id }, 20), context);
-		const faulted = tasks.items.find((task) => task.kind === "garmin-code-mini.tool")!;
+		const faulted = tasks.items.find((task) => task.kind === "gcode.tool")!;
 		expect(faulted.state).toMatchObject({ status: "terminal", outcome: { status: "faulted" } });
 		await opened.harness.close(context);
 	});

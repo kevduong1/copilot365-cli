@@ -27,12 +27,7 @@ const paths = tsconfig.compilerOptions?.paths;
 if (!paths) throw new Error(`Source runtime requires compilerOptions.paths in ${tsconfigPath}`);
 
 const aliases: SourceAlias[] = Object.entries(paths)
-	.filter(
-		([pattern]) =>
-			pattern.startsWith("@garmin-code-mini/") ||
-			pattern === "garmin-code-mini" ||
-			pattern.startsWith("garmin-code-mini/"),
-	)
+	.filter(([pattern]) => pattern.startsWith("@gcode/") || pattern === "gcode" || pattern.startsWith("gcode/"))
 	.map(([pattern, replacements]) => {
 		const wildcard = pattern.indexOf("*");
 		if (wildcard !== -1 && pattern.indexOf("*", wildcard + 1) !== -1) {

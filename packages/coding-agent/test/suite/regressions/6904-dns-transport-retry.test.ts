@@ -1,4 +1,4 @@
-import { fauxAssistantMessage } from "@garmin-code-mini/ai";
+import { fauxAssistantMessage } from "@gcode/ai";
 import { describe, expect, it } from "vitest";
 import { createHarness } from "../harness.ts";
 

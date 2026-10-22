@@ -1,6 +1,6 @@
 import { DatabaseSync } from "node:sqlite";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import { registerStorageConformance } from "@garmin-code-mini/durable/testing";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import { registerStorageConformance } from "@gcode/durable/testing";
 import { describe, expect, it } from "vitest";
 import { durableObjectStorage } from "../../chord/test/sqlite/helpers.ts";
 import { idFromNumber } from "../src/ids.ts";
@@ -19,7 +19,7 @@ describe("Durable Object SQLite adapter", () => {
 		expect(sqlite.prepare("SELECT name FROM sqlite_master WHERE name = 'pi_durable_schema'").get()).toBeUndefined();
 	});
 
-	it("prefixes garmin-code-mini's tables and indexes without changing host tables", async () => {
+	it("prefixes gcode's tables and indexes without changing host tables", async () => {
 		const sqlite = new DatabaseSync(":memory:");
 		const storage = durableObjectStorage(sqlite);
 		const database = new DurableObjectSqliteDatabase(storage);

@@ -2,9 +2,9 @@
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/06-harness.ts
 
-import { Type } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { Type } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import {
 	AgentDoc,
 	createRegistry,
@@ -31,7 +31,7 @@ const Files = defineExtension({ name: "files", tools: [read] });
 const registry = createRegistry();
 registry.install(Files);
 
-// `models` is garmin-code-mini-ai's model access; generation calls models through it.
+// `models` is gcode-ai's model access; generation calls models through it.
 const harness = await Harness.open(new MemoryStorage(), { models: createModels(), registry }, context);
 
 const Notes = defineDoc<{ text: string }>({

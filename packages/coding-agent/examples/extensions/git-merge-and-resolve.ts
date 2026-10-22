@@ -8,13 +8,13 @@
  * with file, line range, and ours/theirs sections so it can resolve them.
  * Also re-sends unresolved conflicts from a previous incomplete merge.
  *
- * Start garmin-code-mini with this extension:
- *   garmin-code-mini -e ./examples/extensions/git-merge-and-resolve.ts
+ * Start gcode with this extension:
+ *   gcode -e ./examples/extensions/git-merge-and-resolve.ts
  */
 import { createReadStream } from "node:fs";
 import { join } from "node:path";
 import { createInterface } from "node:readline";
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
 interface ConflictBlock {
 	file: string;
@@ -24,8 +24,8 @@ interface ConflictBlock {
 }
 
 /** Parse conflict markers from working tree files with unmerged paths. */
-async function findConflicts(garminCodeMini: ExtensionAPI, cwd: string): Promise<ConflictBlock[]> {
-	const { stdout, code } = await garminCodeMini.exec("git", ["diff", "--name-only", "--diff-filter=U"]);
+async function findConflicts(gcode: ExtensionAPI, cwd: string): Promise<ConflictBlock[]> {
+	const { stdout, code } = await gcode.exec("git", ["diff", "--name-only", "--diff-filter=U"]);
 	if (code !== 0 || !stdout.trim()) return [];
 
 	const blocks: ConflictBlock[] = [];
@@ -70,21 +70,21 @@ function formatConflicts(ref: string, blocks: ConflictBlock[]): string {
 	return lines.join("\n");
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("agent_end", async (_event, ctx) => {
-		const { code: revParseCode } = await garminCodeMini.exec("git", ["rev-parse", "--git-dir"]);
+export default function (gcode: ExtensionAPI) {
+	gcode.on("agent_end", async (_event, ctx) => {
+		const { code: revParseCode } = await gcode.exec("git", ["rev-parse", "--git-dir"]);
 		if (revParseCode !== 0) return;
 
 		let ref = "MERGE_HEAD";
 
 		// If not already in a merge, attempt one
-		const { code: mergeHeadCode } = await garminCodeMini.exec("git", ["rev-parse", "MERGE_HEAD"]);
+		const { code: mergeHeadCode } = await gcode.exec("git", ["rev-parse", "MERGE_HEAD"]);
 		if (mergeHeadCode !== 0) {
 			// Only attempt a new merge if the working tree is clean
-			const { stdout: status } = await garminCodeMini.exec("git", ["status", "--porcelain"]);
+			const { stdout: status } = await gcode.exec("git", ["status", "--porcelain"]);
 			if (status.trim()) return;
 
-			const { stdout: upstream, code: upstreamCode } = await garminCodeMini.exec("git", [
+			const { stdout: upstream, code: upstreamCode } = await gcode.exec("git", [
 				"rev-parse",
 				"--abbrev-ref",
 				"--symbolic-full-name",
@@ -96,20 +96,20 @@ export default function (garminCodeMini: ExtensionAPI) {
 			const remote = ref.split("/")[0];
 			ctx.ui.notify(`git-merge-and-resolve: fetching ${remote}, merging ${ref}`, "info");
 
-			const { code: fetchCode, stderr: fetchErr } = await garminCodeMini.exec("git", ["fetch", remote]);
+			const { code: fetchCode, stderr: fetchErr } = await gcode.exec("git", ["fetch", remote]);
 			if (fetchCode !== 0) {
 				ctx.ui.notify(`git-merge-and-resolve: fetch failed: ${fetchErr.trim()}`, "warning");
 				return;
 			}
 
-			const { code: mergeCode } = await garminCodeMini.exec("git", ["merge", "--no-ff", ref]);
+			const { code: mergeCode } = await gcode.exec("git", ["merge", "--no-ff", ref]);
 			if (mergeCode === 0) return;
 		}
 
 		// Either we just merged with conflicts, or we were already in an unfinished merge
-		const conflicts = await findConflicts(garminCodeMini, ctx.cwd);
+		const conflicts = await findConflicts(gcode, ctx.cwd);
 		if (conflicts.length === 0) return;
 
-		garminCodeMini.sendUserMessage(formatConflicts(ref, conflicts), { deliverAs: "followUp" });
+		gcode.sendUserMessage(formatConflicts(ref, conflicts), { deliverAs: "followUp" });
 	});
 }

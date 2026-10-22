@@ -1,4 +1,4 @@
-import { fauxAssistantMessage } from "@garmin-code-mini/ai";
+import { fauxAssistantMessage } from "@gcode/ai";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { SessionBeforeCompactEvent } from "../../src/core/extensions/index.ts";
 import { createHarness, type Harness } from "./harness.ts";
@@ -49,8 +49,8 @@ describe("AgentSession compaction model overrides", () => {
 					},
 				},
 				extensionFactories: [
-					(garminCodeMini) => {
-						garminCodeMini.on("session_before_compact", (event) => {
+					(gcode) => {
+						gcode.on("session_before_compact", (event) => {
 							preparations.push(event);
 							return {
 								compaction: {
@@ -116,8 +116,8 @@ describe("AgentSession compaction model overrides", () => {
 				},
 			},
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_before_compact", (event) => ({
+				(gcode) => {
+					gcode.on("session_before_compact", (event) => ({
 						compaction: {
 							summary: "big model summary",
 							firstKeptEntryId: event.preparation.firstKeptEntryId,

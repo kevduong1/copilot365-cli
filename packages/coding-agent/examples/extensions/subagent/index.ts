@@ -1,7 +1,7 @@
 /**
  * Subagent Tool - Delegate tasks to specialized agents
  *
- * Spawns a separate `garmin-code-mini` process for each subagent invocation,
+ * Spawns a separate `gcode` process for each subagent invocation,
  * giving it an isolated context window.
  *
  * Supports three modes:
@@ -16,10 +16,10 @@ import { spawn } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { AgentToolResult, ThinkingLevel } from "@garmin-code-mini/agent-core";
-import type { Message } from "@garmin-code-mini/ai";
-import { StringEnum } from "@garmin-code-mini/ai";
-import { Container, Markdown, Spacer, Text } from "@garmin-code-mini/tui";
+import type { AgentToolResult, ThinkingLevel } from "@gcode/agent-core";
+import type { Message } from "@gcode/ai";
+import { StringEnum } from "@gcode/ai";
+import { Container, Markdown, Spacer, Text } from "@gcode/tui";
 import {
 	CONFIG_DIR_NAME,
 	type ExtensionAPI,
@@ -27,7 +27,7 @@ import {
 	getAgentDir,
 	getMarkdownTheme,
 	withFileMutationQueue,
-} from "garmin-code-mini";
+} from "gcode";
 import { Type } from "typebox";
 import { type AgentConfig, type AgentScope, discoverAgents } from "./agents.ts";
 
@@ -235,7 +235,7 @@ async function mapWithConcurrencyLimit<TIn, TOut>(
 }
 
 async function writePromptToTempFile(agentName: string, prompt: string): Promise<{ dir: string; filePath: string }> {
-	const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "garmin-code-mini-subagent-"));
+	const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), "gcode-subagent-"));
 	const safeName = agentName.replace(/[^\w.-]+/g, "_");
 	const filePath = path.join(tmpDir, `prompt-${safeName}.md`);
 	await withFileMutationQueue(filePath, async () => {
@@ -257,7 +257,7 @@ function getPiInvocation(args: string[]): { command: string; args: string[] } {
 		return { command: process.execPath, args };
 	}
 
-	return { command: "garminCodeMini", args };
+	return { command: "gcode", args };
 }
 
 type OnUpdateCallback = (partial: AgentToolResult<SubagentDetails>) => void;
@@ -466,8 +466,8 @@ const SubagentParams = Type.Object({
 	cwd: Type.Optional(Type.String({ description: "Working directory for the agent process (single mode)" })),
 });
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerTool({
+export default function (gcode: ExtensionAPI) {
+	gcode.registerTool({
 		name: "subagent",
 		label: "Subagent",
 		description: [

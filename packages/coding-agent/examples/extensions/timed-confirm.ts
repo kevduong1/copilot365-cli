@@ -7,11 +7,11 @@
  * - /timed-signal - Shows confirm using AbortSignal (manual approach)
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	// Simple approach: use timeout option (recommended)
-	garminCodeMini.registerCommand("timed", {
+	gcode.registerCommand("timed", {
 		description: "Show a timed confirmation dialog (auto-cancels in 5s with countdown)",
 		handler: async (_args, ctx) => {
 			const confirmed = await ctx.ui.confirm(
@@ -28,7 +28,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.registerCommand("timed-select", {
+	gcode.registerCommand("timed-select", {
 		description: "Show a timed select dialog (auto-cancels in 10s with countdown)",
 		handler: async (_args, ctx) => {
 			const choice = await ctx.ui.select("Pick an option", ["Option A", "Option B", "Option C"], { timeout: 10000 });
@@ -42,7 +42,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Manual approach: use AbortSignal for more control
-	garminCodeMini.registerCommand("timed-signal", {
+	gcode.registerCommand("timed-signal", {
 		description: "Show a timed confirm using AbortSignal (manual approach)",
 		handler: async (_args, ctx) => {
 			const controller = new AbortController();

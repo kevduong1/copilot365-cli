@@ -77,7 +77,7 @@ describe("propagation and links", () => {
 		const original = telemetry.inject(target);
 		const injected = telemetry.inject(target);
 		if (!injected) throw new Error("Expected carrier");
-		injected["garmin-code-mini-memory-span"] = "999";
+		injected["gcode-memory-span"] = "999";
 		expect(telemetry.inject(target)).toEqual(original);
 		await telemetry.startSpan(
 			{ name: "linked", links: [{ context: target, attributes: { tags: ["original"] } }] },
@@ -85,8 +85,8 @@ describe("propagation and links", () => {
 		);
 		const [first, linked] = telemetry.getSpans();
 		if (!first || !linked?.links[0]) throw new Error("Expected spans and link");
-		(first.context as TelemetryCarrier)["garmin-code-mini-memory-span"] = "123";
-		(linked.links[0].context as TelemetryCarrier)["garmin-code-mini-memory-span"] = "456";
+		(first.context as TelemetryCarrier)["gcode-memory-span"] = "123";
+		(linked.links[0].context as TelemetryCarrier)["gcode-memory-span"] = "456";
 		(linked.links[0].attributes as SpanAttributes).tags = ["mutated"];
 		expect(telemetry.getSpans()[1]?.links).toEqual([{ context: original, attributes: { tags: ["original"] } }]);
 	});
@@ -129,9 +129,9 @@ describe("propagation and links", () => {
 	it("treats recognized carrier identifiers as opaque strings", async () => {
 		const telemetry = new InMemoryTelemetryContext();
 		const carrier = {
-			"garmin-code-mini-memory-scope": "external-recorder",
-			"garmin-code-mini-memory-span": "external-span",
-			"garmin-code-mini-memory-trace": "external-trace",
+			"gcode-memory-scope": "external-recorder",
+			"gcode-memory-span": "external-span",
+			"gcode-memory-trace": "external-trace",
 		};
 		await telemetry.extract(carrier).startSpan({ name: "receiver" }, () => {});
 		expect(telemetry.getSpans()[0]?.parentContext).toEqual(carrier);

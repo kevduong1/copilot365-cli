@@ -1,6 +1,6 @@
 import { runInNewContext } from "node:vm";
-import { createModels } from "@garmin-code-mini/ai";
-import type { Context } from "@garmin-code-mini/chord";
+import { createModels } from "@gcode/ai";
+import type { Context } from "@gcode/chord";
 import {
 	createRegistry,
 	defineExtension,
@@ -12,7 +12,7 @@ import {
 	StorageRequestError,
 	type TaskId,
 	watchEvents,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { safeNow } from "../src/harness/harness.ts";
 import { conversationViews } from "../src/harness/view.ts";
@@ -308,7 +308,7 @@ describe("a failed Storage call", () => {
 				return root.entries({ order: "descending" }, 1, page.next ?? { after: 1, order: "ascending" }, context);
 			},
 			() => root.commit((tx) => tx.scanEntries({ conversationId: 999_999 as never }, 10), context),
-			// `garmin-code-mini.live` keeps no history.
+			// `gcode.live` keeps no history.
 			() => harness.snapshotAsOf(LiveDoc as never, root.id, entry.id, context),
 		];
 		for (const request of requests) {

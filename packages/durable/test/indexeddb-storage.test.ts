@@ -1,8 +1,8 @@
 /// <reference lib="dom" />
 
-import type { Context, JsonValue } from "@garmin-code-mini/chord";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import { registerStorageConformance } from "@garmin-code-mini/durable/testing";
+import type { Context, JsonValue } from "@gcode/chord";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import { registerStorageConformance } from "@gcode/durable/testing";
 import { IDBKeyRange as FakeIDBKeyRange, IDBFactory } from "fake-indexeddb";
 import { describe, expect, it } from "vitest";
 import { idFromNumber } from "../src/ids.ts";

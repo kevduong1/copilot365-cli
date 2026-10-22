@@ -1,8 +1,8 @@
 /**
  * Inline Bash Extension - expands inline bash commands in user prompts.
  *
- * Start garmin-code-mini with this extension:
- *   garmin-code-mini -e ./examples/extensions/inline-bash.ts
+ * Start gcode with this extension:
+ *   gcode -e ./examples/extensions/inline-bash.ts
  *
  * Then type prompts with inline bash:
  *   What's in !{pwd}?
@@ -14,13 +14,13 @@
  *
  * Note: Regular !command syntax (whole-line bash) is preserved and works as before.
  */
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	const PATTERN = /!\{([^}]+)\}/g;
 	const TIMEOUT_MS = 30000;
 
-	garminCodeMini.on("input", async (event, ctx) => {
+	gcode.on("input", async (event, ctx) => {
 		const text = event.text;
 
 		// Don't process if it's a whole-line bash command (starts with !)
@@ -51,7 +51,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		// Execute each command and collect results
 		for (const { full, command } of matches) {
 			try {
-				const bashResult = await garminCodeMini.exec("bash", ["-c", command], {
+				const bashResult = await gcode.exec("bash", ["-c", command], {
 					timeout: TIMEOUT_MS,
 				});
 

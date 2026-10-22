@@ -1,6 +1,6 @@
 import { stripVTControlCharacters } from "node:util";
-import type { AgentToolResult } from "@garmin-code-mini/agent-core";
-import type { Component, TUI } from "@garmin-code-mini/tui";
+import type { AgentToolResult } from "@gcode/agent-core";
+import type { Component, TUI } from "@gcode/tui";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { ToolRenderContext } from "../src/core/extensions/types.ts";
 import { codemodeRenderers } from "../src/extensions/codemode/renderer.ts";

@@ -38,7 +38,7 @@ for (const pkg of packages) {
 	}
 }
 
-console.log(`Publishing garmin-code-mini packages at ${versions[0]}${dryRun ? " (dry run)" : ""}\n`);
+console.log(`Publishing gcode packages at ${versions[0]}${dryRun ? " (dry run)" : ""}\n`);
 const artifactSet = produceArtifactSet({ build: false, repoRoot });
 try {
 	const packageStates = artifactSet.packages.map((pkg) => ({ ...pkg, published: isPublished(pkg.name, pkg.version) }));

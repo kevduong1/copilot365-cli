@@ -1,7 +1,7 @@
 /**
  * Overlay QA Tests - comprehensive overlay positioning and edge case tests
  *
- * Usage: garmin-code-mini --extension ./examples/extensions/overlay-qa-tests.ts
+ * Usage: gcode --extension ./examples/extensions/overlay-qa-tests.ts
  *
  * Commands:
  *   /overlay-animation  - Real-time animation demo (~30 FPS, proves DOOM-like rendering works)
@@ -19,17 +19,17 @@
  *   /overlay-streaming  - Multiple input panels with simulated streaming (Tab to cycle focus)
  */
 
-import type { Component, OverlayAnchor, OverlayHandle, OverlayOptions, TUI } from "@garmin-code-mini/tui";
-import { Input, matchesKey, truncateToWidth, visibleWidth } from "@garmin-code-mini/tui";
+import type { Component, OverlayAnchor, OverlayHandle, OverlayOptions, TUI } from "@gcode/tui";
+import { Input, matchesKey, truncateToWidth, visibleWidth } from "@gcode/tui";
 import { spawn } from "child_process";
-import type { ExtensionAPI, ExtensionCommandContext, Theme } from "garmin-code-mini";
+import type { ExtensionAPI, ExtensionCommandContext, Theme } from "gcode";
 
 // Global handle for toggle demo (in real code, use a more elegant pattern)
 let globalToggleHandle: OverlayHandle | null = null;
 
-export default function (garminCodeMini: ExtensionAPI) {
-	// Animation demo - proves overlays can handle real-time updates (like garmin-code-mini-doom would need)
-	garminCodeMini.registerCommand("overlay-animation", {
+export default function (gcode: ExtensionAPI) {
+	// Animation demo - proves overlays can handle real-time updates (like gcode-doom would need)
+	gcode.registerCommand("overlay-animation", {
 		description: "Test real-time animation in overlay (~30 FPS)",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			await ctx.ui.custom<void>((tui, theme, _kb, done) => new AnimationDemoComponent(tui, theme, done), {
@@ -40,7 +40,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test all 9 anchor positions
-	garminCodeMini.registerCommand("overlay-anchors", {
+	gcode.registerCommand("overlay-anchors", {
 		description: "Cycle through all anchor positions",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			const anchors: OverlayAnchor[] = [
@@ -78,7 +78,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test margins and offsets
-	garminCodeMini.registerCommand("overlay-margins", {
+	gcode.registerCommand("overlay-margins", {
 		description: "Test margin and offset options",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			const configs: { name: string; options: OverlayOptions }[] = [
@@ -112,7 +112,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test stacked overlays
-	garminCodeMini.registerCommand("overlay-stack", {
+	gcode.registerCommand("overlay-stack", {
 		description: "Test stacked overlays",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			// Three large overlays that overlap in the center area
@@ -156,7 +156,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test width overflow scenarios (original crash case) - streams real process output
-	garminCodeMini.registerCommand("overlay-overflow", {
+	gcode.registerCommand("overlay-overflow", {
 		description: "Test width overflow with streaming process output",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			await ctx.ui.custom<void>((tui, theme, _kb, done) => new StreamingOverflowComponent(tui, theme, done), {
@@ -167,7 +167,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test overlay at terminal edge
-	garminCodeMini.registerCommand("overlay-edge", {
+	gcode.registerCommand("overlay-edge", {
 		description: "Test overlay positioned at terminal edge",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			await ctx.ui.custom<void>((_tui, theme, _kb, done) => new EdgeTestComponent(theme, done), {
@@ -178,7 +178,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test percentage-based positioning
-	garminCodeMini.registerCommand("overlay-percent", {
+	gcode.registerCommand("overlay-percent", {
 		description: "Test percentage-based positioning",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			const configs = [
@@ -214,7 +214,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test maxHeight
-	garminCodeMini.registerCommand("overlay-maxheight", {
+	gcode.registerCommand("overlay-maxheight", {
 		description: "Test maxHeight truncation",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			await ctx.ui.custom<void>((_tui, theme, _kb, done) => new MaxHeightTestComponent(theme, done), {
@@ -225,7 +225,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test responsive sidepanel - only shows when terminal is wide enough
-	garminCodeMini.registerCommand("overlay-sidepanel", {
+	gcode.registerCommand("overlay-sidepanel", {
 		description: "Test responsive sidepanel (hides when terminal < 100 cols)",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			await ctx.ui.custom<void>((tui, theme, _kb, done) => new SidepanelComponent(tui, theme, done), {
@@ -243,7 +243,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test toggle overlay - demonstrates OverlayHandle.setHidden() via onHandle callback
-	garminCodeMini.registerCommand("overlay-toggle", {
+	gcode.registerCommand("overlay-toggle", {
 		description: "Test overlay toggle (press 't' to toggle visibility)",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			await ctx.ui.custom<void>((tui, theme, _kb, done) => new ToggleDemoComponent(tui, theme, done), {
@@ -261,7 +261,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Non-capturing overlay demo - passive info panel that doesn't steal focus
-	garminCodeMini.registerCommand("overlay-passive", {
+	gcode.registerCommand("overlay-passive", {
 		description: "Test non-capturing overlay (passive info panel alongside active overlay)",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			ctx.ui.setEditorText("");
@@ -273,7 +273,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Focus cycling demo - demonstrates focus(), input routing, per-panel dismissal, and rendering order
-	garminCodeMini.registerCommand("overlay-focus", {
+	gcode.registerCommand("overlay-focus", {
 		description: "Test focus cycling, input routing, dismissal, and rendering order with overlays",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			ctx.ui.setEditorText("");
@@ -285,7 +285,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Test multiple input panels with simulated streaming
-	garminCodeMini.registerCommand("overlay-streaming", {
+	gcode.registerCommand("overlay-streaming", {
 		description: "Multiple input panels with simulated streaming (Tab to cycle focus)",
 		handler: async (_args: string, ctx: ExtensionCommandContext) => {
 			ctx.ui.setEditorText("");
@@ -485,13 +485,13 @@ class StreamingOverflowComponent extends BaseOverlay {
 			echo ""
 			for i in $(seq 1 100); do
 				# Simulate long file paths with OSC 8 hyperlinks (clickable) - tests width overflow
-				DIR="/Users/nicobailon/Documents/development/garmin-code-mini-mono/packages/coding-agent/src/modes/interactive"
+				DIR="/Users/nicobailon/Documents/development/gcode-mono/packages/coding-agent/src/modes/interactive"
 				FILE="\${DIR}/components/very-long-component-name-that-exceeds-width-\${i}.ts"
 				echo -e "\\033]8;;file://\${FILE}\\007▶ read: \${FILE}\\033]8;;\\007"
 
 				# Add some colored status messages with long text
 				if [ $((i % 5)) -eq 0 ]; then
-					echo -e "  \\033[32m✓ Successfully processed \${i} files in /Users/nicobailon/Documents/development/garmin-code-mini-mono\\033[0m"
+					echo -e "  \\033[32m✓ Successfully processed \${i} files in /Users/nicobailon/Documents/development/gcode-mono\\033[0m"
 				fi
 				if [ $((i % 7)) -eq 0 ]; then
 					echo -e "  \\033[33m⚠ Warning: potential issue detected at line \${i} in very-long-component-name-that-exceeds-width.ts\\033[0m"
@@ -760,7 +760,7 @@ class SidepanelComponent extends BaseOverlay {
 	}
 }
 
-// Animation demo - proves overlays can handle real-time updates like garmin-code-mini-doom
+// Animation demo - proves overlays can handle real-time updates like gcode-doom
 class AnimationDemoComponent extends BaseOverlay {
 	private tui: TUI;
 	private frame = 0;
@@ -836,7 +836,7 @@ class AnimationDemoComponent extends BaseOverlay {
 		lines.push(border("│") + padLine(``) + border("│"));
 		lines.push(border("│") + padLine(th.fg("dim", " This proves overlays can handle")) + border("│"));
 		lines.push(border("│") + padLine(th.fg("dim", " real-time game-like rendering.")) + border("│"));
-		lines.push(border("│") + padLine(th.fg("dim", " (garmin-code-mini-doom uses same approach)")) + border("│"));
+		lines.push(border("│") + padLine(th.fg("dim", " (gcode-doom uses same approach)")) + border("│"));
 		lines.push(border("│") + padLine(``) + border("│"));
 		lines.push(border("│") + padLine(th.fg("dim", " Press Esc to close")) + border("│"));
 		lines.push(border(`╰${"─".repeat(innerW)}╯`));

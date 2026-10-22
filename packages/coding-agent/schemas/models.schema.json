@@ -111,7 +111,7 @@
                   },
                   "promptCache": {
                     "$ref": "#/$defs/ModelPromptCache",
-                    "description": "Best-effort prompt cache lifetime in seconds for the short and long retention tiers. garmin-code-mini warms only tiers with a known lifetime."
+                    "description": "Best-effort prompt cache lifetime in seconds for the short and long retention tiers. gcode warms only tiers with a known lifetime."
                   },
                   "contextWindow": {
                     "type": "number",
@@ -286,7 +286,7 @@
                     },
                     "promptCache": {
                       "$ref": "#/$defs/ModelPromptCache",
-                      "description": "Best-effort prompt cache lifetime in seconds for the short and long retention tiers. garmin-code-mini warms only tiers with a known lifetime."
+                      "description": "Best-effort prompt cache lifetime in seconds for the short and long retention tiers. gcode warms only tiers with a known lifetime."
                     },
                     "contextWindow": {
                       "type": "number",

@@ -1,7 +1,7 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { resetCapabilitiesCache, setCapabilityOverrides } from "@garmin-code-mini/tui";
+import { resetCapabilitiesCache, setCapabilityOverrides } from "@gcode/tui";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DefaultResourceLoader } from "../src/core/resource-loader.ts";
 import { SettingsManager } from "../src/core/settings-manager.ts";
@@ -63,7 +63,7 @@ describe("DefaultResourceLoader theme color mode", () => {
 	])(
 		"uses the $setting setting over a $environment environment",
 		async ({ environmentOverride, setting, expected }) => {
-			vi.stubEnv("GARMIN_CODE_MINI_TRUE_COLOR", environmentOverride);
+			vi.stubEnv("GCODE_TRUE_COLOR", environmentOverride);
 			setCapabilityOverrides({});
 			resetCapabilitiesCache();
 
@@ -85,7 +85,7 @@ describe("DefaultResourceLoader theme color mode", () => {
 	);
 
 	it("returns to automatic detection after an explicit setting is removed", async () => {
-		vi.stubEnv("GARMIN_CODE_MINI_TRUE_COLOR", "1");
+		vi.stubEnv("GCODE_TRUE_COLOR", "1");
 		setCapabilityOverrides({});
 		resetCapabilitiesCache();
 

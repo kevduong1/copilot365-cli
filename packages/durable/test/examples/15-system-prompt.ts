@@ -2,9 +2,9 @@
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/15-system-prompt.ts
 
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { NodeExecutionEnv } from "../../src/env/node.ts";
 import {
 	type Conversation,
@@ -26,7 +26,7 @@ faux.setResponses([fauxAssistantMessage("Done."), fauxAssistantMessage("Done."),
 // Pico stores no prompt state. Before each model request, the sections of the
 // conversation's selected extensions render the desired prompt, and only the
 // difference to what the model already saw is appended to the transcript as a
-// `garmin-code-mini.system` entry.
+// `gcode.system` entry.
 const Coding = defineExtension({
 	name: "coding",
 	sections: [

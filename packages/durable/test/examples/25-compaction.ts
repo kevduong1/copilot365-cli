@@ -2,10 +2,10 @@
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/25-compaction.ts
 
-import type { AssistantMessage, Message, TranscriptContext } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider } from "@garmin-code-mini/ai/providers/faux";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import type { AssistantMessage, Message, TranscriptContext } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider } from "@gcode/ai/providers/faux";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import {
 	CompactionEntry,
 	type Conversation,

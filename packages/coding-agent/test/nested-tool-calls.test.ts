@@ -1,5 +1,5 @@
-import type { AgentTool, AgentToolCall } from "@garmin-code-mini/agent-core";
-import type { Usage } from "@garmin-code-mini/ai";
+import type { AgentTool, AgentToolCall } from "@gcode/agent-core";
+import type { Usage } from "@gcode/ai";
 import { Type } from "typebox";
 import { describe, expect, it } from "vitest";
 import {

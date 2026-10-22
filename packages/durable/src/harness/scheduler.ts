@@ -1,13 +1,13 @@
-import type { Models } from "@garmin-code-mini/ai";
-import { type Context, copyJson, type JsonValue } from "@garmin-code-mini/chord";
-import { awaitWithContext, withAbortSignal, withoutAbortSignal, withTelemetry } from "@garmin-code-mini/chord/context";
+import type { Models } from "@gcode/ai";
+import { type Context, copyJson, type JsonValue } from "@gcode/chord";
+import { awaitWithContext, withAbortSignal, withoutAbortSignal, withTelemetry } from "@gcode/chord/context";
 import {
 	createTypedMetrics,
 	createTypedSpanStarter,
 	NOOP_TELEMETRY_CONTEXT,
 	NOOP_TELEMETRY_METRICS,
 	type TelemetryCarrier,
-} from "@garmin-code-mini/telemetry";
+} from "@gcode/telemetry";
 import type { ExecutionEnv } from "../env/index.ts";
 import { errorMessage } from "../errors.ts";
 import type { SessionImpl } from "../session/session.ts";
@@ -347,8 +347,8 @@ export class TaskScheduler {
 	constructor(options: TaskSchedulerOptions) {
 		this.#telemetry = options.telemetry ?? NOOP_TELEMETRY_CONTEXT;
 		const metrics = createTypedMetrics(this.#telemetry.metrics ?? NOOP_TELEMETRY_METRICS, [DURABLE_TELEMETRY_SCHEMA]);
-		this.#activeMetric = metrics.upDownCounter("garmin-code-mini.durable.tasks.active");
-		this.#durationMetric = metrics.histogram("garmin-code-mini.durable.phase.duration");
+		this.#activeMetric = metrics.upDownCounter("gcode.durable.tasks.active");
+		this.#durationMetric = metrics.histogram("gcode.durable.phase.duration");
 		this.#session = options.session;
 		this.#storage = options.storage;
 		this.#registry = options.registry;
@@ -1746,7 +1746,7 @@ export class TaskScheduler {
 		const attempt = checkpoint.attempt;
 		const resumed = this.#resumed.delete(task.id);
 		return createTypedSpanStarter(parent, [DURABLE_TELEMETRY_SCHEMA])(
-			"garmin-code-mini.durable.phase",
+			"gcode.durable.phase",
 			{
 				"task.id": task.id,
 				"task.name": task.kind,
@@ -2144,7 +2144,7 @@ export class TaskScheduler {
 					context,
 				);
 				if (checkpoint !== undefined) {
-					invocation.context.telemetry.addEvent("garmin-code-mini.durable.checkpoint", {
+					invocation.context.telemetry.addEvent("gcode.durable.checkpoint", {
 						phase: checkpoint,
 					});
 				}

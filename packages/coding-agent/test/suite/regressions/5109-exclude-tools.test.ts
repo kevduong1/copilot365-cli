@@ -9,9 +9,9 @@ function toolNames(tools: Array<{ name: string }>): string[] {
 
 describe("regression #5109: exclude tools", () => {
 	const extensionFactories: ExtensionFactory[] = [
-		(garminCodeMini) => {
-			garminCodeMini.on("session_start", () => {
-				garminCodeMini.registerTool({
+		(gcode) => {
+			gcode.on("session_start", () => {
+				gcode.registerTool({
 					name: "ask_question",
 					label: "Ask Question",
 					description: "Ask a question",
@@ -22,7 +22,7 @@ describe("regression #5109: exclude tools", () => {
 						details: {},
 					}),
 				});
-				garminCodeMini.registerTool({
+				gcode.registerTool({
 					name: "dynamic_tool",
 					label: "Dynamic Tool",
 					description: "Dynamic test tool",

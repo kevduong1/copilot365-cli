@@ -1,6 +1,6 @@
 /**
- * Adapters that give a garmin-code-mini-agent-core `Agent` MCP tools and a codemode tool, using
- * `@garmin-code-mini/mcp` and `@garmin-code-mini/codemode`. See main.ts for how they fit together.
+ * Adapters that give a gcode-agent-core `Agent` MCP tools and a codemode tool, using
+ * `@gcode/mcp` and `@gcode/codemode`. See main.ts for how they fit together.
  */
 
 import {
@@ -9,15 +9,10 @@ import {
 	type AgentToolCallOutcome,
 	type AgentToolResult,
 	runToolCall,
-} from "@garmin-code-mini/agent-core";
-import type { ImageContent, JsonObject, JsonValue, TextContent } from "@garmin-code-mini/ai";
-import {
-	type CodemodeJsonSchema,
-	CodemodeSandbox,
-	type CodemodeTool,
-	renderDeclarations,
-} from "@garmin-code-mini/codemode";
-import { type McpClient, toLlmContent } from "@garmin-code-mini/mcp";
+} from "@gcode/agent-core";
+import type { ImageContent, JsonObject, JsonValue, TextContent } from "@gcode/ai";
+import { type CodemodeJsonSchema, CodemodeSandbox, type CodemodeTool, renderDeclarations } from "@gcode/codemode";
+import { type McpClient, toLlmContent } from "@gcode/mcp";
 import { Type } from "typebox";
 
 /** Provider tool names are limited to 64 characters of `[A-Za-z0-9_-]`. */
@@ -154,7 +149,7 @@ export function createCodemodeTool(
 			const sandbox = new CodemodeSandbox({ tools: sandboxTools, timeoutMs: 120_000 });
 			try {
 				const result = await sandbox.execute(params.code, { signal });
-				// Items from text(), console.*, and image(), in order. They have garmin-code-mini-ai's content shapes.
+				// Items from text(), console.*, and image(), in order. They have gcode-ai's content shapes.
 				const content: (TextContent | ImageContent)[] = [...result.output];
 				if (result.ok && result.value !== undefined) {
 					const value = typeof result.value === "string" ? result.value : JSON.stringify(result.value);

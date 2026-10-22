@@ -84,7 +84,7 @@ trap 'rm -f "$temporary_archive" "$manifest"' EXIT
 
 archive_mtime="$(git show -s --format=%ct "$commit")"
 
-archive_root="garmin-code-mini-${version}"
+archive_root="gcode-${version}"
 git archive --format=tar --prefix="${archive_root}/" --mtime="@${archive_mtime}" "$commit" \
     | gzip -n -9 > "$temporary_archive"
 tar -tzf "$temporary_archive" > "$manifest"

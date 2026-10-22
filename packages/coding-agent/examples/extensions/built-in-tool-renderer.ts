@@ -22,24 +22,24 @@
  *   toggled the tool output open (via ctrl+e or clicking)
  *
  * Usage:
- *   garmin-code-mini -e ./built-in-tool-renderer.ts
+ *   gcode -e ./built-in-tool-renderer.ts
  */
 
-import { Text } from "@garmin-code-mini/tui";
-import type { BashToolDetails, EditToolDetails, ExtensionAPI, ReadToolDetails } from "garmin-code-mini";
+import { Text } from "@gcode/tui";
+import type { BashToolDetails, EditToolDetails, ExtensionAPI, ReadToolDetails } from "gcode";
 import {
 	createBashToolDefinition,
 	createEditToolDefinition,
 	createReadToolDefinition,
 	createWriteToolDefinition,
-} from "garmin-code-mini";
+} from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	const cwd = process.cwd();
 
 	// --- Read tool: show path and line count ---
 	const originalRead = createReadToolDefinition(cwd);
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...originalRead,
 
 		renderCall(args, theme, _context) {
@@ -91,7 +91,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 
 	// --- Bash tool: show command and exit code ---
 	const originalBash = createBashToolDefinition(cwd);
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...originalBash,
 
 		renderCall(args, theme, _context) {
@@ -143,7 +143,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 
 	// --- Edit tool: show path and diff stats ---
 	const originalEdit = createEditToolDefinition(cwd);
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...originalEdit,
 
 		renderCall(args, theme, _context) {
@@ -200,7 +200,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 
 	// --- Write tool: show path and size ---
 	const originalWrite = createWriteToolDefinition(cwd);
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...originalWrite,
 
 		renderCall(args, theme, _context) {

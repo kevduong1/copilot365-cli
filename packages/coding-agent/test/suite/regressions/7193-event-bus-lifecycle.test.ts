@@ -18,9 +18,9 @@ describe("issue #7193 extension event-bus lifecycle", () => {
 		let extensionCalls = 0;
 		let hostCalls = 0;
 		let firstApi: ExtensionAPI | undefined;
-		const factory: ExtensionFactory = (garminCodeMini) => {
-			firstApi ??= garminCodeMini;
-			garminCodeMini.events.on("reload:test", () => extensionCalls++);
+		const factory: ExtensionFactory = (gcode) => {
+			firstApi ??= gcode;
+			gcode.events.on("reload:test", () => extensionCalls++);
 		};
 		eventBus.on("reload:test", () => hostCalls++);
 

@@ -7,7 +7,7 @@ import {
 	type ModelsSimpleStreamOptions,
 	normalizeContext,
 	type Usage,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import {
@@ -137,7 +137,7 @@ describe("cache warming", () => {
 			getPromptCacheTtlMs(adaptiveModel, undefined),
 			getPromptCacheTtlMs(adaptiveModel, { cacheRetention: "long" }),
 			getPromptCacheTtlMs(adaptiveModel, { cacheRetention: "none" }),
-			getPromptCacheTtlMs(adaptiveModel, { env: { GARMIN_CODE_MINI_CACHE_RETENTION: "long" } }),
+			getPromptCacheTtlMs(adaptiveModel, { env: { GCODE_CACHE_RETENTION: "long" } }),
 			getPromptCacheTtlMs(openaiModel, { cacheRetention: "long" }),
 			getPromptCacheTtlMs(unknownModel, undefined),
 		]).toEqual([300_000, 3_600_000, undefined, 3_600_000, 86_400_000, undefined]);
@@ -348,11 +348,11 @@ describe("ExtensionRunner.emitCacheWarmingDecision", () => {
 		const runtime = createExtensionRuntime();
 		const eventBus = createEventBus();
 		const factories: ExtensionFactory[] = [
-			(garminCodeMini) => {
-				garminCodeMini.on("cache_warming_decision", () => ({ action: "warm" }));
+			(gcode) => {
+				gcode.on("cache_warming_decision", () => ({ action: "warm" }));
 			},
-			(garminCodeMini) => {
-				garminCodeMini.on("cache_warming_decision", () => ({ action: "stop" }));
+			(gcode) => {
+				gcode.on("cache_warming_decision", () => ({ action: "stop" }));
 			},
 		];
 		const extensions = [];

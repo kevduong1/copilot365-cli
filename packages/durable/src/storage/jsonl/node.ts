@@ -1,4 +1,4 @@
-import type { Context } from "@garmin-code-mini/chord";
+import type { Context } from "@gcode/chord";
 import { NodeExecutionEnv } from "../../env/node.ts";
 import { JsonlStorage, type JsonlStorageOptions } from "./storage.ts";
 

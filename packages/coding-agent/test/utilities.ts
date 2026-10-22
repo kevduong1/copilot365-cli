@@ -6,10 +6,10 @@ import { createModelRegistry, getModelRuntime } from "./model-runtime-test-utils
 import { chmodSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { Agent } from "@garmin-code-mini/agent-core";
-import type { OAuthCredentials } from "@garmin-code-mini/ai";
-import { getModel, streamSimple } from "@garmin-code-mini/ai/compat";
-import { builtinProviders } from "@garmin-code-mini/ai/providers/all";
+import { Agent } from "@gcode/agent-core";
+import type { OAuthCredentials } from "@gcode/ai";
+import { getModel, streamSimple } from "@gcode/ai/compat";
+import { builtinProviders } from "@gcode/ai/providers/all";
 import { AgentSession } from "../src/core/agent-session.ts";
 import { AuthStorage } from "../src/core/auth-storage.ts";
 import { createEventBus } from "../src/core/event-bus.ts";
@@ -32,10 +32,10 @@ import { createCodingTools } from "../src/index.ts";
 export const API_KEY = process.env.ANTHROPIC_OAUTH_TOKEN || process.env.ANTHROPIC_API_KEY;
 
 // ============================================================================
-// OAuth API key resolution from ~/.garmin-code-mini/agent/auth.json
+// OAuth API key resolution from ~/.gcode/agent/auth.json
 // ============================================================================
 
-const AUTH_PATH = join(homedir(), ".garmin-code-mini", "agent", "auth.json");
+const AUTH_PATH = join(homedir(), ".gcode", "agent", "auth.json");
 
 type ApiKeyCredential = {
 	type: "api_key";
@@ -72,7 +72,7 @@ function saveAuthStorage(storage: AuthStorageData): void {
 }
 
 /**
- * Resolve API key for a provider from ~/.garmin-code-mini/agent/auth.json
+ * Resolve API key for a provider from ~/.gcode/agent/auth.json
  *
  * For API key credentials, returns the key directly.
  * For OAuth credentials, returns the access token (refreshing if expired and saving back).
@@ -104,18 +104,18 @@ export async function resolveApiKey(provider: string): Promise<string | undefine
 }
 
 /**
- * Check if a provider has credentials in ~/.garmin-code-mini/agent/auth.json
+ * Check if a provider has credentials in ~/.gcode/agent/auth.json
  */
 export function hasAuthForProvider(provider: string): boolean {
 	const storage = loadAuthStorage();
 	return provider in storage;
 }
 
-/** Path to the real garmin-code-mini agent config directory */
-export const GARMIN_CODE_MINI_AGENT_DIR = join(homedir(), ".garmin-code-mini", "agent");
+/** Path to the real gcode agent config directory */
+export const GCODE_AGENT_DIR = join(homedir(), ".gcode", "agent");
 
 /**
- * Get an AuthStorage instance backed by ~/.garmin-code-mini/agent/auth.json
+ * Get an AuthStorage instance backed by ~/.gcode/agent/auth.json
  * Use this for tests that need real OAuth credentials.
  */
 export function getRealAuthStorage(): AuthStorage {
@@ -251,7 +251,7 @@ export function createTestResourceLoader(options: CreateTestResourceLoaderOption
  * Use this for e2e tests that need real LLM calls.
  */
 export async function createTestSession(options: TestSessionOptions = {}): Promise<TestSessionContext> {
-	const tempDir = join(tmpdir(), `garmin-code-mini-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+	const tempDir = join(tmpdir(), `gcode-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 	mkdirSync(tempDir, { recursive: true });
 
 	const model = getModel("anthropic", "claude-sonnet-4-5")!;

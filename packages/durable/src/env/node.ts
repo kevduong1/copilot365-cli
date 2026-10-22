@@ -20,7 +20,7 @@ import {
 import { homedir, constants as osConstants, tmpdir } from "node:os";
 import { basename, isAbsolute, join, resolve, win32 } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { Context } from "@garmin-code-mini/chord";
+import type { Context } from "@gcode/chord";
 import { StreamDecoder } from "./decode.ts";
 import {
 	type BinaryReader,
@@ -786,10 +786,7 @@ export class NodeExecutionEnv implements ExecutionEnv {
 				if (spillStart !== undefined) return;
 				pauseOutput();
 				spillStart = (async () => {
-					const created = await this.createTempFile(
-						{ prefix: "garmin-code-mini-output-", suffix: ".log" },
-						context,
-					);
+					const created = await this.createTempFile({ prefix: "gcode-output-", suffix: ".log" }, context);
 					if (!created.ok) throw created.error;
 					spillPath = created.value;
 					spillStream = createWriteStream(spillPath, { flags: "a", highWaterMark: SPILL_HIGH_WATER_MARK });

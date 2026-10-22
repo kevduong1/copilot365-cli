@@ -15,8 +15,8 @@ export default mergeConfig(baseConfig, defineConfig({
 	resolve: {
 		conditions: ["source"],
 		alias: [
-			{ find: /^@garmin-code-mini\/durable$/, replacement: durableSrcIndex },
-			{ find: /^@garmin-code-mini\/durable\/testing$/, replacement: durableSrcTesting },
+			{ find: /^@gcode\/durable$/, replacement: durableSrcIndex },
+			{ find: /^@gcode\/durable\/testing$/, replacement: durableSrcTesting },
 		],
 	},
 	ssr: { resolve: { conditions: ["source"] } },

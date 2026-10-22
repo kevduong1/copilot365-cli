@@ -2,14 +2,14 @@
  * Custom Header Extension
  *
  * Demonstrates ctx.ui.setHeader() for replacing the built-in header
- * (logo + keybinding hints) with a custom component showing the garmin-code-mini mascot.
+ * (logo + keybinding hints) with a custom component showing the gcode mascot.
  */
 
-import type { ExtensionAPI, Theme } from "garmin-code-mini";
-import { VERSION } from "garmin-code-mini";
+import type { ExtensionAPI, Theme } from "gcode";
+import { VERSION } from "gcode";
 
 // --- PI MASCOT ---
-// Based on pi_mascot.ts - the garmin-code-mini agent character
+// Based on pi_mascot.ts - the gcode agent character
 function getPiMascot(theme: Theme): string[] {
 	// --- COLORS ---
 	// 3b1b Blue: R=80, G=180, B=230
@@ -44,9 +44,9 @@ function getPiMascot(theme: Theme): string[] {
 	return ["", lineEyes, lineBar, lineLeg, lineLeg, lineLeg, lineLeg, ""];
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
+export default function (gcode: ExtensionAPI) {
 	// Set custom header immediately on load (if UI is available)
-	garminCodeMini.on("session_start", async (_event, ctx) => {
+	gcode.on("session_start", async (_event, ctx) => {
 		if (ctx.mode === "tui") {
 			ctx.ui.setHeader((_tui, theme) => {
 				return {
@@ -63,7 +63,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	});
 
 	// Command to restore built-in header
-	garminCodeMini.registerCommand("builtin-header", {
+	gcode.registerCommand("builtin-header", {
 		description: "Restore built-in header with keybinding hints",
 		handler: async (_args, ctx) => {
 			ctx.ui.setHeader(undefined);

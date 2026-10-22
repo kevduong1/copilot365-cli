@@ -1,9 +1,9 @@
 /**
  * Central timing instrumentation for startup profiling.
- * Enable with GARMIN_CODE_MINI_TIMING=1 environment variable.
+ * Enable with GCODE_TIMING=1 environment variable.
  */
 
-const ENABLED = process.env.GARMIN_CODE_MINI_TIMING === "1";
+const ENABLED = process.env.GCODE_TIMING === "1";
 interface TimingNamespace {
 	timings: Array<{ label: string; ms: number }>;
 	lastTime: number;

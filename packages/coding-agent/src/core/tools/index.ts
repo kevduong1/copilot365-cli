@@ -79,7 +79,7 @@ export {
 	type WriteToolOptions,
 } from "./write.ts";
 
-import type { AgentTool } from "@garmin-code-mini/agent-core";
+import type { AgentTool } from "@gcode/agent-core";
 import type { ToolDefinition } from "../extensions/types.ts";
 import { type BashToolOptions, createBashTool, createBashToolDefinition } from "./bash.ts";
 import { createEditTool, createEditToolDefinition, type EditToolOptions } from "./edit.ts";

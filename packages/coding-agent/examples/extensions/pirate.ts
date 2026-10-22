@@ -5,18 +5,18 @@
  * change agent behavior based on extension state.
  *
  * Usage:
- * 1. Copy this file to ~/.garmin-code-mini/agent/extensions/ or your project's .garmin-code-mini/extensions/
+ * 1. Copy this file to ~/.gcode/agent/extensions/ or your project's .gcode/extensions/
  * 2. Use /pirate to toggle pirate mode
  * 3. When enabled, the agent will respond like a pirate
  */
 
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function pirateExtension(garminCodeMini: ExtensionAPI) {
+export default function pirateExtension(gcode: ExtensionAPI) {
 	let pirateMode = false;
 
 	// Register /pirate command to toggle pirate mode
-	garminCodeMini.registerCommand("pirate", {
+	gcode.registerCommand("pirate", {
 		description: "Toggle pirate mode (agent speaks like a pirate)",
 		handler: async (_args, ctx) => {
 			pirateMode = !pirateMode;
@@ -25,7 +25,7 @@ export default function pirateExtension(garminCodeMini: ExtensionAPI) {
 	});
 
 	// Append to system prompt when pirate mode is enabled
-	garminCodeMini.on("before_agent_start", async (event) => {
+	gcode.on("before_agent_start", async (event) => {
 		if (pirateMode) {
 			return {
 				systemPrompt:

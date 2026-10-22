@@ -40,20 +40,20 @@ describe("ProjectTrustStore", () => {
 		const originalHome = process.env.HOME;
 		process.env.HOME = tempDir;
 		try {
-			mkdirSync(join(tempDir, ".garmin-code-mini", "agent"), { recursive: true });
+			mkdirSync(join(tempDir, ".gcode", "agent"), { recursive: true });
 			mkdirSync(join(tempDir, ".agents", "skills"), { recursive: true });
 			expect(hasTrustRequiringProjectResources(tempDir)).toBe(false);
 			expect(hasTrustRequiringProjectResources(cwd)).toBe(false);
 
-			writeFileSync(join(tempDir, ".garmin-code-mini", "settings.json"), "{}");
+			writeFileSync(join(tempDir, ".gcode", "settings.json"), "{}");
 			expect(hasTrustRequiringProjectResources(tempDir)).toBe(true);
-			rmSync(join(tempDir, ".garmin-code-mini", "settings.json"), { force: true });
+			rmSync(join(tempDir, ".gcode", "settings.json"), { force: true });
 
-			mkdirSync(join(cwd, ".garmin-code-mini"), { recursive: true });
-			writeFileSync(join(cwd, ".garmin-code-mini", "settings.json"), "{}");
+			mkdirSync(join(cwd, ".gcode"), { recursive: true });
+			writeFileSync(join(cwd, ".gcode", "settings.json"), "{}");
 			expect(hasTrustRequiringProjectResources(cwd)).toBe(true);
 
-			rmSync(join(cwd, ".garmin-code-mini"), { recursive: true, force: true });
+			rmSync(join(cwd, ".gcode"), { recursive: true, force: true });
 			mkdirSync(join(cwd, ".agents", "skills"), { recursive: true });
 			expect(hasTrustRequiringProjectResources(cwd)).toBe(true);
 		} finally {

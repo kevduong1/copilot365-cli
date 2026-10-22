@@ -4,7 +4,7 @@
  * Configure provider auth through ModelRuntime.
  */
 
-import { createAgentSession, ModelRuntime, SessionManager } from "garmin-code-mini";
+import { createAgentSession, ModelRuntime, SessionManager } from "gcode";
 
 const modelRuntime = await ModelRuntime.create();
 const { session: defaultAuthSession } = await createAgentSession({

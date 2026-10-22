@@ -2,17 +2,17 @@
 // (steer or follow up), stop them mid-answer, and list them. Subagents keep working while the main agent
 // answers the user, and each answer is delivered back to the main agent as a new message once it arrives. Everything
 // survives a restart: the example closes the Harness while a subagent works and reopens it.
-// Uses the local endpoint when GARMIN_CODE_MINI_MODEL is set, and a scripted faux model otherwise.
+// Uses the local endpoint when GCODE_MODEL is set, and a scripted faux model otherwise.
 // Run from packages/durable:
 //   node --conditions=source --experimental-strip-types test/examples/23-subagent-background.ts
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { type AssistantMessage, type FauxResponseStep, Type } from "@garmin-code-mini/ai";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@garmin-code-mini/ai/providers/faux";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { type AssistantMessage, type FauxResponseStep, Type } from "@gcode/ai";
+import { createModels } from "@gcode/ai/models";
+import { fauxAssistantMessage, fauxProvider, fauxText, fauxToolCall } from "@gcode/ai/providers/faux";
+import { localProvider } from "@gcode/ai/providers/local";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import {
 	type AgentEvent,
 	AssistantEntry,
@@ -214,8 +214,8 @@ const SubagentTools = defineExtension({ name: "subagent-tools", tasks: [Anchor, 
 // ─── Host setup ─────────────────────────────────────────────────────────────
 
 const models = createModels();
-let model = { provider: "local", modelId: process.env.GARMIN_CODE_MINI_MODEL || "local-model" };
-if (process.env.GARMIN_CODE_MINI_MODEL !== undefined) {
+let model = { provider: "local", modelId: process.env.GCODE_MODEL || "local-model" };
+if (process.env.GCODE_MODEL !== undefined) {
 	models.setProvider(localProvider());
 } else {
 	// The main agent and the subagent share one scripted model, which answers each request by its last message.
@@ -256,7 +256,7 @@ if (process.env.GARMIN_CODE_MINI_MODEL !== undefined) {
 }
 const registry = createRegistry();
 registry.install(SubagentTools);
-const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-subagents-"));
+const directory = await mkdtemp(join(tmpdir(), "gcode-durable-subagents-"));
 const open = async () => {
 	const harness = await Harness.open(
 		await openNodeSqliteStorage(join(directory, "session.sqlite")),

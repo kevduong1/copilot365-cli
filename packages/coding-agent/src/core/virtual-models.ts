@@ -9,7 +9,7 @@
  * separately and adds them to the provider's catalog with `withVirtualModels()`, so any provider,
  * including one with physical models, can list several virtual models.
  */
-import type { AgentMessage } from "@garmin-code-mini/agent-core";
+import type { AgentMessage } from "@gcode/agent-core";
 import {
 	type AnyModel,
 	type Api,
@@ -22,16 +22,16 @@ import {
 	type ModelThinkingLevel,
 	type Provider,
 	type ThinkingLevelMap,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import type { SessionEntry } from "./session-manager.ts";
 
 /** API id of virtual catalog entries. Requests for it fail unless routed first. */
-export const VIRTUAL_MODEL_API = "garmin-code-mini-virtual";
+export const VIRTUAL_MODEL_API = "gcode-virtual";
 
 /** Custom entry type that stores router state on the session branch. */
-export const VIRTUAL_MODEL_STATE_ENTRY = "garmin-code-mini.virtual-model-state";
+export const VIRTUAL_MODEL_STATE_ENTRY = "gcode.virtual-model-state";
 
-/** Data of a `garmin-code-mini.virtual-model-state` custom entry. */
+/** Data of a `gcode.virtual-model-state` custom entry. */
 export interface VirtualModelStateData<TState = unknown> {
 	provider: string;
 	modelId: string;
@@ -90,7 +90,7 @@ export interface VirtualModelDefinition<TState = unknown> {
 	/** Thinking levels offered for selection. Defaults to `["off"]`. */
 	thinkingLevels?: readonly ModelThinkingLevel[];
 	/**
-	 * Limits shown before the first response. Afterwards, garmin-code-mini uses the limits of the physical model
+	 * Limits shown before the first response. Afterwards, gcode uses the limits of the physical model
 	 * that answered. Unset limits are unknown (0).
 	 */
 	contextWindow?: number;

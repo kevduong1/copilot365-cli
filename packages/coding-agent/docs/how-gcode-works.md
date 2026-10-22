@@ -1,22 +1,22 @@
-# How garmin-code-mini Works
+# How gcode Works
 
-garmin-code-mini coordinates model requests, tool execution, context assembly, and session storage. A session is garmin-code-mini's record of a conversation, including messages, tool calls and results, model changes, compactions, and other events.
+gcode coordinates model requests, tool execution, context assembly, and session storage. A session is gcode's record of a conversation, including messages, tool calls and results, model changes, compactions, and other events.
 
 Messages and events in a session form a tree. Each path through that tree is a branch. The branch ending at the current entry is the active branch and supplies the history for the next model request.
 
 ## Agent loop
 
-A submitted message is added to the active branch. garmin-code-mini builds a model request from the system prompt, active branch, available tools, and model settings, then sends it through the selected provider.
+A submitted message is added to the active branch. gcode builds a model request from the system prompt, active branch, available tools, and model settings, then sends it through the selected provider.
 
-The provider streams an assistant response, which can contain text and tool calls. garmin-code-mini records the response, executes each tool call, and records the results. That completes one turn. If tool results or queued messages require another model request, garmin-code-mini starts another turn. Otherwise, the run ends.
+The provider streams an assistant response, which can contain text and tool calls. gcode records the response, executes each tool call, and records the results. That completes one turn. If tool results or queued messages require another model request, gcode starts another turn. Otherwise, the run ends.
 
 Steering messages enter after the current assistant turn. Follow-up messages enter after the agent has finished its pending work. Aborting stops the current run and returns queued messages to the editor.
 
 ## Context
 
-The active branch supplies conversation history. garmin-code-mini converts its session entries into model-compatible user, assistant, and tool-result messages.
+The active branch supplies conversation history. gcode converts its session entries into model-compatible user, assistant, and tool-result messages.
 
-garmin-code-mini builds the system prompt from its base instructions and discovered context files. The request also carries tool definitions and skill descriptions.
+gcode builds the system prompt from its base instructions and discovered context files. The request also carries tool definitions and skill descriptions.
 
 Full skill instructions are loaded on demand. Extensions can add instructions or transform context.
 
@@ -40,10 +40,10 @@ All interfaces use the same agent and session mechanisms.
 
 ## Extensions and resources
 
-Extensions are TypeScript modules loaded into the garmin-code-mini process. Their factory functions register tools, commands, shortcuts, providers, event handlers, renderers, and terminal UI.
+Extensions are TypeScript modules loaded into the gcode process. Their factory functions register tools, commands, shortcuts, providers, event handlers, renderers, and terminal UI.
 
 Skills provide on-demand instructions and supporting files. Prompt templates provide reusable message text. Themes provide terminal colors. Local extension packages group these resources on disk.
 
 ## Trust and permissions
 
-garmin-code-mini resolves project trust before loading project settings and resources. After the trust decision and project-resource loading, garmin-code-mini loads context files. Enabled tools use the operating-system permissions of the garmin-code-mini process. Extensions execute inside that process.
+gcode resolves project trust before loading project settings and resources. After the trust decision and project-resource loading, gcode loads context files. Enabled tools use the operating-system permissions of the gcode process. Extensions execute inside that process.

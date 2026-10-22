@@ -1,5 +1,5 @@
-import { type FauxResponseStep, fauxAssistantMessage } from "@garmin-code-mini/ai";
-import { type AfterFailedRun, AssistantEntry, MemoryStorage } from "@garmin-code-mini/durable";
+import { type FauxResponseStep, fauxAssistantMessage } from "@gcode/ai";
+import { type AfterFailedRun, AssistantEntry, MemoryStorage } from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { chatSetup, openChat, textOf } from "./chat-support.ts";
 import { context } from "./session-support.ts";

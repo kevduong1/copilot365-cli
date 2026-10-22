@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fauxAssistantMessage, registerFauxProvider, streamSimple } from "@garmin-code-mini/ai/compat";
+import { fauxAssistantMessage, registerFauxProvider, streamSimple } from "@gcode/ai/compat";
 import { afterEach, describe, expect, it } from "vitest";
 import type { AgentSession } from "../../../src/core/agent-session.ts";
 import {
@@ -37,7 +37,7 @@ describe("regression #2860: replaced session callbacks", () => {
 	});
 
 	async function createRuntimeForTest(extensionFactory: ExtensionFactory, responses: string[]) {
-		const tempDir = join(tmpdir(), `garmin-code-mini-2860-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+		const tempDir = join(tmpdir(), `gcode-2860-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		mkdirSync(tempDir, { recursive: true });
 
 		const faux = registerFauxProvider({
@@ -59,8 +59,8 @@ describe("regression #2860: replaced session callbacks", () => {
 				modelRuntime,
 				resourceLoaderOptions: {
 					extensionFactories: [
-						(garminCodeMini: ExtensionAPI) => {
-							garminCodeMini.registerProvider(faux.getModel().provider, {
+						(gcode: ExtensionAPI) => {
+							gcode.registerProvider(faux.getModel().provider, {
 								baseUrl: faux.getModel().baseUrl,
 								apiKey: "faux-key",
 								api: faux.api,
@@ -76,7 +76,7 @@ describe("regression #2860: replaced session callbacks", () => {
 									maxTokens: registeredModel.maxTokens,
 								})),
 							});
-							extensionFactory(garminCodeMini);
+							extensionFactory(gcode);
 						},
 					],
 					noSkills: true,
@@ -145,7 +145,7 @@ describe("regression #2860: replaced session callbacks", () => {
 		return { runtime, faux };
 	}
 
-	it("rebinds before withSession, targets the replacement session, and invalidates stale garmin-code-mini/ctx", async () => {
+	it("rebinds before withSession, targets the replacement session, and invalidates stale gcode/ctx", async () => {
 		const events: string[] = [];
 		let oldCtx: ExtensionCommandContext | undefined;
 		let oldPi: ExtensionAPI | undefined;
@@ -155,19 +155,19 @@ describe("regression #2860: replaced session callbacks", () => {
 		let replacementSessionFile: string | undefined;
 		let instanceId = 0;
 		const { runtime } = await createRuntimeForTest(
-			(garminCodeMini) => {
+			(gcode) => {
 				const currentInstance = ++instanceId;
-				garminCodeMini.on("session_start", () => {
+				gcode.on("session_start", () => {
 					events.push(`start:${currentInstance}`);
 				});
-				garminCodeMini.on("session_shutdown", () => {
+				gcode.on("session_shutdown", () => {
 					events.push(`shutdown:${currentInstance}`);
 				});
-				garminCodeMini.registerCommand("repro", {
+				gcode.registerCommand("repro", {
 					description: "repro",
 					handler: async (_args, ctx) => {
 						oldCtx = ctx;
-						oldPi = garminCodeMini;
+						oldPi = gcode;
 						oldSessionFile = ctx.sessionManager.getSessionFile();
 						await ctx.newSession({
 							parentSession: oldSessionFile,
@@ -211,8 +211,8 @@ describe("regression #2860: replaced session callbacks", () => {
 
 	it("supports withSession for fork", async () => {
 		const { runtime } = await createRuntimeForTest(
-			(garminCodeMini) => {
-				garminCodeMini.registerCommand("fork-it", {
+			(gcode) => {
+				gcode.registerCommand("fork-it", {
 					description: "fork-it",
 					handler: async (_args, ctx) => {
 						const leafId = ctx.sessionManager.getLeafId();
@@ -244,8 +244,8 @@ describe("regression #2860: replaced session callbacks", () => {
 	it("supports withSession for switchSession", async () => {
 		let targetSessionPath = "";
 		const { runtime } = await createRuntimeForTest(
-			(garminCodeMini) => {
-				garminCodeMini.registerCommand("switch-it", {
+			(gcode) => {
+				gcode.registerCommand("switch-it", {
 					description: "switch-it",
 					handler: async (_args, ctx) => {
 						await ctx.switchSession(targetSessionPath, {

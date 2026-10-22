@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, parse } from "node:path";
-import { fauxAssistantMessage, fauxToolCall, registerFauxProvider, streamSimple } from "@garmin-code-mini/ai/compat";
+import { fauxAssistantMessage, fauxToolCall, registerFauxProvider, streamSimple } from "@gcode/ai/compat";
 import { Type } from "typebox";
 import { afterEach, describe, expect, it } from "vitest";
 import {
@@ -42,8 +42,7 @@ describe("AgentSessionRuntime characterization", () => {
 		options?: { cwd?: string; bootstrapModel?: boolean; bootstrapThinkingLevel?: boolean },
 	) {
 		const tempDir =
-			options?.cwd ??
-			join(tmpdir(), `garmin-code-mini-runtime-suite-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+			options?.cwd ?? join(tmpdir(), `gcode-runtime-suite-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		mkdirSync(tempDir, { recursive: true });
 
 		const faux = registerFauxProvider({
@@ -64,8 +63,8 @@ describe("AgentSessionRuntime characterization", () => {
 			thinkingLevel: options?.bootstrapThinkingLevel === false ? undefined : undefined,
 			resourceLoaderOptions: {
 				extensionFactories: [
-					(garminCodeMini: ExtensionAPI) => {
-						garminCodeMini.registerProvider(faux.getModel().provider, {
+					(gcode: ExtensionAPI) => {
+						gcode.registerProvider(faux.getModel().provider, {
 							baseUrl: faux.getModel().baseUrl,
 							apiKey: "faux-key",
 							api: faux.api,
@@ -81,7 +80,7 @@ describe("AgentSessionRuntime characterization", () => {
 								maxTokens: registeredModel.maxTokens,
 							})),
 						});
-						extensionFactory(garminCodeMini);
+						extensionFactory(gcode);
 					},
 				],
 				noSkills: true,
@@ -125,8 +124,8 @@ describe("AgentSessionRuntime characterization", () => {
 	}
 
 	it("persists message_end assistant replacements to the session manager", async () => {
-		const { runtime } = await createRuntimeForTest((garminCodeMini: ExtensionAPI) => {
-			garminCodeMini.on("message_end", (event) => {
+		const { runtime } = await createRuntimeForTest((gcode: ExtensionAPI) => {
+			gcode.on("message_end", (event) => {
 				if (event.message.role !== "assistant") return;
 
 				return {
@@ -170,8 +169,8 @@ describe("AgentSessionRuntime characterization", () => {
 		const toolStartedPromise = new Promise<void>((resolve) => {
 			toolStarted = resolve;
 		});
-		const { runtime, faux } = await createRuntimeForTest((garminCodeMini: ExtensionAPI) => {
-			garminCodeMini.registerTool({
+		const { runtime, faux } = await createRuntimeForTest((gcode: ExtensionAPI) => {
+			gcode.registerTool({
 				name: "block",
 				label: "Block",
 				description: "Blocks until aborted",
@@ -250,14 +249,14 @@ describe("AgentSessionRuntime characterization", () => {
 
 	it("emits session_before_switch and session_start for new and resume flows", async () => {
 		const events: RecordedSessionEvent[] = [];
-		const { runtime } = await createRuntimeForTest((garminCodeMini: ExtensionAPI) => {
-			garminCodeMini.on("session_before_switch", (event) => {
+		const { runtime } = await createRuntimeForTest((gcode: ExtensionAPI) => {
+			gcode.on("session_before_switch", (event) => {
 				events.push(event);
 			});
-			garminCodeMini.on("session_shutdown", (event) => {
+			gcode.on("session_shutdown", (event) => {
 				events.push(event);
 			});
-			garminCodeMini.on("session_start", (event) => {
+			gcode.on("session_start", (event) => {
 				events.push(event);
 			});
 		});
@@ -296,14 +295,14 @@ describe("AgentSessionRuntime characterization", () => {
 	it("honors session_before_switch cancellation for new and resume", async () => {
 		const events: RecordedSessionEvent[] = [];
 		let cancelReason: "new" | "resume" | undefined;
-		const { runtime } = await createRuntimeForTest((garminCodeMini: ExtensionAPI) => {
-			garminCodeMini.on("session_before_switch", (event) => {
+		const { runtime } = await createRuntimeForTest((gcode: ExtensionAPI) => {
+			gcode.on("session_before_switch", (event) => {
 				events.push(event);
 				if (event.reason === cancelReason) {
 					return { cancel: true };
 				}
 			});
-			garminCodeMini.on("session_start", (event) => {
+			gcode.on("session_start", (event) => {
 				events.push(event);
 			});
 		});
@@ -317,10 +316,7 @@ describe("AgentSessionRuntime characterization", () => {
 		expect(runtime.session.sessionFile).toBe(originalSessionFile);
 
 		events.length = 0;
-		const otherDir = join(
-			tmpdir(),
-			`garmin-code-mini-runtime-other-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-		);
+		const otherDir = join(tmpdir(), `gcode-runtime-other-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		mkdirSync(otherDir, { recursive: true });
 		const otherSession = SessionManager.create(otherDir);
 		otherSession.appendMessage({ role: "user", content: [{ type: "text", text: "other" }], timestamp: Date.now() });
@@ -334,18 +330,18 @@ describe("AgentSessionRuntime characterization", () => {
 	it("emits session_before_fork and session_start and honors cancellation", async () => {
 		const events: RecordedSessionEvent[] = [];
 		let cancelNextFork = false;
-		const { runtime } = await createRuntimeForTest((garminCodeMini: ExtensionAPI) => {
-			garminCodeMini.on("session_before_fork", (event) => {
+		const { runtime } = await createRuntimeForTest((gcode: ExtensionAPI) => {
+			gcode.on("session_before_fork", (event) => {
 				events.push(event);
 				if (cancelNextFork) {
 					cancelNextFork = false;
 					return { cancel: true };
 				}
 			});
-			garminCodeMini.on("session_shutdown", (event) => {
+			gcode.on("session_shutdown", (event) => {
 				events.push(event);
 			});
-			garminCodeMini.on("session_start", (event) => {
+			gcode.on("session_start", (event) => {
 				events.push(event);
 			});
 		});
@@ -436,7 +432,7 @@ describe("AgentSessionRuntime characterization", () => {
 	it("duplicates the current active branch in-memory when forking at the current position", async () => {
 		const tempDir = join(
 			tmpdir(),
-			`garmin-code-mini-runtime-suite-in-memory-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+			`gcode-runtime-suite-in-memory-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 		);
 		mkdirSync(tempDir, { recursive: true });
 
@@ -457,8 +453,8 @@ describe("AgentSessionRuntime characterization", () => {
 			model: faux.getModel(),
 			resourceLoaderOptions: {
 				extensionFactories: [
-					(garminCodeMini: ExtensionAPI) => {
-						garminCodeMini.registerProvider(faux.getModel().provider, {
+					(gcode: ExtensionAPI) => {
+						gcode.registerProvider(faux.getModel().provider, {
 							baseUrl: faux.getModel().baseUrl,
 							apiKey: "faux-key",
 							api: faux.api,
@@ -555,14 +551,8 @@ describe("AgentSessionRuntime characterization", () => {
 	});
 
 	it("updates the runtime session cwd on cross-cwd session replacement", async () => {
-		const firstDir = join(
-			tmpdir(),
-			`garmin-code-mini-runtime-cwd-a-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-		);
-		const secondDir = join(
-			tmpdir(),
-			`garmin-code-mini-runtime-cwd-b-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-		);
+		const firstDir = join(tmpdir(), `gcode-runtime-cwd-a-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+		const secondDir = join(tmpdir(), `gcode-runtime-cwd-b-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 		mkdirSync(firstDir, { recursive: true });
 		mkdirSync(secondDir, { recursive: true });
 		const { runtime, faux, tempDir } = await createRuntimeForTest(() => {}, { cwd: firstDir });
@@ -573,8 +563,8 @@ describe("AgentSessionRuntime characterization", () => {
 			authStorage: otherAuthStorage,
 			resourceLoaderOptions: {
 				extensionFactories: [
-					(garminCodeMini: ExtensionAPI) => {
-						garminCodeMini.registerProvider(faux.getModel().provider, {
+					(gcode: ExtensionAPI) => {
+						gcode.registerProvider(faux.getModel().provider, {
 							baseUrl: faux.getModel().baseUrl,
 							apiKey: "faux-key",
 							api: faux.api,
@@ -648,8 +638,8 @@ describe("AgentSessionRuntime characterization", () => {
 			authStorage: otherAuthStorage,
 			resourceLoaderOptions: {
 				extensionFactories: [
-					(garminCodeMini: ExtensionAPI) => {
-						garminCodeMini.registerProvider(faux.getModel().provider, {
+					(gcode: ExtensionAPI) => {
+						gcode.registerProvider(faux.getModel().provider, {
 							baseUrl: faux.getModel().baseUrl,
 							apiKey: "faux-key",
 							api: faux.api,

@@ -1,4 +1,4 @@
-import { NOOP_TELEMETRY_CONTEXT, type TelemetrySpan } from "@garmin-code-mini/telemetry";
+import { NOOP_TELEMETRY_CONTEXT, type TelemetrySpan } from "@gcode/telemetry";
 import { describe, expect, it } from "vitest";
 import { buildBaseOptions } from "../src/api/simple-options.ts";
 import { createModels, createProvider } from "../src/models.ts";

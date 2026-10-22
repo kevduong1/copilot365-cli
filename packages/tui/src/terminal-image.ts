@@ -93,7 +93,7 @@ function detectCapabilitiesFromEnvironment(tmuxForwardsHyperlink: () => boolean)
 	}
 
 	// Rex supports OSC 8 hyperlinks and only partially implements the Kitty graphics protocol
-	// (no Unicode placeholders), but enough to support garmin-code-mini.
+	// (no Unicode placeholders), but enough to support gcode.
 	if (termProgram === "rex") {
 		return { images: "kitty", trueColor: true, hyperlinks: true };
 	}
@@ -150,18 +150,18 @@ function parseBooleanCapabilityOverride(value: string | undefined): boolean | un
 }
 
 export function detectCapabilities(tmuxForwardsHyperlink: () => boolean = probeTmuxHyperlinks): TerminalCapabilities {
-	const hyperlinks = parseBooleanCapabilityOverride(process.env.GARMIN_CODE_MINI_HYPERLINKS);
+	const hyperlinks = parseBooleanCapabilityOverride(process.env.GCODE_HYPERLINKS);
 	const detected = detectCapabilitiesFromEnvironment(
 		hyperlinks === undefined ? tmuxForwardsHyperlink : () => hyperlinks,
 	);
-	const imageProtocol = process.env.GARMIN_CODE_MINI_IMAGE_PROTOCOL?.toLowerCase();
+	const imageProtocol = process.env.GCODE_IMAGE_PROTOCOL?.toLowerCase();
 	const images =
 		imageProtocol === "kitty" || imageProtocol === "iterm2"
 			? imageProtocol
 			: imageProtocol === "none" || imageProtocol === "0"
 				? null
 				: undefined;
-	const trueColor = parseBooleanCapabilityOverride(process.env.GARMIN_CODE_MINI_TRUE_COLOR);
+	const trueColor = parseBooleanCapabilityOverride(process.env.GCODE_TRUE_COLOR);
 	return {
 		...detected,
 		...(images !== undefined ? { images } : {}),

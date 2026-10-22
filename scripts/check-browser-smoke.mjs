@@ -3,10 +3,10 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { build } from "esbuild";
 
-const outputPath = join(tmpdir(), "garmin-code-mini-browser-smoke.js");
-const durableOutputPath = join(tmpdir(), "garmin-code-mini-durable-browser-smoke.js");
-const agentTreeshakeOutputPath = join(tmpdir(), "garmin-code-mini-agent-treeshake-smoke.js");
-const errorLogPath = join(tmpdir(), "garmin-code-mini-browser-smoke-errors.log");
+const outputPath = join(tmpdir(), "gcode-browser-smoke.js");
+const durableOutputPath = join(tmpdir(), "gcode-durable-browser-smoke.js");
+const agentTreeshakeOutputPath = join(tmpdir(), "gcode-agent-treeshake-smoke.js");
+const errorLogPath = join(tmpdir(), "gcode-browser-smoke-errors.log");
 const generatedCatalogDataDir = join(process.cwd(), "packages/ai/src/providers/data");
 
 // Fresh checkouts do not materialize provider JSON until model data is hydrated.

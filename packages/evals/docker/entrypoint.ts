@@ -5,7 +5,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const variant = process.env.GARMIN_CODE_MINI_EVAL_VARIANT;
+const variant = process.env.GCODE_EVAL_VARIANT;
 
 function parseId(name: string): number {
 	const value = Number(process.env[name]);
@@ -13,8 +13,8 @@ function parseId(name: string): number {
 	return value;
 }
 
-const sandboxUid = parseId("GARMIN_CODE_MINI_EVAL_SANDBOX_UID");
-const sandboxGid = parseId("GARMIN_CODE_MINI_EVAL_SANDBOX_GID");
+const sandboxUid = parseId("GCODE_EVAL_SANDBOX_UID");
+const sandboxGid = parseId("GCODE_EVAL_SANDBOX_GID");
 
 function assertDirectoryEntries(path: string, expectedEntries: readonly string[]): void {
 	const actual = readdirSync(path).sort();
@@ -28,13 +28,13 @@ function assertWorkspace(): void {
 	assertDirectoryEntries("/repo", ["node_modules", "package.json", "packages", "vitest.base.ts"]);
 	assertDirectoryEntries("/repo/packages", ["evals"]);
 	assertDirectoryEntries("/repo/packages/evals", ["docker", "evals", "package.json", "src", "vitest.evals.config.ts"]);
-	const codingAgentDir = "/repo/node_modules/garmin-code-mini";
+	const codingAgentDir = "/repo/node_modules/gcode";
 	for (const name of ["package.json", "dist/index.js"]) {
 		if (!existsSync(join(codingAgentDir, name))) throw new Error(`Installed coding-agent is missing ${name}.`);
 	}
 	const internalScope = "/repo/node_modules/@earendil-works";
 	for (const packageName of readdirSync(internalScope)) {
-		if (packageName === "garmin-code-mini-coding-agent") continue;
+		if (packageName === "gcode-coding-agent") continue;
 		const packageDirectory = join(internalScope, packageName);
 		for (const entry of readdirSync(packageDirectory, { withFileTypes: true })) {
 			if (
@@ -51,7 +51,7 @@ function assertWorkspace(): void {
 		}
 		return;
 	}
-	if (variant !== "with_docs") throw new Error("Eval image has no valid GARMIN_CODE_MINI_EVAL_VARIANT.");
+	if (variant !== "with_docs") throw new Error("Eval image has no valid GCODE_EVAL_VARIANT.");
 	for (const path of [
 		join(codingAgentDir, "README.md"),
 		join(codingAgentDir, "CHANGELOG.md"),
@@ -99,21 +99,21 @@ for (const path of [
 	assertRootOnly(path);
 	assertSandboxCannotRead(path);
 }
-const codingAgentEntry = fileURLToPath(import.meta.resolve("garmin-code-mini"));
-if (codingAgentEntry !== "/repo/node_modules/garmin-code-mini/dist/index.js") {
-	throw new Error(`Eval does not resolve garmin-code-mini-coding-agent from dist: ${codingAgentEntry}`);
+const codingAgentEntry = fileURLToPath(import.meta.resolve("gcode"));
+if (codingAgentEntry !== "/repo/node_modules/gcode/dist/index.js") {
+	throw new Error(`Eval does not resolve gcode-coding-agent from dist: ${codingAgentEntry}`);
 }
 
-const agentDir = "/tmp/garmin-code-mini-eval-host-agent";
+const agentDir = "/tmp/gcode-eval-host-agent";
 mkdirSync(agentDir, { recursive: true });
-const authSource = "/run/garmin-code-mini-eval-secrets/auth.json";
+const authSource = "/run/gcode-eval-secrets/auth.json";
 if (existsSync(authSource)) copyFileSync(authSource, join(agentDir, "auth.json"));
 chownTree(agentDir, sandboxUid, sandboxGid);
 chownTree("/artifacts", sandboxUid, sandboxGid);
-process.env.HOME = "/tmp/garmin-code-mini-eval-bootstrap";
+process.env.HOME = "/tmp/gcode-eval-bootstrap";
 process.env.USERPROFILE = process.env.HOME;
-process.env.GARMIN_CODE_MINI_AGENT_DIR = agentDir;
-process.env.GARMIN_CODE_MINI_EVAL_CONTAINER = "1";
+process.env.GCODE_AGENT_DIR = agentDir;
+process.env.GCODE_EVAL_CONTAINER = "1";
 process.umask(0o022);
 
 const require = createRequire(import.meta.url);
@@ -144,9 +144,9 @@ const commandArgs = discover
 const result = spawnSync(process.execPath, commandArgs, { cwd: packageRoot, stdio: "inherit", env: process.env });
 if (result.error) throw result.error;
 
-const artifactUid = process.env.GARMIN_CODE_MINI_EVAL_ARTIFACT_UID;
-const artifactGid = process.env.GARMIN_CODE_MINI_EVAL_ARTIFACT_GID;
+const artifactUid = process.env.GCODE_EVAL_ARTIFACT_UID;
+const artifactGid = process.env.GCODE_EVAL_ARTIFACT_GID;
 if (artifactUid !== undefined && artifactGid !== undefined) {
-	chownTree("/artifacts", parseId("GARMIN_CODE_MINI_EVAL_ARTIFACT_UID"), parseId("GARMIN_CODE_MINI_EVAL_ARTIFACT_GID"));
+	chownTree("/artifacts", parseId("GCODE_EVAL_ARTIFACT_UID"), parseId("GCODE_EVAL_ARTIFACT_GID"));
 }
 process.exit(result.status ?? 1);

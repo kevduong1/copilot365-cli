@@ -1,9 +1,9 @@
 import { appendFileSync } from "node:fs";
 import { join } from "node:path";
-import { CONFIG_DIR_NAME, type ExtensionAPI } from "garmin-code-mini";
+import { CONFIG_DIR_NAME, type ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("before_provider_request", (event, ctx) => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("before_provider_request", (event, ctx) => {
 		const logFile = join(ctx.cwd, CONFIG_DIR_NAME, "provider-payload.log");
 		appendFileSync(logFile, `${JSON.stringify(event.payload, null, 2)}\n\n`, "utf8");
 
@@ -11,7 +11,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		// return { ...event.payload, temperature: 0 };
 	});
 
-	garminCodeMini.on("after_provider_response", (event, ctx) => {
+	gcode.on("after_provider_response", (event, ctx) => {
 		const logFile = join(ctx.cwd, CONFIG_DIR_NAME, "provider-payload.log");
 		appendFileSync(logFile, `[${event.status}] ${JSON.stringify(event.headers)}\n\n`, "utf8");
 	});

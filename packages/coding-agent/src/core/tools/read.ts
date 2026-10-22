@@ -1,5 +1,5 @@
-import type { AgentTool } from "@garmin-code-mini/agent-core";
-import type { Api, ImageContent, Model, ModelImageResizeOptions, TextContent } from "@garmin-code-mini/ai";
+import type { AgentTool } from "@gcode/agent-core";
+import type { Api, ImageContent, Model, ModelImageResizeOptions, TextContent } from "@gcode/ai";
 import { constants } from "fs";
 import { access as fsAccess, readFile as fsReadFile } from "fs/promises";
 import { type Static, Type } from "typebox";

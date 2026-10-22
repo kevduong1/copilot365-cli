@@ -1,18 +1,18 @@
 /**
  * Input Transform Example - demonstrates the `input` event for intercepting user input.
  *
- * Start garmin-code-mini with this extension:
- *   garmin-code-mini -e ./examples/extensions/input-transform.ts
+ * Start gcode with this extension:
+ *   gcode -e ./examples/extensions/input-transform.ts
  *
- * Then type these inside garmin-code-mini:
+ * Then type these inside gcode:
  *   ?quick What is TypeScript?  → "Respond briefly: What is TypeScript?"
  *   ping                        → "pong" (instant, no LLM)
  *   time                        → current time (instant, no LLM)
  */
-import type { ExtensionAPI } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.on("input", async (event, ctx) => {
+export default function (gcode: ExtensionAPI) {
+	gcode.on("input", async (event, ctx) => {
 		// Source-based logic: skip processing for extension-injected messages
 		if (event.source === "extension") {
 			return { action: "continue" };

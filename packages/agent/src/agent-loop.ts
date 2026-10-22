@@ -7,7 +7,7 @@ import {
 	type AssistantMessage,
 	type ClientIdentity,
 	EventStream,
-	GARMIN_CODE_MINI_ATTRIBUTION,
+	GCODE_ATTRIBUTION,
 	getCurrentTools,
 	getToolStateChanges,
 	mergeClientIdentity,
@@ -17,7 +17,7 @@ import {
 	type ToolStateChanges,
 	toToolDeclaration,
 	validateToolArguments,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { getDefaultStreamFn } from "./stream-fn.ts";
 import type {
 	AgentContext,
@@ -35,10 +35,10 @@ import type {
 export type AgentEventSink = (event: AgentEvent) => Promise<void> | void;
 
 /**
- * Request identity of agent loops: garmin-code-mini-ai's defaults with provider attribution to garmin-code-mini. `AgentLoopConfig.identity`
+ * Request identity of agent loops: gcode-ai's defaults with provider attribution to gcode. `AgentLoopConfig.identity`
  * overrides it field by field.
  */
-export const DEFAULT_AGENT_IDENTITY: ClientIdentity = { attribution: GARMIN_CODE_MINI_ATTRIBUTION };
+export const DEFAULT_AGENT_IDENTITY: ClientIdentity = { attribution: GCODE_ATTRIBUTION };
 
 /**
  * Start an agent loop with a new prompt message.

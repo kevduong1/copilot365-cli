@@ -1,5 +1,5 @@
-import type { AgentMessage } from "@garmin-code-mini/agent-core";
-import { type AssistantMessage, type Model, normalizeContext, type TranscriptContext } from "@garmin-code-mini/ai";
+import type { AgentMessage } from "@gcode/agent-core";
+import { type AssistantMessage, type Model, normalizeContext, type TranscriptContext } from "@gcode/ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	type CompactionPreparation,
@@ -13,8 +13,8 @@ const { completeSimpleMock } = vi.hoisted(() => ({
 	completeSimpleMock: vi.fn(),
 }));
 
-vi.mock("@garmin-code-mini/ai/compat", async (importOriginal) => {
-	const actual = await importOriginal<typeof import("@garmin-code-mini/ai/compat")>();
+vi.mock("@gcode/ai/compat", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@gcode/ai/compat")>();
 	return {
 		...actual,
 		completeSimple: completeSimpleMock,
@@ -269,7 +269,7 @@ describe("generateSummary reasoning options", () => {
 		expect(completeSimpleMock.mock.calls[0][2]).not.toHaveProperty("reasoning");
 	});
 
-	it("leaves Anthropic refusal fallback handling to garmin-code-mini-ai model metadata", async () => {
+	it("leaves Anthropic refusal fallback handling to gcode-ai model metadata", async () => {
 		await generateSummary(
 			messages,
 			createModel(true, 8192, {

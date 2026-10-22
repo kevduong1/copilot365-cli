@@ -4,7 +4,7 @@
  * Replace everything - no discovery, explicit configuration.
  */
 
-import { getModel } from "@garmin-code-mini/ai/compat";
+import { getModel } from "@gcode/ai/compat";
 import {
 	createAgentSession,
 	createExtensionRuntime,
@@ -12,7 +12,7 @@ import {
 	type ResourceLoader,
 	SessionManager,
 	SettingsManager,
-} from "garmin-code-mini";
+} from "gcode";
 
 const modelRuntime = await ModelRuntime.create({
 	authPath: "/tmp/my-agent/auth.json",

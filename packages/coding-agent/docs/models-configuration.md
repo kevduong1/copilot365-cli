@@ -47,7 +47,7 @@ Each `models` entry adds a model to the provider. An entry whose `id` matches an
 | `cost.tiers[].output` | number |  | Required. Output cost in USD per million tokens. |
 | `cost.tiers[].cacheRead` | number |  | Required. Cache-read cost in USD per million tokens. |
 | `cost.tiers[].cacheWrite` | number |  | Required. Cache-write cost in USD per million tokens. |
-| `promptCache` | object |  | Best-effort prompt cache lifetime in seconds for the short and long retention tiers. garmin-code-mini warms only tiers with a known lifetime. |
+| `promptCache` | object |  | Best-effort prompt cache lifetime in seconds for the short and long retention tiers. gcode warms only tiers with a known lifetime. |
 | `contextWindow` | number | `128000` | Context window in tokens. |
 | `maxTokens` | number | `16384` | Maximum output tokens. |
 | `samplingParams` | object |  | Fields merged into every request body. Applies only to OpenAI-compatible APIs. |
@@ -77,7 +77,7 @@ Each `modelOverrides` key is the ID of a built-in or extension model. Unknown ID
 | `cost.tiers[].output` | number |  | Required. Output cost in USD per million tokens. |
 | `cost.tiers[].cacheRead` | number |  | Required. Cache-read cost in USD per million tokens. |
 | `cost.tiers[].cacheWrite` | number |  | Required. Cache-write cost in USD per million tokens. |
-| `promptCache` | object |  | Best-effort prompt cache lifetime in seconds for the short and long retention tiers. garmin-code-mini warms only tiers with a known lifetime. |
+| `promptCache` | object |  | Best-effort prompt cache lifetime in seconds for the short and long retention tiers. gcode warms only tiers with a known lifetime. |
 | `contextWindow` | number |  | Context window in tokens. |
 | `maxTokens` | number |  | Maximum output tokens. |
 | `samplingParams` | object |  | Fields merged into every request body. Applies only to OpenAI-compatible APIs. |

@@ -1,5 +1,5 @@
-import type { Context } from "@garmin-code-mini/chord";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import type { Context } from "@gcode/chord";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import {
 	type CommitPublication,
 	type ConversationId,
@@ -12,7 +12,7 @@ import {
 	MemoryStorage,
 	type Seq,
 	type StorageWrite,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { SessionImpl } from "../src/session/session.ts";
 
 export const context: Context = BACKGROUND_CONTEXT;

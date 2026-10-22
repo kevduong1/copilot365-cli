@@ -1,7 +1,7 @@
-import { createHost, memoryLinkPair, replicatedState } from "@garmin-code-mini/chord";
-import { createAssistantMessageEventStream, Type } from "@garmin-code-mini/ai";
-import { complete, getModel, getProviders, streamSimple } from "@garmin-code-mini/ai/compat";
-import { Agent } from "@garmin-code-mini/agent-core";
+import { createHost, memoryLinkPair, replicatedState } from "@gcode/chord";
+import { createAssistantMessageEventStream, Type } from "@gcode/ai";
+import { complete, getModel, getProviders, streamSimple } from "@gcode/ai/compat";
+import { Agent } from "@gcode/agent-core";
 
 // Keep this entry browser-safe. It is bundled by scripts/check-browser-smoke.mjs
 // to catch accidental Node-only runtime imports in browser-facing package exports.

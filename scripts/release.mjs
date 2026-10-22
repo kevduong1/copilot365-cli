@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Release script for garmin-code-mini-mono
+ * Release script for gcode-mono
  *
  * Usage:
  *   node scripts/release.mjs <major|minor|patch>
@@ -211,10 +211,10 @@ console.log("Building packages for tests...");
 run("npm run build:offline");
 console.log();
 
-// GARMIN_CODE_MINI_RELEASE_SKIP_TESTS=1 skips the test suite, e.g. when it already passed in `npm run release:local`
+// GCODE_RELEASE_SKIP_TESTS=1 skips the test suite, e.g. when it already passed in `npm run release:local`
 // and an overloaded machine makes timing-sensitive tests fail. Checks and the install check still run.
-if (process.env.GARMIN_CODE_MINI_RELEASE_SKIP_TESTS === "1") {
-	console.log("Skipping tests (GARMIN_CODE_MINI_RELEASE_SKIP_TESTS=1)\n");
+if (process.env.GCODE_RELEASE_SKIP_TESTS === "1") {
+	console.log("Skipping tests (GCODE_RELEASE_SKIP_TESTS=1)\n");
 } else {
 	console.log("Running tests...");
 	run("./test.sh");

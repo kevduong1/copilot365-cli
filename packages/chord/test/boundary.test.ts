@@ -8,17 +8,15 @@ const sourceDirectory = resolve(packageDirectory, "src");
 const IMPORT_SPECIFIER = /(?:import|export)\s+(?:type\s+)?(?:[^;]*?\sfrom\s*)?["']([^"']+)["']/gu;
 
 describe("package boundary", () => {
-	// garmin-code-mini-telemetry is the one allowed garmin-code-mini package: a leaf without dependencies, needed for Context.telemetry.
-	const ALLOWED = new Set(["@garmin-code-mini/telemetry"]);
+	// gcode-telemetry is the one allowed gcode package: a leaf without dependencies, needed for Context.telemetry.
+	const ALLOWED = new Set(["@gcode/telemetry"]);
 
-	test("does not depend on garmin-code-mini packages other than garmin-code-mini-telemetry, or on files outside Chord", async () => {
+	test("does not depend on gcode packages other than gcode-telemetry, or on files outside Chord", async () => {
 		const manifest = JSON.parse(await readFile(resolve(packageDirectory, "package.json"), "utf8")) as {
 			dependencies?: Record<string, string>;
 		};
 		expect(
-			Object.keys(manifest.dependencies ?? {}).filter(
-				(name) => name.startsWith("@garmin-code-mini/") && !ALLOWED.has(name),
-			),
+			Object.keys(manifest.dependencies ?? {}).filter((name) => name.startsWith("@gcode/") && !ALLOWED.has(name)),
 		).toEqual([]);
 
 		const paths = (await readdir(sourceDirectory, { recursive: true })).filter((path) => path.endsWith(".ts")).sort();
@@ -29,8 +27,7 @@ describe("package boundary", () => {
 			for (const match of source.matchAll(IMPORT_SPECIFIER)) {
 				const specifier = match[1]!;
 				const pkg = specifier.split("/").slice(0, 2).join("/");
-				if (specifier.startsWith("@garmin-code-mini/") && !ALLOWED.has(pkg))
-					violations.push(`${path}: ${specifier}`);
+				if (specifier.startsWith("@gcode/") && !ALLOWED.has(pkg)) violations.push(`${path}: ${specifier}`);
 				if (specifier.startsWith(".") && !resolve(dirname(file), specifier).startsWith(`${sourceDirectory}/`)) {
 					violations.push(`${path}: ${specifier}`);
 				}

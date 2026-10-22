@@ -553,7 +553,7 @@ describe("TUI overlay options", () => {
 		});
 	});
 
-	// https://github.com/earendil-works/garmin-code-mini/issues/10026
+	// https://github.com/earendil-works/gcode/issues/10026
 	describe("hiding after stop", () => {
 		it("hideOverlay() leaves the cursor visible", () => {
 			const terminal = new CursorTrackingTerminal(80, 24);

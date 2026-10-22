@@ -1,4 +1,4 @@
-import { createModels } from "@garmin-code-mini/ai";
+import { createModels } from "@gcode/ai";
 import {
 	type AnyTask,
 	createRegistry,
@@ -10,7 +10,7 @@ import {
 	type RegistryReader,
 	type ReportInfo,
 	type Storage,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { context, flush } from "./session-support.ts";
 
 export type Deferred<T = void> = {

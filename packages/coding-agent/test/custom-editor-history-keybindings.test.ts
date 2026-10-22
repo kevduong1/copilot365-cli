@@ -1,4 +1,4 @@
-import { setKeybindings, TuiMainScreen } from "@garmin-code-mini/tui";
+import { setKeybindings, TuiMainScreen } from "@gcode/tui";
 import { afterEach, describe, expect, it } from "vitest";
 import { defaultEditorTheme } from "../../tui/test/test-themes.ts";
 import { VirtualTerminal } from "../../tui/test/virtual-terminal.ts";

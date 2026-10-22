@@ -2,10 +2,10 @@
  * Minimal SDK Usage
  *
  * Uses all defaults: discovers skills, extensions, tools, context files
- * from cwd and ~/.garmin-code-mini/agent. Model chosen from settings or first available.
+ * from cwd and ~/.gcode/agent. Model chosen from settings or first available.
  */
 
-import { createAgentSession } from "garmin-code-mini";
+import { createAgentSession } from "gcode";
 
 const { session } = await createAgentSession();
 

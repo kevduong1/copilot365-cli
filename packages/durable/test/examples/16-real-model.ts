@@ -1,10 +1,10 @@
 // A real model: stream an answer from the local endpoint.
-// Run from packages/durable (needs GARMIN_CODE_MINI_MODEL):
+// Run from packages/durable (needs GCODE_MODEL):
 //   node --conditions=source --experimental-strip-types test/examples/16-real-model.ts
 
-import { createModels } from "@garmin-code-mini/ai/models";
-import { localProvider } from "@garmin-code-mini/ai/providers/local";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { localProvider } from "@gcode/ai/providers/local";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import {
 	AssistantEntry,
 	createRegistry,
@@ -19,11 +19,11 @@ const context = BACKGROUND_CONTEXT;
 
 // Production code passes a Models collection with real providers; the Harness
 // never talks to a provider any other way. localProvider() reads
-// GARMIN_CODE_MINI_MODEL from the environment. While the answer streams, generation
-// commits throttled partials to the conversation's garmin-code-mini.live document. Watching
+// GCODE_MODEL from the environment. While the answer streams, generation
+// commits throttled partials to the conversation's gcode.live document. Watching
 // that document streams the answer; the watch sees only committed values.
-if (process.env.GARMIN_CODE_MINI_MODEL === undefined) {
-	console.log("skipped: GARMIN_CODE_MINI_MODEL is not set");
+if (process.env.GCODE_MODEL === undefined) {
+	console.log("skipped: GCODE_MODEL is not set");
 } else {
 	const models = createModels();
 	models.setProvider(localProvider());
@@ -37,7 +37,7 @@ if (process.env.GARMIN_CODE_MINI_MODEL === undefined) {
 	const harness = await Harness.open(new MemoryStorage(), { models, registry }, context);
 	const root = await harness.root(context, {
 		agent: {
-			model: { provider: "local", modelId: process.env.GARMIN_CODE_MINI_MODEL || "local-model" },
+			model: { provider: "local", modelId: process.env.GCODE_MODEL || "local-model" },
 			thinkingLevel: "high",
 		},
 	});

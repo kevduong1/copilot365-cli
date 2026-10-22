@@ -13,10 +13,10 @@ RUN --mount=type=bind,source=.,target=/repo,rw \
 # coding-agent documentation whose effect the experiment measures.
 FROM builder AS without-docs-install
 RUN rm -rf \
-    /opt/evaluator/install/node_modules/garmin-code-mini/README.md \
-    /opt/evaluator/install/node_modules/garmin-code-mini/CHANGELOG.md \
-    /opt/evaluator/install/node_modules/garmin-code-mini/docs \
-    /opt/evaluator/install/node_modules/garmin-code-mini/examples
+    /opt/evaluator/install/node_modules/gcode/README.md \
+    /opt/evaluator/install/node_modules/gcode/CHANGELOG.md \
+    /opt/evaluator/install/node_modules/gcode/docs \
+    /opt/evaluator/install/node_modules/gcode/examples
 
 FROM node:24-slim AS evaluator
 COPY --from=builder /opt/evaluator/root /repo
@@ -31,14 +31,14 @@ RUN chmod -R go-rwx \
     && chmod go-rwx \
       /repo/vitest.base.ts \
       /repo/packages/evals/vitest.evals.config.ts \
-    && mkdir -p /run/garmin-code-mini-eval-secrets \
-    && chmod 0700 /run/garmin-code-mini-eval-secrets
+    && mkdir -p /run/gcode-eval-secrets \
+    && chmod 0700 /run/gcode-eval-secrets
 ENTRYPOINT ["node", "--experimental-strip-types", "docker/entrypoint.ts"]
 
 FROM evaluator AS without_docs
 COPY --from=without-docs-install /opt/evaluator/install/node_modules /repo/node_modules
-ENV GARMIN_CODE_MINI_EVAL_VARIANT=without_docs
+ENV GCODE_EVAL_VARIANT=without_docs
 
 FROM evaluator AS with_docs
 COPY --from=builder /opt/evaluator/install/node_modules /repo/node_modules
-ENV GARMIN_CODE_MINI_EVAL_VARIANT=with_docs
+ENV GCODE_EVAL_VARIANT=with_docs

@@ -373,11 +373,11 @@ describe("skills", () => {
 		});
 
 		it("should expand ~ in skillPaths", () => {
-			const homeSkillsDir = join(homedir(), ".garmin-code-mini/agent/skills");
+			const homeSkillsDir = join(homedir(), ".gcode/agent/skills");
 			const { skills: withTilde } = loadSkills({
 				agentDir: emptyAgentDir,
 				cwd: emptyCwd,
-				skillPaths: ["~/.garmin-code-mini/agent/skills"],
+				skillPaths: ["~/.gcode/agent/skills"],
 				includeDefaults: true,
 			});
 			const { skills: withoutTilde } = loadSkills({

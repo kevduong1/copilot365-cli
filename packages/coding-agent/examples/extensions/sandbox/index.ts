@@ -10,10 +10,10 @@
  * via `tool_call` input mutation without replacing the tool.
  *
  * Config files (merged, project takes precedence):
- * - ~/.garmin-code-mini/agent/extensions/sandbox.json (global)
- * - <cwd>/.garmin-code-mini/sandbox.json (project-local)
+ * - ~/.gcode/agent/extensions/sandbox.json (global)
+ * - <cwd>/.gcode/sandbox.json (project-local)
  *
- * Example .garmin-code-mini/sandbox.json:
+ * Example .gcode/sandbox.json:
  * ```json
  * {
  *   "enabled": true,
@@ -30,13 +30,13 @@
  * ```
  *
  * Usage:
- * - `garmin-code-mini -e ./sandbox` - sandbox enabled with default/config settings
- * - `garmin-code-mini -e ./sandbox --no-sandbox` - disable sandboxing
+ * - `gcode -e ./sandbox` - sandbox enabled with default/config settings
+ * - `gcode -e ./sandbox --no-sandbox` - disable sandboxing
  * - `/sandbox` - show current sandbox configuration
  *
  * Setup:
- * 1. Copy sandbox/ directory to ~/.garmin-code-mini/agent/extensions/
- * 2. Run `npm install` in ~/.garmin-code-mini/agent/extensions/sandbox/
+ * 1. Copy sandbox/ directory to ~/.gcode/agent/extensions/
+ * 2. Run `npm install` in ~/.gcode/agent/extensions/sandbox/
  *
  * Linux also requires: bubblewrap, socat, ripgrep
  */
@@ -45,8 +45,8 @@ import { spawn } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { SandboxManager, type SandboxRuntimeConfig } from "@anthropic-ai/sandbox-runtime";
-import type { ExtensionAPI } from "garmin-code-mini";
-import { type BashOperations, CONFIG_DIR_NAME, createBashTool, getAgentDir } from "garmin-code-mini";
+import type { ExtensionAPI } from "gcode";
+import { type BashOperations, CONFIG_DIR_NAME, createBashTool, getAgentDir } from "gcode";
 
 interface SandboxConfig extends SandboxRuntimeConfig {
 	enabled?: boolean;
@@ -198,8 +198,8 @@ function createSandboxedBashOps(): BashOperations {
 	};
 }
 
-export default function (garminCodeMini: ExtensionAPI) {
-	garminCodeMini.registerFlag("no-sandbox", {
+export default function (gcode: ExtensionAPI) {
+	gcode.registerFlag("no-sandbox", {
 		description: "Disable OS-level sandboxing for bash commands",
 		type: "boolean",
 		default: false,
@@ -211,7 +211,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 	let sandboxEnabled = false;
 	let sandboxInitialized = false;
 
-	garminCodeMini.registerTool({
+	gcode.registerTool({
 		...localBash,
 		label: "bash (sandboxed)",
 		async execute(id, params, signal, onUpdate, _ctx) {
@@ -226,13 +226,13 @@ export default function (garminCodeMini: ExtensionAPI) {
 		},
 	});
 
-	garminCodeMini.on("user_bash", () => {
+	gcode.on("user_bash", () => {
 		if (!sandboxEnabled || !sandboxInitialized) return;
 		return { operations: createSandboxedBashOps() };
 	});
 
-	garminCodeMini.on("session_start", async (_event, ctx) => {
-		const noSandbox = garminCodeMini.getFlag("no-sandbox") as boolean;
+	gcode.on("session_start", async (_event, ctx) => {
+		const noSandbox = gcode.getFlag("no-sandbox") as boolean;
 
 		if (noSandbox) {
 			sandboxEnabled = false;
@@ -284,7 +284,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		}
 	});
 
-	garminCodeMini.on("session_shutdown", async () => {
+	gcode.on("session_shutdown", async () => {
 		if (sandboxInitialized) {
 			try {
 				await SandboxManager.reset();
@@ -294,7 +294,7 @@ export default function (garminCodeMini: ExtensionAPI) {
 		}
 	});
 
-	garminCodeMini.registerCommand("sandbox", {
+	gcode.registerCommand("sandbox", {
 		description: "Show sandbox configuration",
 		handler: async (_args, ctx) => {
 			if (!sandboxEnabled) {

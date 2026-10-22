@@ -26,7 +26,7 @@ describe("max thinking level", () => {
 	});
 
 	it("falls back to thinkingXhigh for legacy themes", () => {
-		const testDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-max-theme-"));
+		const testDir = mkdtempSync(join(tmpdir(), "gcode-max-theme-"));
 		tempDirs.push(testDir);
 		const currentDir = dirname(fileURLToPath(import.meta.url));
 		const darkTheme = JSON.parse(

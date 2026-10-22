@@ -1,12 +1,12 @@
-import { validateSqliteSchemaPrefix } from "@garmin-code-mini/chord/sqlite";
-import { type NodeSqliteDatabaseOptions, openNodeSqliteDatabase } from "@garmin-code-mini/chord/sqlite/node";
+import { validateSqliteSchemaPrefix } from "@gcode/chord/sqlite";
+import { type NodeSqliteDatabaseOptions, openNodeSqliteDatabase } from "@gcode/chord/sqlite/node";
 import { SqliteStorage, type SqliteStorageOptions } from "./storage.ts";
 
 export {
 	NodeSqliteDatabase,
 	type NodeSqliteDatabaseOptions,
 	openNodeSqliteDatabase,
-} from "@garmin-code-mini/chord/sqlite/node";
+} from "@gcode/chord/sqlite/node";
 
 /** Node SQLite connection settings plus durable storage options. */
 export type NodeSqliteStorageOptions = NodeSqliteDatabaseOptions & SqliteStorageOptions;

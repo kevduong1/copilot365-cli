@@ -6,7 +6,7 @@ owner: christianklotz
 The extension API and runtime.
 
 In:
-- garmin-code-mini.* and ctx.* API surface, events and hooks.
+- gcode.* and ctx.* API surface, events and hooks.
 - registerTool, registerCommand, registerProvider, renderers.
 - ctx.ui dialogs and custom components.
 - Extension loading (jiti, module resolution, virtual modules), /reload.

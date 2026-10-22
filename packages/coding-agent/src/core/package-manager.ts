@@ -8,7 +8,7 @@ import { valid, validRange } from "semver";
 import { CONFIG_DIR_NAME } from "../config.ts";
 import { type GitSource, parseGitUrl } from "../utils/git.ts";
 import { canonicalizePath, isLocalPath, normalizePath, resolvePath } from "../utils/paths.ts";
-import { type PiManifest, readPiManifest } from "./garmin-code-mini-manifest.ts";
+import { type GcodeManifest, readGcodeManifest } from "./gcode-manifest.ts";
 import type { PackageSource, SettingsManager } from "./settings-manager.ts";
 import { BUILTIN_PATH_PREFIX } from "./source-info.ts";
 
@@ -306,7 +306,7 @@ function collectFiles(
 	return files;
 }
 
-type SkillDiscoveryMode = "garminCodeMini" | "agents";
+type SkillDiscoveryMode = "gcode" | "agents";
 
 function collectSkillEntries(
 	dir: string,
@@ -369,7 +369,7 @@ function collectSkillEntries(
 				isFile &&
 				entry.name.endsWith(".md") &&
 				!ig.ignores(relPath) &&
-				((mode === "garminCodeMini" && dir === root) || (mode === "agents" && dir !== root));
+				((mode === "gcode" && dir === root) || (mode === "agents" && dir !== root));
 			if (shouldIncludeMarkdownFile) {
 				entries.push(fullPath);
 				continue;
@@ -503,7 +503,7 @@ function collectAutoThemeEntries(dir: string): string[] {
 function resolveExtensionEntries(dir: string): string[] | null {
 	const packageJsonPath = join(dir, "package.json");
 	if (existsSync(packageJsonPath)) {
-		const manifest = readPiManifest(packageJsonPath);
+		const manifest = readGcodeManifest(packageJsonPath);
 		if (manifest?.extensions?.length) {
 			const entries: string[] = [];
 			for (const extPath of manifest.extensions) {
@@ -590,7 +590,7 @@ function collectAutoExtensionEntries(dir: string): string[] {
  */
 function collectResourceFiles(dir: string, resourceType: ResourceType): string[] {
 	if (resourceType === "skills") {
-		return collectSkillEntries(dir, "garminCodeMini");
+		return collectSkillEntries(dir, "gcode");
 	}
 	if (resourceType === "extensions") {
 		return collectAutoExtensionEntries(dir);
@@ -1240,10 +1240,10 @@ export class DefaultPackageManager implements PackageManager {
 			return true;
 		}
 
-		const manifest = readPiManifest(join(packageRoot, "package.json"));
+		const manifest = readGcodeManifest(join(packageRoot, "package.json"));
 		if (manifest) {
 			for (const resourceType of RESOURCE_TYPES) {
-				const entries = manifest[resourceType as keyof PiManifest];
+				const entries = manifest[resourceType as keyof GcodeManifest];
 				this.addManifestEntries(
 					entries,
 					packageRoot,
@@ -1276,8 +1276,8 @@ export class DefaultPackageManager implements PackageManager {
 		target: Map<string, { metadata: PathMetadata; enabled: boolean }>,
 		metadata: PathMetadata,
 	): void {
-		const manifest = readPiManifest(join(packageRoot, "package.json"));
-		const entries = manifest?.[resourceType as keyof PiManifest];
+		const manifest = readGcodeManifest(join(packageRoot, "package.json"));
+		const entries = manifest?.[resourceType as keyof GcodeManifest];
 		if (entries) {
 			this.addManifestEntries(entries, packageRoot, resourceType, target, metadata);
 			return;
@@ -1345,8 +1345,8 @@ export class DefaultPackageManager implements PackageManager {
 		packageRoot: string,
 		resourceType: ResourceType,
 	): { allFiles: string[]; enabledByManifest: Set<string> } {
-		const manifest = readPiManifest(join(packageRoot, "package.json"));
-		const entries = manifest?.[resourceType as keyof PiManifest];
+		const manifest = readGcodeManifest(join(packageRoot, "package.json"));
+		const entries = manifest?.[resourceType as keyof GcodeManifest];
 		if (entries && entries.length > 0) {
 			const allFiles = this.collectFilesFromManifestEntries(entries, packageRoot, resourceType);
 			const manifestPatterns = entries.filter(isOverridePattern);
@@ -1484,7 +1484,7 @@ export class DefaultPackageManager implements PackageManager {
 		};
 
 		if (projectTrusted) {
-			// Project extensions from .garmin-code-mini/
+			// Project extensions from .gcode/
 			addResources(
 				"extensions",
 				collectAutoExtensionEntries(projectDirs.extensions),
@@ -1493,10 +1493,10 @@ export class DefaultPackageManager implements PackageManager {
 				projectBaseDir,
 			);
 
-			// Project skills from .garmin-code-mini/
+			// Project skills from .gcode/
 			addResources(
 				"skills",
-				collectAutoSkillEntries(projectDirs.skills, "garminCodeMini"),
+				collectAutoSkillEntries(projectDirs.skills, "gcode"),
 				projectMetadata,
 				projectOverrides.skills,
 				projectBaseDir,
@@ -1536,7 +1536,7 @@ export class DefaultPackageManager implements PackageManager {
 			);
 		}
 
-		// User extensions from ~/.garmin-code-mini/agent/
+		// User extensions from ~/.gcode/agent/
 		addResources(
 			"extensions",
 			collectAutoExtensionEntries(userDirs.extensions),
@@ -1545,10 +1545,10 @@ export class DefaultPackageManager implements PackageManager {
 			globalBaseDir,
 		);
 
-		// User skills from ~/.garmin-code-mini/agent/
+		// User skills from ~/.gcode/agent/
 		addResources(
 			"skills",
-			collectAutoSkillEntries(userDirs.skills, "garminCodeMini"),
+			collectAutoSkillEntries(userDirs.skills, "gcode"),
 			userMetadata,
 			userOverrides.skills,
 			globalBaseDir,

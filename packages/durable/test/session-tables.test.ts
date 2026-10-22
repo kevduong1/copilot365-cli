@@ -1,4 +1,4 @@
-import type { JsonValue } from "@garmin-code-mini/chord";
+import type { JsonValue } from "@gcode/chord";
 import {
 	type ConversationId,
 	defineDoc,
@@ -8,7 +8,7 @@ import {
 	ReadAfterWrite,
 	type TaskId,
 	type TaskRecord,
-} from "@garmin-code-mini/durable";
+} from "@gcode/durable";
 import { describe, expect, it } from "vitest";
 import { idFromNumber } from "../src/ids.ts";
 import { context, createConversation, documentChanges, flush, openTestSession } from "./session-support.ts";

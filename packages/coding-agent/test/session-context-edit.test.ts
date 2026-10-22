@@ -1,4 +1,4 @@
-import type { AssistantMessage, ToolResultMessage } from "@garmin-code-mini/ai";
+import type { AssistantMessage, ToolResultMessage } from "@gcode/ai";
 import { describe, expect, it } from "vitest";
 import {
 	DEFAULT_COMPACTION_SETTINGS,

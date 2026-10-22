@@ -1,4 +1,4 @@
-import { type Component, ScrollView, type ScrollViewScrollbar, VStack } from "@garmin-code-mini/tui";
+import { type Component, ScrollView, type ScrollViewScrollbar, VStack } from "@gcode/tui";
 
 export interface ChatViewportOptions {
 	readonly document: Component;

@@ -79,7 +79,7 @@ function commonBuildOptions() {
 		absWorkingDir: repoRoot,
 		banner,
 		bundle: true,
-		define: { GARMIN_CODE_MINI_BUNDLED_NODE: "true" },
+		define: { GCODE_BUNDLED_NODE: "true" },
 		external: ["@silvia-odwyer/photon-node"],
 		format: "esm",
 		legalComments: "none",

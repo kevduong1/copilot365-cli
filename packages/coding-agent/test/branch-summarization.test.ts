@@ -1,11 +1,11 @@
-import type { StreamFn } from "@garmin-code-mini/agent-core";
+import type { StreamFn } from "@gcode/agent-core";
 import {
 	type AssistantMessage,
 	createAssistantMessageEventStream,
 	fauxAssistantMessage,
 	type Model,
 	type SimpleStreamOptions,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { describe, expect, it } from "vitest";
 import { generateBranchSummary } from "../src/core/compaction/index.ts";
 import type { SessionEntry } from "../src/core/session-manager.ts";

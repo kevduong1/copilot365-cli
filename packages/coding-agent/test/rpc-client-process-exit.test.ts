@@ -7,7 +7,7 @@ import { RpcClient } from "../src/modes/rpc/rpc-client.ts";
 const tempDirs: string[] = [];
 
 function writeChildScript(contents: string): string {
-	const dir = mkdtempSync(join(tmpdir(), "garmin-code-mini-rpc-client-exit-"));
+	const dir = mkdtempSync(join(tmpdir(), "gcode-rpc-client-exit-"));
 	tempDirs.push(dir);
 	const path = join(dir, "child.mjs");
 	writeFileSync(path, contents);

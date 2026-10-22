@@ -5,10 +5,10 @@
  * a summary of the branch being left so context isn't lost.
  */
 
-import type { AgentMessage, StreamFn } from "@garmin-code-mini/agent-core";
-import type { RetryCallbacks, RetryPolicy } from "@garmin-code-mini/ai";
-import { contentText, normalizeContext } from "@garmin-code-mini/ai";
-import type { Model, SimpleStreamOptions, Usage } from "@garmin-code-mini/ai/compat";
+import type { AgentMessage, StreamFn } from "@gcode/agent-core";
+import type { RetryCallbacks, RetryPolicy } from "@gcode/ai";
+import { contentText, normalizeContext } from "@gcode/ai";
+import type { Model, SimpleStreamOptions, Usage } from "@gcode/ai/compat";
 import {
 	convertToLlm,
 	createBranchSummaryMessage,
@@ -199,7 +199,7 @@ export function prepareBranchEntries(entries: SessionEntry[], tokenBudget: numbe
 
 	// First pass: collect file ops from ALL entries (even if they don't fit in token budget)
 	// This ensures we capture cumulative file tracking from nested branch summaries
-	// Only extract from garmin-code-mini-generated summaries (fromHook !== true), not extension-generated ones
+	// Only extract from gcode-generated summaries (fromHook !== true), not extension-generated ones
 	for (const entry of entries) {
 		if (entry.type === "branch_summary" && !entry.fromHook && entry.details) {
 			const details = entry.details as BranchSummaryDetails;

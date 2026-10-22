@@ -4,8 +4,8 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import { createRegistry, defineExtension, defineTask, Harness } from "../../src/index.ts";
 import { openNodeSqliteStorage } from "../../src/storage/sqlite/node.ts";
 
@@ -14,7 +14,7 @@ const context = BACKGROUND_CONTEXT;
 // Everything a task needs to continue is in storage, so a new Harness over the
 // same storage picks up where the last one stopped. This example keeps its
 // storage in a SQLite file so it survives closing.
-const directory = await mkdtemp(join(tmpdir(), "garmin-code-mini-durable-example-"));
+const directory = await mkdtemp(join(tmpdir(), "gcode-durable-example-"));
 const databasePath = join(directory, "session.sqlite");
 
 let reachedTick = (_n: number): void => {};

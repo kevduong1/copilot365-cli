@@ -1,10 +1,10 @@
-# @garmin-code-mini/durable
+# @gcode/durable
 
 > **Experimental.** The API changes without notice between releases.
 
 A durable agent harness. Conversations, model turns, tool calls, and your own state are committed to storage before anything is shown. If the process dies mid-turn, reopening the storage picks the work up where it stopped.
 
-Built on [`@garmin-code-mini/ai`](../ai/README.md) for model access and `@garmin-code-mini/chord` for document state.
+Built on [`@gcode/ai`](../ai/README.md) for model access and `@gcode/chord` for document state.
 
 ## Table of Contents
 
@@ -40,16 +40,16 @@ Built on [`@garmin-code-mini/ai`](../ai/README.md) for model access and `@garmin
 ## Installation
 
 ```bash
-npm install @garmin-code-mini/durable @garmin-code-mini/ai @garmin-code-mini/chord
+npm install @gcode/durable @gcode/ai @gcode/chord
 ```
 
 ## Quick Start
 
 ```typescript
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
-import { createModels } from "@garmin-code-mini/ai/models";
-import { openaiProvider } from "@garmin-code-mini/ai/providers/openai";
-import { AssistantEntry, createRegistry, Harness, MemoryStorage } from "@garmin-code-mini/durable";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
+import { createModels } from "@gcode/ai/models";
+import { openaiProvider } from "@gcode/ai/providers/openai";
+import { AssistantEntry, createRegistry, Harness, MemoryStorage } from "@gcode/durable";
 
 const context = BACKGROUND_CONTEXT;
 
@@ -77,39 +77,39 @@ What happened:
 
 Every async call takes a Chord `Context`, which carries cancellation and its current `TelemetrySpan`. `BACKGROUND_CONTEXT` never cancels and uses a NOOP span. The Harness owns the root adapter; adapters are never stored in a `Context`. Cancelling a wait only cancels that wait, never the work.
 
-`HarnessOptions.identity` sets how model requests identify the app to providers (a garmin-code-mini-ai `ClientIdentity`), merged over `DEFAULT_HARNESS_IDENTITY` (`{ attribution: GARMIN_CODE_MINI_ATTRIBUTION }`: OpenRouter, NVIDIA NIM, and OpenCode attribution headers name garmin-code-mini). It applies to generation, compaction, hooks, and tools, over the identity the host's `Models` was created with. Pass your app's attribution, for example `{ attribution: { name: "my-app", url: "https://my-app.example" } }`, or `{ attribution: null }` to send none.
+`HarnessOptions.identity` sets how model requests identify the app to providers (a gcode-ai `ClientIdentity`), merged over `DEFAULT_HARNESS_IDENTITY` (`{ attribution: GCODE_ATTRIBUTION }`: OpenRouter, NVIDIA NIM, and OpenCode attribution headers name gcode). It applies to generation, compaction, hooks, and tools, over the identity the host's `Models` was created with. Pass your app's attribution, for example `{ attribution: { name: "my-app", url: "https://my-app.example" } }`, or `{ attribution: null }` to send none.
 
-`HarnessOptions.telemetry` accepts a host-owned `TelemetryContext` from `@garmin-code-mini/telemetry`, with optional `propagation` and `metrics` capabilities; omitted, it is a no-op. `DURABLE_TELEMETRY_SCHEMA`, exported from the package root, documents its typed spans, events, and metrics. Attributes contain IDs and control metadata, never messages, arguments, or results; IDs point to the transcript.
+`HarnessOptions.telemetry` accepts a host-owned `TelemetryContext` from `@gcode/telemetry`, with optional `propagation` and `metrics` capabilities; omitted, it is a no-op. `DURABLE_TELEMETRY_SCHEMA`, exported from the package root, documents its typed spans, events, and metrics. Attributes contain IDs and control metadata, never messages, arguments, or results; IDs point to the transcript.
 
-- `garmin-code-mini.durable.submit` covers the public submit call and its commit. Each input starts a new root trace with a link to its caller's current span; a write is a child of its caller. Duplicate `requestId` preserves the original submission and carrier. Internal admissions, such as compaction writes, emit events on their phase span without a submit span.
-- `garmin-code-mini.durable.phase` covers one run or abort phase of every task, including its decision commit, never the next phase, a durable wait, or a restart. Its attributes identify the task, phase, attempt when present, `resumed`, and outcome. Tool phases also identify the tool and call. Nested tasks and background compactions inherit the creating phase; model requests receive that phase context. Hooks add no spans.
+- `gcode.durable.submit` covers the public submit call and its commit. Each input starts a new root trace with a link to its caller's current span; a write is a child of its caller. Duplicate `requestId` preserves the original submission and carrier. Internal admissions, such as compaction writes, emit events on their phase span without a submit span.
+- `gcode.durable.phase` covers one run or abort phase of every task, including its decision commit, never the next phase, a durable wait, or a restart. Its attributes identify the task, phase, attempt when present, `resumed`, and outcome. Tool phases also identify the tool and call. Nested tasks and background compactions inherit the creating phase; model requests receive that phase context. Hooks add no spans.
 - Failed phase outcomes set error status with a fixed category (`task_faulted`, `task_failed`, or `task_orphaned`) and the outcome's diagnostic message, truncated to 500 characters (the reason for an orphaned task). Diagnostics can contain caller content; no error detail or exception name is recorded. An `aborted` outcome keeps status `ok`, including interruption by close or cancellation.
-- Every `onReport` report also emits a `garmin-code-mini.durable.report` event on its current span. Without a span, the NOOP span drops the event; no root report span is created. Only `type`, optional fixed `reason`, `extension`, and `task.id` are recorded; no error payload is included. `garmin-code-mini.durable.reports` counts all reports by `type` only, including those without a span. Clock failures report without a phase context. The `onReport` callback is unchanged.
-- Committed entries and settled submissions emit `garmin-code-mini.durable.entry` and `garmin-code-mini.durable.submission`. Committed running phase changes emit `garmin-code-mini.durable.checkpoint`; a nested call answered from its stored result emits `garmin-code-mini.durable.replay`.
+- Every `onReport` report also emits a `gcode.durable.report` event on its current span. Without a span, the NOOP span drops the event; no root report span is created. Only `type`, optional fixed `reason`, `extension`, and `task.id` are recorded; no error payload is included. `gcode.durable.reports` counts all reports by `type` only, including those without a span. Clock failures report without a phase context. The `onReport` callback is unchanged.
+- Committed entries and settled submissions emit `gcode.durable.entry` and `gcode.durable.submission`. Committed running phase changes emit `gcode.durable.checkpoint`; a nested call answered from its stored result emits `gcode.durable.replay`.
 - Propagation stores optional opaque `trace` carriers in submission and task JSON without a storage migration. Phase spans extract their task's stored carrier, or start at the adapter root when absent or unknown. `TaskOptions.trace` inherits the creator's carrier when absent, accepts an explicit carrier override, or uses `"root"` to start at the adapter root without storing a carrier. A run started for several queued inputs takes the first input's trace; its first invocation's phase spans link to the other inputs through immutable task `links`. A steer stays in the running trace and its submit span links to that run's stored carrier. A reopened task's first invocation has `resumed: true` in the same trace.
-- Metrics record `garmin-code-mini.durable.phase.duration` (milliseconds; task, phase, outcome) and `garmin-code-mini.durable.tasks.active` (live tasks; task name), without record IDs. Closing the Harness releases its active counts.
+- Metrics record `gcode.durable.phase.duration` (milliseconds; task, phase, outcome) and `gcode.durable.tasks.active` (live tasks; task name), without record IDs. Closing the Harness releases its active counts.
 
 ## Concepts
 
 - **Harness**: one open storage plus the machinery that runs agents on it. All changes go through one line of atomic commits, and nothing is shown before its commit is stored.
 - **Conversation**: a transcript. `root()` creates the root conversation on first use; you can create more and fork them. A `Conversation` handle holds no state; compare handles by `id`.
-- **Entry**: one immutable transcript record, such as a user message (`garmin-code-mini.user`), a model response (`garmin-code-mini.assistant`), a tool result (`garmin-code-mini.tool-result`), a system prompt change (`garmin-code-mini.system`), a reset (`garmin-code-mini.reset`), or your own kind. The model sees the entries from the newest reset onward.
+- **Entry**: one immutable transcript record, such as a user message (`gcode.user`), a model response (`gcode.assistant`), a tool result (`gcode.tool-result`), a system prompt change (`gcode.system`), a reset (`gcode.reset`), or your own kind. The model sees the entries from the newest reset onward.
 - **Commit**: an atomic write. `conversation.commit((tx) => ...)` can append entries, edit documents, and create tasks together; either all of it is stored or none of it.
-- **Document**: typed JSON state stored next to the transcript and changed in commits. Built-in ones hold each conversation's agent choices (`garmin-code-mini.agent`), provider-facing session identity (`garmin-code-mini.provider`), running generation and tools (`garmin-code-mini.live`), queued submissions (`garmin-code-mini.inbox`), and spend (`garmin-code-mini.usage`).
-- **Task**: a durable state machine that saves a checkpoint at every step, so a restarted process continues from the last one. Every task has an owner: its conversation, or another task. The Harness runs answers as built-in tasks: `garmin-code-mini.generation` calls the model and owns the `garmin-code-mini.tool` tasks of its tool calls, waits for them, and hands the run to the next generation.
+- **Document**: typed JSON state stored next to the transcript and changed in commits. Built-in ones hold each conversation's agent choices (`gcode.agent`), provider-facing session identity (`gcode.provider`), running generation and tools (`gcode.live`), queued submissions (`gcode.inbox`), and spend (`gcode.usage`).
+- **Task**: a durable state machine that saves a checkpoint at every step, so a restarted process continues from the last one. Every task has an owner: its conversation, or another task. The Harness runs answers as built-in tasks: `gcode.generation` calls the model and owns the `gcode.tool` tasks of its tool calls, waits for them, and hands the run to the next generation.
 - **Submission**: something you hand to a conversation, either user input or an entry to write, which you can wait for.
 - **Turn and run**: a turn is one model response and its tool calls; a run is the turns from an input to its final answer. A conversation is busy while a run is going.
 - **Extension**: a named bundle of tools, system prompt sections, hooks, wrappers, and tasks.
 - **Registry**: the extensions this process installed. It can change while the Harness runs; new work uses the new state.
-- **Agent**: what a conversation runs with: model, thinking level, selected extensions, tools, instructions, and working directory. Stored per conversation as names in `garmin-code-mini.agent`, resolved against the registry at each use.
+- **Agent**: what a conversation runs with: model, thinking level, selected extensions, tools, instructions, and working directory. Stored per conversation as names in `gcode.agent`, resolved against the registry at each use.
 
 One answered input, as entries and tasks:
 
 ```text
-submit(input) → garmin-code-mini.user
-  garmin-code-mini.generation → garmin-code-mini.system (only if the prompt or tools changed), garmin-code-mini.assistant (tool calls)
-    garmin-code-mini.tool × n → garmin-code-mini.tool-result × n   (owned by the generation, which waits for them)
-  garmin-code-mini.generation → garmin-code-mini.assistant (answer) → submission done
+submit(input) → gcode.user
+  gcode.generation → gcode.system (only if the prompt or tools changed), gcode.assistant (tool calls)
+    gcode.tool × n → gcode.tool-result × n   (owned by the generation, which waits for them)
+  gcode.generation → gcode.assistant (answer) → submission done
 ```
 
 ## Persist and Resume
@@ -117,14 +117,14 @@ submit(input) → garmin-code-mini.user
 Use SQLite or JSONL storage to keep conversations across restarts:
 
 ```typescript
-import { openNodeSqliteStorage } from "@garmin-code-mini/durable/storage/sqlite/node";
+import { openNodeSqliteStorage } from "@gcode/durable/storage/sqlite/node";
 
 const harness = await Harness.open(await openNodeSqliteStorage("./session.sqlite"), { models, registry }, context);
 const root = await harness.root(context); // the same root as last time
 harness.resume(); // continue any run the last process left unfinished
 ```
 
-Work interrupted by a crash or close stays pending. `resume()` starts the task scheduler; submitting or waiting starts it too. Each conversation has its own persisted UUIDv7 in `garmin-code-mini.provider`, forwarded to garmin-code-mini-ai as `sessionId` for provider prompt-cache and session affinity. It survives reopen, retries, reset, compaction, and model changes; a child or fork receives a fresh identity. A legacy conversation receives and persists one before its first generation or compaction request.
+Work interrupted by a crash or close stays pending. `resume()` starts the task scheduler; submitting or waiting starts it too. Each conversation has its own persisted UUIDv7 in `gcode.provider`, forwarded to gcode-ai as `sessionId` for provider prompt-cache and session affinity. It survives reopen, retries, reset, compaction, and model changes; a child or fork receives a fresh identity. A legacy conversation receives and persists one before its first generation or compaction request.
 
 A retried submission with the same `requestId` returns the existing submission instead of submitting twice:
 
@@ -226,8 +226,8 @@ The default `setTimer` declines the timers that only free memory in Workers, so 
 Code the Harness runs, other than its built-in tasks, comes in named extensions installed in a registry your process owns:
 
 ```typescript
-import { createRegistry, defineExtension, defineTool, hook, section, ToolTask } from "@garmin-code-mini/durable";
-import { CodingTools } from "@garmin-code-mini/durable/tools";
+import { createRegistry, defineExtension, defineTool, hook, section, ToolTask } from "@gcode/durable";
+import { CodingTools } from "@gcode/durable/tools";
 
 const Coding = defineExtension({
 	name: "coding",
@@ -244,13 +244,13 @@ An extension may bring `tools`, `sections`, `hooks`, `wraps` (decorators of a to
 
 ## Tools
 
-`@garmin-code-mini/durable/tools` provides `read`, `write`, `edit`, and `bash`, and the `CodingTools` extension with all four. They touch files and processes only through the call's environment (see [Environment](#environment)).
+`@gcode/durable/tools` provides `read`, `write`, `edit`, and `bash`, and the `CodingTools` extension with all four. They touch files and processes only through the call's environment (see [Environment](#environment)).
 
 `read` returns an image file as one image block, which programs calling it get as an `ImageContent`. Limits are the model's `inputLimits.images.resize`, by default 2000x2000 pixels and 4.5 MB of base64. Without an image processor it sends PNG, JPEG, GIF, and WebP files within them (dimensions read from the file's header) as they are, without decoding them, and refuses larger ones and other formats. With one, it decodes every image, turns it upright by its EXIF orientation, converts BMP to PNG, and shrinks it to fit. The Photon-based processor runs on WebAssembly and is only loaded when you import it:
 
 ```typescript
-import { createNodePhotonImages } from "@garmin-code-mini/durable/images/node"; // or /images/cloudflare, or createPhotonImages(wasm) from /images
-import { createCodingTools } from "@garmin-code-mini/durable/tools";
+import { createNodePhotonImages } from "@gcode/durable/images/node"; // or /images/cloudflare, or createPhotonImages(wasm) from /images
+import { createCodingTools } from "@gcode/durable/tools";
 
 registry.install(createCodingTools({ images: await createNodePhotonImages() }));
 ```
@@ -260,7 +260,7 @@ A model without image input sees a placeholder instead of the image, and `read` 
 Define your own tool with a TypeBox schema. `defineTool()` types `args` from `parameters`, which the Harness validates before `execute()`. `api.output()` streams running output, which becomes the result when `execute()` returns no `output`:
 
 ```typescript
-import { Type } from "@garmin-code-mini/ai";
+import { Type } from "@gcode/ai";
 
 const count = defineTool({
 	name: "count",
@@ -324,7 +324,7 @@ const testsPass = defineTool({
 
 - The caller gets the nested call's `taskId`, `structuredOutput`, `details`, `diagnostics`, `usage`, and `isError`, not the `output` meant for the model. A blocked, invalid, failed, or aborted nested call returns an `isError` result. `executeTool()` itself rejects once `execute()` has returned, when the caller is aborted, or when the Harness closes; cancelling its `context` stops only the wait.
 - Hooks see a nested call's `call.parent`, so a guard can treat calls from scripts differently.
-- While the caller runs, its nested calls show in `docs["garmin-code-mini.live"].nestedTools`, with the arguments they run with and a `summary` (error, duration, usage) once done, and as tool events with `parentToolCallId` and `parentTaskId`. `progress: false` keeps a nested call's running output out of `garmin-code-mini.live`. Before the caller settles, nested calls it left running are aborted, also those an earlier attempt made. The caller's result message does not list its nested calls; their task records keep them.
+- While the caller runs, its nested calls show in `docs["gcode.live"].nestedTools`, with the arguments they run with and a `summary` (error, duration, usage) once done, and as tool events with `parentToolCallId` and `parentTaskId`. `progress: false` keeps a nested call's running output out of `gcode.live`. Before the caller settles, nested calls it left running are aborted, also those an earlier attempt made. The caller's result message does not list its nested calls; their task records keep them.
 - Each nested call has a key, its position among the caller's nested calls unless the caller passes `{ key }`. A replay-safe caller that reruns after a crash and calls in the same order, or passes the same keys, gets the nested calls it already made back, finished or still running, instead of starting them again. A nested call the crash interrupted before its result was committed follows its own `replay` policy, so a replay-safe tool with external effects still needs its own idempotency. A caller that is not replay-safe never reruns, so after a restart its unfinished nested calls are abandoned, with everything they own, before they run again.
 - A nested call's `usage` is counted under its own tool; passing it on in the caller's result counts it twice.
 - Nested results are not kept: they live in the caller's task documents (`NestedCallDoc`, one per nested call, keyed by its key, holding `{ taskId, result? }`) only until the caller settles. The nested call's task record keeps only a small receipt. A stored result is exactly what `executeTool()` returns, without the model's `output`, so an image or a `bash` tail is stored once.
@@ -346,7 +346,7 @@ await root.configure({ modelTools: { remove: [bash] } }, context);
 
 `conversation.agent()` resolves both lists: `tools`, offered to the model, and `callable`, which nested calls resolve among. `tools` still decides what is enabled at all; `modelTools` cannot add to it.
 
-A `deferred: true` tool is not offered to the model until it is loaded, though other tools can call it any time. The `tool_search` tool from `@garmin-code-mini/durable/tool-search` (`createToolSearchExtension()`) lets the model search the deferred tools and loads the matches with `control.addTools`, which records them in `modelTools`; loaded tools stay offered on that branch, also after a compaction, and the `codemode` section leaves deferred tools out. Use it for large tool sets, such as an MCP server's.
+A `deferred: true` tool is not offered to the model until it is loaded, though other tools can call it any time. The `tool_search` tool from `@gcode/durable/tool-search` (`createToolSearchExtension()`) lets the model search the deferred tools and loads the matches with `control.addTools`, which records them in `modelTools`; loaded tools stay offered on that branch, also after a compaction, and the `codemode` section leaves deferred tools out. Use it for large tool sets, such as an MCP server's.
 
 ### Tasks a restart abandons
 
@@ -354,11 +354,11 @@ A task that its creator awaits only in memory, and that the creator never resume
 
 ## Code Mode
 
-`@garmin-code-mini/durable/codemode` adds a `codemode` tool: the model writes JavaScript that calls the conversation's tools as `await tools.<name>(args)`, in a QuickJS sandbox (`@garmin-code-mini/codemode`). Each call is a nested tool call, and only the script's output reaches the model. The script survives a restart: it resumes where it was, without running its finished calls again.
+`@gcode/durable/codemode` adds a `codemode` tool: the model writes JavaScript that calls the conversation's tools as `await tools.<name>(args)`, in a QuickJS sandbox (`@gcode/codemode`). Each call is a nested tool call, and only the script's output reaches the model. The script survives a restart: it resumes where it was, without running its finished calls again.
 
 ```typescript
-import { CodemodeSandbox } from "@garmin-code-mini/codemode";
-import { createCodemodeExtension } from "@garmin-code-mini/durable/codemode";
+import { CodemodeSandbox } from "@gcode/codemode";
+import { createCodemodeExtension } from "@gcode/durable/codemode";
 
 registry.install(createCodemodeExtension({ sandbox: new CodemodeSandbox({ memoryLimitBytes: 256 * 1024 * 1024 }) }));
 ```
@@ -379,7 +379,7 @@ A conversation's `instructions` render last, as the section `instructions`. Sect
 
 ## Per-Conversation Agent
 
-Each conversation stores what it runs with in its `garmin-code-mini.agent` document. `configure()` changes it in one commit; unset fields follow the host:
+Each conversation stores what it runs with in its `gcode.agent` document. `configure()` changes it in one commit; unset fields follow the host:
 
 ```typescript
 await root.configure(
@@ -429,7 +429,7 @@ const harness = await Harness.open(storage, {
 `env` builds the execution environment for each tool call, section rendering, and `runtime.env()`. It receives the conversation's ID, its agent `cwd`, and committed reads, so one function serves a directory per conversation or a container per conversation:
 
 ```typescript
-import { NodeExecutionEnv } from "@garmin-code-mini/durable/env/node";
+import { NodeExecutionEnv } from "@gcode/durable/env/node";
 
 const harness = await Harness.open(storage, {
 	models,
@@ -451,9 +451,9 @@ await env.exec(["git", "status", "--porcelain=v2", "-z"], {
 }, context);
 ```
 
-Abort the context to stop one call; `cleanup()` is for shutting the environment down. A custom environment can check itself with `registerEnvConformance()` from `@garmin-code-mini/durable/testing`, like storage below.
+Abort the context to stop one call; `cleanup()` is for shutting the environment down. A custom environment can check itself with `registerEnvConformance()` from `@gcode/durable/testing`, like storage below.
 
-Some environments also implement the optional `listFiles()`: the files and directories below a directory at any depth, as `fd` lists them, skipping what git ignores and stopping at bounds with `truncated`. `NodeExecutionEnv` does not; garmin-code-mini-env's `RemoteExecutionEnv` and `LocalExecutionEnv` do. Callers fall back to their own walk when the method is missing or fails with `not_supported`:
+Some environments also implement the optional `listFiles()`: the files and directories below a directory at any depth, as `fd` lists them, skipping what git ignores and stopping at bounds with `truncated`. `NodeExecutionEnv` does not; gcode-env's `RemoteExecutionEnv` and `LocalExecutionEnv` do. Callers fall back to their own walk when the method is missing or fails with `not_supported`:
 
 ```typescript
 const listing = await env.listFiles?.(".", { exclude: ["node_modules"], maxEntries: 50_000 }, context);
@@ -479,8 +479,8 @@ Everything a UI needs is committed state. `viewState()` returns the conversation
 const view = await root.viewState(context);
 view.subscribe((value) => {
 	// value.entries: the active transcript
-	// value.docs["garmin-code-mini.live"]: the running generation (streamed partial, retry, deferred) and tool calls (output, details)
-	// value.docs["garmin-code-mini.inbox"], value.docs["garmin-code-mini.usage"], value.docs["garmin-code-mini.agent"], value.docs["garmin-code-mini.provider"]
+	// value.docs["gcode.live"]: the running generation (streamed partial, retry, deferred) and tool calls (output, details)
+	// value.docs["gcode.inbox"], value.docs["gcode.usage"], value.docs["gcode.agent"], value.docs["gcode.provider"]
 	render(value);
 });
 // later: view.dispose();
@@ -503,7 +503,7 @@ Partial answers and tool output are committed at most every 100 ms by default, s
 
 ## Busy Conversations
 
-A conversation is busy while a run is working on an input. Submitting to a busy conversation queues the submission in the conversation's inbox, `docs["garmin-code-mini.inbox"]` in the view:
+A conversation is busy while a run is working on an input. Submitting to a busy conversation queues the submission in the conversation's inbox, `docs["gcode.inbox"]` in the view:
 
 ```typescript
 await root.submit({ type: "input", content: "Also run the tests" }, context); // follow-up (default)
@@ -520,7 +520,7 @@ await root.submit({ type: "write", entry: { kind: "app.note", data: "user opened
 
 If a run fails, queued items stay in the inbox until the next input or queued write places them, oldest first.
 
-An input is placed as a `garmin-code-mini.user` entry. To show it as something else, give it an `entry` with your kind and data; the model still sees `content` as the user message:
+An input is placed as a `gcode.user` entry. To show it as something else, give it an `entry` with your kind and data; the model still sees `content` as the user message:
 
 ```typescript
 await root.submit(
@@ -534,7 +534,7 @@ await root.submit(
 // placed as { kind: "chat.mention", data: { author: "ann", ... }, model: [{ role: "user", content: "ann: can you check the build?" }] }
 ```
 
-It behaves like any other input: it starts a run, steers, follows up, or rejects, and is answered. While queued, its inbox item carries the entry. The kind must not start with `garmin-code-mini.`.
+It behaves like any other input: it starts a run, steers, follows up, or rejects, and is answered. While queued, its inbox item carries the entry. The kind must not start with `gcode.`.
 
 ## Reset and Handoff
 
@@ -549,7 +549,7 @@ While busy, the reset is queued like a write. When it is placed during a tool ro
 
 ## Compaction
 
-Compaction shrinks what the model sees: it summarizes older entries and appends a `garmin-code-mini.compaction` entry that holds the summary and heads the first entry it keeps. Older entries stay in storage.
+Compaction shrinks what the model sees: it summarizes older entries and appends a `gcode.compaction` entry that holds the summary and heads the first entry it keeps. Older entries stay in storage.
 
 ```typescript
 const id = await root.compact("Keep the failing test names", context); // manual, with optional instructions
@@ -581,18 +581,18 @@ settings: {
 
 The fixed token counts rarely suit a 32k and a 1M context window alike; `modelOverrides` lets one harness serve both. The conversation's current model picks the entry, at the threshold check, after a context overflow, and when a compaction selects what to summarize.
 
-When a provider rejects a request because the context is too long, generation compacts and retries once. A summary that would cut before the start of the current context settles as `stale` when it is placed, so when several are in flight, the furthest cut stays in effect. Summarization spend counts in `garmin-code-mini.usage`. A `beforeCompact` hook on `CompactionTask` can decline or supply its own summary.
+When a provider rejects a request because the context is too long, generation compacts and retries once. A summary that would cut before the start of the current context settles as `stale` when it is placed, so when several are in flight, the furthest cut stays in effect. Summarization spend counts in `gcode.usage`. A `beforeCompact` hook on `CompactionTask` can decline or supply its own summary.
 
 When a compaction that a generation waits for at the blocking threshold fails, the generation fails too, without sending a request: its inputs settle `unanswered` with `model_error` and detail `Compaction failed: <error>`. One that finds nothing to compact or is declined lets the request go ahead.
 
-Running compactions are listed in `docs["garmin-code-mini.live"].compactions` with their reason, attempt, and retry backoff. The newest failure stays in `docs["garmin-code-mini.live"].compactionFailure` (task, reason, error) until a compaction produces a summary. The agent events add `compaction_start` and `compaction_end` (with `error` when the compaction failed), and `compactions` and `compactionFailure` fields in the snapshot.
+Running compactions are listed in `docs["gcode.live"].compactions` with their reason, attempt, and retry backoff. The newest failure stays in `docs["gcode.live"].compactionFailure` (task, reason, error) until a compaction produces a summary. The agent events add `compaction_start` and `compaction_end` (with `error` when the compaction failed), and `compactions` and `compactionFailure` fields in the snapshot.
 
 ## Agent Events (Experimental)
 
 For consumers that want coding-agent style events (`message_start`, `message_update`, `tool_execution_start`, ...) instead of structural state:
 
 ```typescript
-import { watchEvents } from "@garmin-code-mini/durable";
+import { watchEvents } from "@gcode/durable";
 
 const stream = await watchEvents(harness, root.id, context);
 initialize(stream.snapshot); // entries, run, in-flight generation, tools, compactions, inbox, agent, usage
@@ -608,7 +608,7 @@ Events are derived from commits, one batch per commit, and apply on top of the s
 Hooks let extensions observe or adjust the built-in tasks, in the conversations that select them:
 
 ```typescript
-import { GenerationTask, hook, ToolTask } from "@garmin-code-mini/durable";
+import { GenerationTask, hook, ToolTask } from "@gcode/durable";
 
 const Guard = defineExtension({
 	name: "guard",
@@ -728,7 +728,7 @@ A task appears with the commit that creates it and leaves with the commit that m
 Documents are typed JSON objects committed together with entries. Define one, and edit it in a commit:
 
 ```typescript
-import { defineDoc } from "@garmin-code-mini/durable";
+import { defineDoc } from "@gcode/durable";
 
 const Todos = defineDoc<{ items: string[] }>({
 	kind: "app.todos",
@@ -750,7 +750,7 @@ console.log(await harness.snapshot(Todos, root.id, context));
 
 ## Usage and Cost
 
-Each conversation keeps token and cost totals in `docs["garmin-code-mini.usage"]`: per `provider/model` for model responses, and per tool name for tool results that report usage. Failed and aborted attempts count too. For the whole Session:
+Each conversation keeps token and cost totals in `docs["gcode.usage"]`: per `provider/model` for model responses, and per tool name for tool results that report usage. Failed and aborted attempts count too. For the whole Session:
 
 ```typescript
 const usage = await harness.usage(context); // { models: { "openai/gpt-6-sol": Usage }, tools: {...} }
@@ -761,10 +761,10 @@ const usage = await harness.usage(context); // { models: { "openai/gpt-6-sol": U
 | Backend | Import | Notes |
 |---|---|---|
 | Memory | `MemoryStorage` from the package root | Nothing is persisted. |
-| IndexedDB | `IndexedDbStorage.open(name)` from `@garmin-code-mini/durable/storage/indexeddb` | Browser-only storage in one IndexedDB database. |
-| SQLite | `openNodeSqliteStorage(file)` from `@garmin-code-mini/durable/storage/sqlite/node` | One database file. WAL mode with `synchronous = NORMAL`: commits survive process crashes; the newest may be lost on power or host failure. |
-| JSONL | `openNodeJsonlStorage(directory, context)` from `@garmin-code-mini/durable/storage/jsonl/node` | Append-only files in one directory. Pass `{ fsync: true }` to flush before each commit marker. Keeps the whole history in memory too, so memory grows with it; use SQLite for long-running agents. |
-| Cloudflare Durable Object | `openDurableObjectSqliteStorage(ctx.storage)` from `@garmin-code-mini/durable/storage/sqlite/cloudflare` | The SQLite storage of one SQLite-backed Durable Object; commits are its storage transactions. |
+| IndexedDB | `IndexedDbStorage.open(name)` from `@gcode/durable/storage/indexeddb` | Browser-only storage in one IndexedDB database. |
+| SQLite | `openNodeSqliteStorage(file)` from `@gcode/durable/storage/sqlite/node` | One database file. WAL mode with `synchronous = NORMAL`: commits survive process crashes; the newest may be lost on power or host failure. |
+| JSONL | `openNodeJsonlStorage(directory, context)` from `@gcode/durable/storage/jsonl/node` | Append-only files in one directory. Pass `{ fsync: true }` to flush before each commit marker. Keeps the whole history in memory too, so memory grows with it; use SQLite for long-running agents. |
+| Cloudflare Durable Object | `openDurableObjectSqliteStorage(ctx.storage)` from `@gcode/durable/storage/sqlite/cloudflare` | The SQLite storage of one SQLite-backed Durable Object; commits are its storage transactions. |
 
 In a browser, open IndexedDB storage with `await IndexedDbStorage.open(name)`. One owner must hold the database at a
 time; use a [Web Lock](https://developer.mozilla.org/docs/Web/API/Web_Locks_API) around its lifetime rather than opening
@@ -776,9 +776,9 @@ SQLite storage can namespace its tables and indexes when sharing a database: pas
 need no support. A prefix must be a SQLite identifier and cannot begin with `sqlite_`; a host may reserve more, such
 as `_cf_` in Durable Objects. Changing the prefix does not migrate existing data.
 
-Multiple garmin-code-mini storages opened through the Cloudflare adapter with the same storage object automatically share an
-operation queue. To share the database with host tables, create an adapter and use it for both garmin-code-mini and all host queries;
-direct storage calls bypass the queue and may be rolled back with a garmin-code-mini transaction:
+Multiple gcode storages opened through the Cloudflare adapter with the same storage object automatically share an
+operation queue. To share the database with host tables, create an adapter and use it for both gcode and all host queries;
+direct storage calls bypass the queue and may be rolled back with a gcode transaction:
 
 ```typescript
 const database = new DurableObjectSqliteDatabase(ctx.storage);
@@ -787,7 +787,7 @@ await database.exec("CREATE TABLE IF NOT EXISTS host_notes (text TEXT)");
 await database.run("INSERT INTO host_notes (text) VALUES (?)", text);
 ```
 
-One process owns a storage at a time; there is no cross-process locking. The portable SQLite and JSONL cores (`/storage/sqlite`, `/storage/jsonl`) run without Node APIs, for example on Bun or in Cloudflare Durable Objects, given an asynchronous `SqliteDatabase` facade or a `FileSystem` from `@garmin-code-mini/durable/env`.
+One process owns a storage at a time; there is no cross-process locking. The portable SQLite and JSONL cores (`/storage/sqlite`, `/storage/jsonl`) run without Node APIs, for example on Bun or in Cloudflare Durable Objects, given an asynchronous `SqliteDatabase` facade or a `FileSystem` from `@gcode/durable/env`.
 
 SQLite adapters implement promise-based `exec`, `run`, `get`, `all`, `transaction`, and `close`. `run`, `get`, and `all` take SQL text plus positional bindings; adapters may cache prepared statements by SQL text. A transaction callback receives a transaction handle; all work in the transaction must use it, and the handle expires when the callback settles. Adapters must queue unrelated operations and other transactions until the transaction finishes, so calling `database` itself inside the callback never settles:
 
@@ -801,7 +801,7 @@ await database.transaction(async (transaction) => {
 Custom backends can run the shared conformance suite with any Vitest- or Jest-compatible runner:
 
 ```typescript
-import { registerStorageConformance } from "@garmin-code-mini/durable/testing";
+import { registerStorageConformance } from "@gcode/durable/testing";
 import { describe, expect, it } from "vitest";
 
 registerStorageConformance({ describe, expect, it }, "My Storage", async (use) => {
@@ -814,7 +814,7 @@ registerStorageConformance({ describe, expect, it }, "My Storage", async (use) =
 });
 ```
 
-The package root loads TypeBox, because the tool task validates arguments with garmin-code-mini-ai's `validateToolArguments()`. That costs about 23 MB of peak RSS unbundled, about 4 MB in a tree-shaken bundle.
+The package root loads TypeBox, because the tool task validates arguments with gcode-ai's `validateToolArguments()`. That costs about 23 MB of peak RSS unbundled, about 4 MB in a tree-shaken bundle.
 
 ## Errors
 
@@ -867,7 +867,7 @@ Examples that call OpenAI need `OPENAI_API_KEY`; most use the faux provider othe
 
 ## Design Documents
 
-- [`docs/spec.md`](https://github.com/earendil-works/garmin-code-mini/blob/main/packages/durable/docs/spec.md): the normative specification
+- [`docs/spec.md`](https://github.com/earendil-works/gcode/blob/main/packages/durable/docs/spec.md): the normative specification
 
 Benchmarks: `npm run bench:storage`, `npm run bench:storage:memory`, `npm run bench:tool-output`, and `npm run bench:nested-tools`.
 

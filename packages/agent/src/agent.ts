@@ -11,7 +11,7 @@ import {
 	type ThinkingBudgets,
 	type Transport,
 	toToolDeclaration,
-} from "@garmin-code-mini/ai";
+} from "@gcode/ai";
 import { runAgentLoop, runAgentLoopContinue } from "./agent-loop.ts";
 import { getDefaultStreamFn } from "./stream-fn.ts";
 import type {
@@ -141,7 +141,7 @@ export interface AgentOptions {
 	toolExecution?: ToolExecutionMode;
 	/**
 	 * How requests identify the app to providers, merged field by field over `DEFAULT_AGENT_IDENTITY`
-	 * (`{ attribution: GARMIN_CODE_MINI_ATTRIBUTION }`). Pass `{ attribution: null }` to send no attribution headers.
+	 * (`{ attribution: GCODE_ATTRIBUTION }`). Pass `{ attribution: null }` to send no attribution headers.
 	 */
 	identity?: ClientIdentity;
 }

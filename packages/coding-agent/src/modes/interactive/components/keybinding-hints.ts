@@ -2,7 +2,7 @@
  * Utilities for formatting keybinding hints in the UI.
  */
 
-import { getKeybindings, type Keybinding, type KeyId } from "@garmin-code-mini/tui";
+import { getKeybindings, type Keybinding, type KeyId } from "@gcode/tui";
 import { theme } from "../theme/theme.ts";
 
 export interface KeyTextFormatOptions {

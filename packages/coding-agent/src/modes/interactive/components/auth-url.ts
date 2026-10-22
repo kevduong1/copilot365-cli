@@ -1,4 +1,4 @@
-import { Container, hyperlink, Text, type TUI } from "@garmin-code-mini/tui";
+import { Container, hyperlink, Text, type TUI } from "@gcode/tui";
 import { copyToClipboard } from "../../../utils/clipboard.ts";
 import { theme } from "../theme/theme.ts";
 import { keyHint } from "./keybinding-hints.ts";

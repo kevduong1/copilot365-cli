@@ -1,4 +1,4 @@
-import type { Usage } from "@garmin-code-mini/ai/compat";
+import type { Usage } from "@gcode/ai/compat";
 import { afterEach, describe, expect, it } from "vitest";
 import { createHarness, type Harness } from "./suite/harness.ts";
 import { assistantMsg, userMsg } from "./utilities.ts";
@@ -23,8 +23,8 @@ describe("Branch summary extensions", () => {
 		};
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("session_before_tree", () => ({
+				(gcode) => {
+					gcode.on("session_before_tree", () => ({
 						summary: {
 							summary: "Summary provided by extension",
 							usage,

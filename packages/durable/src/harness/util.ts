@@ -1,4 +1,4 @@
-import type { Context } from "@garmin-code-mini/chord";
+import type { Context } from "@gcode/chord";
 import { SessionFailed } from "../errors.ts";
 import type { Cursor, Page } from "../types.ts";
 

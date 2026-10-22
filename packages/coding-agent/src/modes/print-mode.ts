@@ -2,11 +2,11 @@
  * Print mode (single-shot): Send prompts, output result, exit.
  *
  * Used for:
- * - `garmin-code-mini -p "prompt"` - text output
- * - `garmin-code-mini --mode json "prompt"` - JSON event stream
+ * - `gcode -p "prompt"` - text output
+ * - `gcode --mode json "prompt"` - JSON event stream
  */
 
-import type { AssistantMessage, ImageContent } from "@garmin-code-mini/ai";
+import type { AssistantMessage, ImageContent } from "@gcode/ai";
 import type { AgentSessionRuntime } from "../core/agent-session-runtime.ts";
 import { flushRawStdout, waitForRawStdoutBackpressure, writeRawStdout } from "../core/output-guard.ts";
 import { killTrackedDetachedChildren } from "../utils/shell.ts";

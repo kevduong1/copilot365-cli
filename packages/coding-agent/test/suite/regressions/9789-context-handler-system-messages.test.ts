@@ -1,17 +1,12 @@
-import type { AgentMessage } from "@garmin-code-mini/agent-core";
-import {
-	fauxAssistantMessage,
-	getCurrentSystemPrompt,
-	getCurrentTools,
-	type TranscriptContext,
-} from "@garmin-code-mini/ai";
+import type { AgentMessage } from "@gcode/agent-core";
+import { fauxAssistantMessage, getCurrentSystemPrompt, getCurrentTools, type TranscriptContext } from "@gcode/ai";
 import { afterEach, describe, expect, it } from "vitest";
 import type { ExtensionFactory } from "../../../src/index.ts";
 import { createHarness, type Harness } from "../harness.ts";
 
 /** Compaction supplied by an extension hook, as in the reported sessions. */
-const compactViaHook: ExtensionFactory = (garminCodeMini) => {
-	garminCodeMini.on("session_before_compact", async (event) => ({
+const compactViaHook: ExtensionFactory = (gcode) => {
+	gcode.on("session_before_compact", async (event) => ({
 		compaction: {
 			summary: "extension summary",
 			firstKeptEntryId: event.preparation.firstKeptEntryId,
@@ -61,8 +56,8 @@ describe("context handlers and system messages", () => {
 		const harness = await createHarness({
 			extensionFactories: [
 				compactViaHook,
-				(garminCodeMini) => {
-					garminCodeMini.on("context", async (event) => {
+				(gcode) => {
+					gcode.on("context", async (event) => {
 						seen.push(event.messages);
 						const summary = event.messages.findIndex((message) => message.role === "compactionSummary");
 						return { messages: event.messages.slice(summary) };
@@ -88,11 +83,11 @@ describe("context handlers and system messages", () => {
 		let turn = 0;
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("before_agent_start", (event) => {
+				(gcode) => {
+					gcode.on("before_agent_start", (event) => {
 						if (++turn === 2) event.systemPromptOptions.sections.plan_mode = "Plan only.";
 					});
-					garminCodeMini.on("context", async (event) => ({ messages: event.messages }));
+					gcode.on("context", async (event) => ({ messages: event.messages }));
 				},
 			],
 		});
@@ -111,8 +106,8 @@ describe("context handlers and system messages", () => {
 	it("applies in-place edits to event.messages without a return value", async () => {
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("context", async (event) => {
+				(gcode) => {
+					gcode.on("context", async (event) => {
 						event.messages.splice(0, 0, {
 							role: "user",
 							content: [{ type: "text", text: "injected" }],
@@ -135,8 +130,8 @@ describe("context handlers and system messages", () => {
 	it("keeps system messages a handler adds after the replayed head", async () => {
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("context", async (event) => ({
+				(gcode) => {
+					gcode.on("context", async (event) => ({
 						messages: [{ role: "system", content: "ephemeral reminder", timestamp: 0 }, ...event.messages],
 					}));
 				},
@@ -167,8 +162,8 @@ describe("context_with_system handlers", () => {
 		const harness = await createHarness({
 			extensionFactories: [
 				compactViaHook,
-				(garminCodeMini) => {
-					garminCodeMini.on("context_with_system", async (event) => {
+				(gcode) => {
+					gcode.on("context_with_system", async (event) => {
 						seen.push(event.messages);
 						return {
 							messages: event.messages.map((message) =>
@@ -179,7 +174,7 @@ describe("context_with_system handlers", () => {
 						};
 					});
 					// Registered after, but runs first: context handlers precede context_with_system.
-					garminCodeMini.on("context", async (event) => {
+					gcode.on("context", async (event) => {
 						const summary = event.messages.findIndex((message) => message.role === "compactionSummary");
 						return { messages: event.messages.slice(summary) };
 					});
@@ -202,8 +197,8 @@ describe("context_with_system handlers", () => {
 	it("reports a handler that drops the leading system message but honors its output", async () => {
 		const harness = await createHarness({
 			extensionFactories: [
-				(garminCodeMini) => {
-					garminCodeMini.on("context_with_system", async (event) => ({
+				(gcode) => {
+					gcode.on("context_with_system", async (event) => ({
 						messages: event.messages.filter((message) => message.role !== "system"),
 					}));
 				},

@@ -120,7 +120,7 @@ describe("CombinedAutocompleteProvider", () => {
 		let outsideDir = "";
 
 		beforeEach(() => {
-			rootDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-autocomplete-root-"));
+			rootDir = mkdtempSync(join(tmpdir(), "gcode-autocomplete-root-"));
 			baseDir = join(rootDir, "cwd");
 			outsideDir = join(rootDir, "outside");
 			mkdirSync(baseDir, { recursive: true });
@@ -432,9 +432,9 @@ describe("CombinedAutocompleteProvider", () => {
 
 		test("includes hidden paths but excludes .git", async () => {
 			setupFolder(baseDir, {
-				dirs: [".garmin-code-mini", ".github", ".git"],
+				dirs: [".gcode", ".github", ".git"],
 				files: {
-					".garmin-code-mini/config.json": "{}",
+					".gcode/config.json": "{}",
 					".github/workflows/ci.yml": "name: ci",
 					".git/config": "[core]",
 				},
@@ -445,7 +445,7 @@ describe("CombinedAutocompleteProvider", () => {
 			const result = await getSuggestions(provider, [line], 0, line.length);
 
 			const values = result?.items.map((item) => item.value) ?? [];
-			assert.ok(values.includes("@.garmin-code-mini/"));
+			assert.ok(values.includes("@.gcode/"));
 			assert.ok(values.includes("@.github/"));
 			assert.ok(!values.some((value) => value === "@.git" || value.startsWith("@.git/")));
 		});
@@ -581,7 +581,7 @@ describe("CombinedAutocompleteProvider", () => {
 		let baseDir = "";
 
 		beforeEach(() => {
-			baseDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-autocomplete-"));
+			baseDir = mkdtempSync(join(tmpdir(), "gcode-autocomplete-"));
 		});
 
 		afterEach(() => {
@@ -774,7 +774,7 @@ describe("CombinedAutocompleteProvider", () => {
 		let baseDir = "";
 
 		beforeEach(() => {
-			baseDir = mkdtempSync(join(tmpdir(), "garmin-code-mini-autocomplete-"));
+			baseDir = mkdtempSync(join(tmpdir(), "gcode-autocomplete-"));
 		});
 
 		afterEach(() => {

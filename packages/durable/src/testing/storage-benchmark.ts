@@ -1,5 +1,5 @@
-import type { JsonValue } from "@garmin-code-mini/chord";
-import { BACKGROUND_CONTEXT } from "@garmin-code-mini/chord/context";
+import type { JsonValue } from "@gcode/chord";
+import { BACKGROUND_CONTEXT } from "@gcode/chord/context";
 import type {
 	ConversationId,
 	DocumentCreate,

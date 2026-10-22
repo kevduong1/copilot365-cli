@@ -12,7 +12,7 @@ describe("extensions discovery", () => {
 	let extensionsDir: string;
 
 	beforeEach(() => {
-		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "garmin-code-mini-ext-test-"));
+		tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "gcode-ext-test-"));
 		extensionsDir = path.join(tempDir, "extensions");
 		fs.mkdirSync(extensionsDir);
 	});
@@ -22,15 +22,15 @@ describe("extensions discovery", () => {
 	});
 
 	const extensionCode = `
-		export default function(garminCodeMini) {
-			garminCodeMini.registerCommand("test", { handler: async () => {} });
+		export default function(gcode) {
+			gcode.registerCommand("test", { handler: async () => {} });
 		}
 	`;
 
 	const extensionCodeWithTool = (toolName: string) => `
 		import { Type } from "typebox";
-		export default function(garminCodeMini) {
-			garminCodeMini.registerTool({
+		export default function(gcode) {
+			gcode.registerTool({
 				name: "${toolName}",
 				label: "${toolName}",
 				description: "Test tool",
@@ -51,14 +51,14 @@ describe("extensions discovery", () => {
 		expect(result.extensions.map((e) => path.basename(e.path)).sort()).toEqual(["bar.ts", "foo.ts"]);
 	});
 
-	it("loads the coding-agent entrypoint without rewriting garmin-code-mini-ai provider subpaths", async () => {
+	it("loads the coding-agent entrypoint without rewriting gcode-ai provider subpaths", async () => {
 		fs.writeFileSync(
 			path.join(extensionsDir, "coding-agent-import.ts"),
 			`
-				import { getAgentDir } from "garmin-code-mini";
+				import { getAgentDir } from "gcode";
 				void getAgentDir;
-				export default function(garminCodeMini) {
-					garminCodeMini.registerCommand("test", { handler: async () => {} });
+				export default function(gcode) {
+					gcode.registerCommand("test", { handler: async () => {} });
 				}
 			`,
 		);
@@ -71,27 +71,27 @@ describe("extensions discovery", () => {
 
 	it("does not infer package ownership from ancestor manifests", async () => {
 		// Regression for #9863.
-		const dependencyDir = path.join(tempDir, "node_modules", "garmin-code-mini");
+		const dependencyDir = path.join(tempDir, "node_modules", "gcode");
 		fs.mkdirSync(dependencyDir, { recursive: true });
 		fs.writeFileSync(
 			path.join(tempDir, "package.json"),
 			JSON.stringify({
 				name: "application",
 				type: "module",
-				dependencies: { "garmin-code-mini": "1.0.0" },
+				dependencies: { gcode: "1.0.0" },
 			}),
 		);
 		fs.writeFileSync(
 			path.join(dependencyDir, "package.json"),
-			JSON.stringify({ name: "garmin-code-mini", type: "module", exports: "./index.js" }),
+			JSON.stringify({ name: "gcode", type: "module", exports: "./index.js" }),
 		);
 		fs.writeFileSync(path.join(dependencyDir, "index.js"), "export const physicalDependency = true;");
 		fs.writeFileSync(
 			path.join(extensionsDir, "compiled-esm-extension.js"),
 			`
-				import { physicalDependency } from "garmin-code-mini";
-				export default function(garminCodeMini) {
-					if (physicalDependency) garminCodeMini.registerCommand("physical-dependency", { handler: async () => {} });
+				import { physicalDependency } from "gcode";
+				export default function(gcode) {
+					if (physicalDependency) gcode.registerCommand("physical-dependency", { handler: async () => {} });
 				}
 			`,
 		);
@@ -104,14 +104,14 @@ describe("extensions discovery", () => {
 		expect(result.warnings).toEqual([]);
 	});
 
-	it("keeps the type-only garmin-code-mini-ai OAuth compatibility barrel resolvable", async () => {
+	it("keeps the type-only gcode-ai OAuth compatibility barrel resolvable", async () => {
 		fs.writeFileSync(
 			path.join(extensionsDir, "oauth-import.ts"),
 			`
-				import * as oauth from "@garmin-code-mini/ai/oauth";
+				import * as oauth from "@gcode/ai/oauth";
 				void oauth;
-				export default function(garminCodeMini) {
-					garminCodeMini.registerCommand("test", { handler: async () => {} });
+				export default function(gcode) {
+					gcode.registerCommand("test", { handler: async () => {} });
 				}
 			`,
 		);
@@ -170,7 +170,7 @@ describe("extensions discovery", () => {
 		expect(result.extensions[0].path).toContain("index.ts");
 	});
 
-	it("discovers subdirectory with package.json garmin-code-mini field", async () => {
+	it("discovers subdirectory with package.json gcode field", async () => {
 		const subdir = path.join(extensionsDir, "my-package");
 		const srcDir = path.join(subdir, "src");
 		fs.mkdirSync(subdir);
@@ -180,7 +180,7 @@ describe("extensions discovery", () => {
 			path.join(subdir, "package.json"),
 			JSON.stringify({
 				name: "my-package",
-				garminCodeMini: {
+				gcode: {
 					extensions: ["./src/main.ts"],
 				},
 			}),
@@ -194,7 +194,7 @@ describe("extensions discovery", () => {
 		expect(result.extensions[0].path).toContain("main.ts");
 	});
 
-	it("keeps package.json garmin-code-mini extension entries with leading tilde package-relative", async () => {
+	it("keeps package.json gcode extension entries with leading tilde package-relative", async () => {
 		const subdir = path.join(extensionsDir, "tilde-package");
 		const directExtensionPath = path.join(subdir, "~entry.ts");
 		const slashExtensionPath = path.join(subdir, "~", "entry.ts");
@@ -205,7 +205,7 @@ describe("extensions discovery", () => {
 			path.join(subdir, "package.json"),
 			JSON.stringify({
 				name: "tilde-package",
-				garminCodeMini: {
+				gcode: {
 					extensions: ["~entry.ts", "~/entry.ts"],
 				},
 			}),
@@ -228,7 +228,7 @@ describe("extensions discovery", () => {
 			path.join(subdir, "package.json"),
 			JSON.stringify({
 				name: "my-package",
-				garminCodeMini: {
+				gcode: {
 					extensions: ["./ext1.ts", "./ext2.ts"],
 				},
 			}),
@@ -240,7 +240,7 @@ describe("extensions discovery", () => {
 		expect(result.extensions).toHaveLength(2);
 	});
 
-	it("package.json with garmin-code-mini field takes precedence over index.ts", async () => {
+	it("package.json with gcode field takes precedence over index.ts", async () => {
 		const subdir = path.join(extensionsDir, "my-package");
 		fs.mkdirSync(subdir);
 		fs.writeFileSync(path.join(subdir, "index.ts"), extensionCodeWithTool("from-index"));
@@ -249,7 +249,7 @@ describe("extensions discovery", () => {
 			path.join(subdir, "package.json"),
 			JSON.stringify({
 				name: "my-package",
-				garminCodeMini: {
+				gcode: {
 					extensions: ["./custom.ts"],
 				},
 			}),
@@ -265,7 +265,7 @@ describe("extensions discovery", () => {
 		expect(result.extensions[0].tools.has("from-index")).toBe(false);
 	});
 
-	it("ignores package.json without garmin-code-mini field, falls back to index.ts", async () => {
+	it("ignores package.json without gcode field, falls back to index.ts", async () => {
 		const subdir = path.join(extensionsDir, "my-package");
 		fs.mkdirSync(subdir);
 		fs.writeFileSync(path.join(subdir, "index.ts"), extensionCode);
@@ -323,10 +323,7 @@ describe("extensions discovery", () => {
 		const subdir2 = path.join(extensionsDir, "with-manifest");
 		fs.mkdirSync(subdir2);
 		fs.writeFileSync(path.join(subdir2, "entry.ts"), extensionCode);
-		fs.writeFileSync(
-			path.join(subdir2, "package.json"),
-			JSON.stringify({ garminCodeMini: { extensions: ["./entry.ts"] } }),
-		);
+		fs.writeFileSync(path.join(subdir2, "package.json"), JSON.stringify({ gcode: { extensions: ["./entry.ts"] } }));
 
 		const result = await discoverAndLoadExtensions([], tempDir, tempDir);
 
@@ -341,7 +338,7 @@ describe("extensions discovery", () => {
 		fs.writeFileSync(
 			path.join(subdir, "package.json"),
 			JSON.stringify({
-				garminCodeMini: {
+				gcode: {
 					extensions: ["./exists.ts", "./missing.ts"],
 				},
 			}),
@@ -411,14 +408,14 @@ describe("extensions discovery", () => {
 
 	it("registers message and entry renderers", async () => {
 		const extCode = `
-			export default function(garminCodeMini) {
-				garminCodeMini.registerMarkdownTransformer((markdown) => {
+			export default function(gcode) {
+				gcode.registerMarkdownTransformer((markdown) => {
 					return markdown;
 				});
-				garminCodeMini.registerMessageRenderer("my-custom-type", (message, options, theme) => {
+				gcode.registerMessageRenderer("my-custom-type", (message, options, theme) => {
 					return null; // Use default rendering
 				});
-				garminCodeMini.registerEntryRenderer("my-entry-type", (entry, options, theme) => {
+				gcode.registerEntryRenderer("my-entry-type", (entry, options, theme) => {
 					return null;
 				});
 			}
@@ -436,7 +433,7 @@ describe("extensions discovery", () => {
 
 	it("reports error when extension throws during initialization", async () => {
 		const extCode = `
-			export default function(garminCodeMini) {
+			export default function(gcode) {
 				throw new Error("Initialization failed!");
 			}
 		`;
@@ -451,8 +448,8 @@ describe("extensions discovery", () => {
 
 	it("reports error when extension has no default export", async () => {
 		const extCode = `
-			export function notDefault(garminCodeMini) {
-				garminCodeMini.registerCommand("test", { handler: async () => {} });
+			export function notDefault(gcode) {
+				gcode.registerCommand("test", { handler: async () => {} });
 			}
 		`;
 		fs.writeFileSync(path.join(extensionsDir, "no-default.ts"), extCode);
@@ -485,10 +482,10 @@ describe("extensions discovery", () => {
 
 	it("loads extension with event handlers", async () => {
 		const extCode = `
-			export default function(garminCodeMini) {
-				garminCodeMini.on("agent_start", async () => {});
-				garminCodeMini.on("tool_call", async (event) => undefined);
-				garminCodeMini.on("agent_end", async () => {});
+			export default function(gcode) {
+				gcode.on("agent_start", async () => {});
+				gcode.on("tool_call", async (event) => undefined);
+				gcode.on("agent_end", async () => {});
 			}
 		`;
 		fs.writeFileSync(path.join(extensionsDir, "with-handlers.ts"), extCode);
@@ -504,8 +501,8 @@ describe("extensions discovery", () => {
 
 	it("loads extension with shortcuts", async () => {
 		const extCode = `
-			export default function(garminCodeMini) {
-				garminCodeMini.registerShortcut("ctrl+t", {
+			export default function(gcode) {
+				gcode.registerShortcut("ctrl+t", {
 					description: "Test shortcut",
 					handler: async (ctx) => {},
 				});
@@ -522,8 +519,8 @@ describe("extensions discovery", () => {
 
 	it("loads extension with flags", async () => {
 		const extCode = `
-			export default function(garminCodeMini) {
-				garminCodeMini.registerFlag("my-flag", {
+			export default function(gcode) {
+				gcode.registerFlag("my-flag", {
 					description: "My custom flag",
 					handler: async (value) => {},
 				});
