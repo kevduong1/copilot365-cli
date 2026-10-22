@@ -1,0 +1,620 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "./models.schema.json",
+  "$comment": "This file is generated from TypeScript source. Do not edit it manually; run npm run generate:schemas.",
+  "type": "object",
+  "required": [
+    "providers"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "providers": {
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Display name."
+            },
+            "baseUrl": {
+              "type": "string",
+              "minLength": 1,
+              "description": "API base URL. Also applies to the provider's built-in models."
+            },
+            "apiKey": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Literal key, \"$NAME\" environment interpolation, or \"!command\" output."
+            },
+            "api": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Local API protocol: \"openai-completions\". Custom extension protocols require an explicit implementation."
+            },
+            "headers": {
+              "type": "object",
+              "patternProperties": {
+                "^.*$": {
+                  "type": "string"
+                }
+              },
+              "description": "Request headers. Values resolve like apiKey."
+            },
+            "compat": {
+              "$ref": "#/$defs/ProviderCompat",
+              "description": "Local chat-completions compatibility settings."
+            },
+            "authHeader": {
+              "type": "boolean",
+              "default": false,
+              "description": "Whether to send the resolved API key as Authorization: Bearer."
+            },
+            "models": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Model ID sent to the API."
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Display name, also matched by --model patterns."
+                  },
+                  "api": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Overrides the provider api."
+                  },
+                  "baseUrl": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Overrides the provider baseUrl."
+                  },
+                  "reasoning": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether the model supports thinking."
+                  },
+                  "thinkingLevelMap": {
+                    "$ref": "#/$defs/ThinkingLevelMap",
+                    "description": "Provider value sent for each thinking level. null marks a level unsupported. Levels the model does not map use the provider's default value through high; xhigh and max are unsupported."
+                  },
+                  "input": {
+                    "type": "array",
+                    "items": {
+                      "enum": [
+                        "text",
+                        "image"
+                      ]
+                    },
+                    "default": [
+                      "text"
+                    ]
+                  },
+                  "inputLimits": {
+                    "$ref": "#/$defs/ModelInputLimits"
+                  },
+                  "cost": {
+                    "$ref": "#/$defs/ModelCost"
+                  },
+                  "promptCache": {
+                    "$ref": "#/$defs/ModelPromptCache",
+                    "description": "Best-effort prompt cache lifetime in seconds for the short and long retention tiers. garmin-code-mini warms only tiers with a known lifetime."
+                  },
+                  "contextWindow": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "default": 128000,
+                    "description": "Context window in tokens."
+                  },
+                  "maxTokens": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "default": 16384,
+                    "description": "Maximum output tokens."
+                  },
+                  "samplingParams": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^.*$": {}
+                    },
+                    "description": "Fields merged into every request body. Applies only to OpenAI-compatible APIs."
+                  },
+                  "samplingParamsByThinkingLevel": {
+                    "type": "object",
+                    "properties": {
+                      "off": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^.*$": {}
+                        }
+                      },
+                      "minimal": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^.*$": {}
+                        }
+                      },
+                      "low": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^.*$": {}
+                        }
+                      },
+                      "medium": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^.*$": {}
+                        }
+                      },
+                      "high": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^.*$": {}
+                        }
+                      },
+                      "xhigh": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^.*$": {}
+                        }
+                      },
+                      "max": {
+                        "type": "object",
+                        "patternProperties": {
+                          "^.*$": {}
+                        }
+                      }
+                    },
+                    "description": "samplingParams per thinking level, merged over samplingParams."
+                  },
+                  "headers": {
+                    "type": "object",
+                    "patternProperties": {
+                      "^.*$": {
+                        "type": "string"
+                      }
+                    },
+                    "description": "Request headers. Values resolve like apiKey."
+                  },
+                  "compat": {
+                    "$ref": "#/$defs/ProviderCompat",
+                    "description": "Local chat-completions compatibility settings."
+                  }
+                }
+              }
+            },
+            "modelOverrides": {
+              "type": "object",
+              "patternProperties": {
+                "^.*$": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Display name, also matched by --model patterns."
+                    },
+                    "reasoning": {
+                      "type": "boolean",
+                      "description": "Whether the model supports thinking."
+                    },
+                    "thinkingLevelMap": {
+                      "$ref": "#/$defs/ThinkingLevelMap",
+                      "description": "Provider value sent for each thinking level. null marks a level unsupported. Levels the model does not map use the provider's default value through high; xhigh and max are unsupported."
+                    },
+                    "input": {
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "text",
+                          "image"
+                        ]
+                      }
+                    },
+                    "inputLimits": {
+                      "$ref": "#/$defs/ModelInputLimits"
+                    },
+                    "cost": {
+                      "type": "object",
+                      "properties": {
+                        "input": {
+                          "type": "number",
+                          "description": "Input cost in USD per million tokens."
+                        },
+                        "output": {
+                          "type": "number",
+                          "description": "Output cost in USD per million tokens."
+                        },
+                        "cacheRead": {
+                          "type": "number",
+                          "description": "Cache-read cost in USD per million tokens."
+                        },
+                        "cacheWrite": {
+                          "type": "number",
+                          "description": "Cache-write cost in USD per million tokens."
+                        },
+                        "tiers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "inputTokensAbove",
+                              "input",
+                              "output",
+                              "cacheRead",
+                              "cacheWrite"
+                            ],
+                            "properties": {
+                              "inputTokensAbove": {
+                                "type": "number",
+                                "description": "Use this tier when total request input exceeds this token count."
+                              },
+                              "input": {
+                                "type": "number",
+                                "description": "Input cost in USD per million tokens."
+                              },
+                              "output": {
+                                "type": "number",
+                                "description": "Output cost in USD per million tokens."
+                              },
+                              "cacheRead": {
+                                "type": "number",
+                                "description": "Cache-read cost in USD per million tokens."
+                              },
+                              "cacheWrite": {
+                                "type": "number",
+                                "description": "Cache-write cost in USD per million tokens."
+                              }
+                            }
+                          },
+                          "description": "Request-wide pricing tiers. The highest matching input threshold applies to the full request."
+                        }
+                      }
+                    },
+                    "promptCache": {
+                      "$ref": "#/$defs/ModelPromptCache",
+                      "description": "Best-effort prompt cache lifetime in seconds for the short and long retention tiers. garmin-code-mini warms only tiers with a known lifetime."
+                    },
+                    "contextWindow": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "description": "Context window in tokens."
+                    },
+                    "maxTokens": {
+                      "type": "number",
+                      "exclusiveMinimum": 0,
+                      "description": "Maximum output tokens."
+                    },
+                    "samplingParams": {
+                      "type": "object",
+                      "patternProperties": {
+                        "^.*$": {}
+                      },
+                      "description": "Fields merged into every request body. Applies only to OpenAI-compatible APIs."
+                    },
+                    "samplingParamsByThinkingLevel": {
+                      "type": "object",
+                      "properties": {
+                        "off": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^.*$": {}
+                          }
+                        },
+                        "minimal": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^.*$": {}
+                          }
+                        },
+                        "low": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^.*$": {}
+                          }
+                        },
+                        "medium": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^.*$": {}
+                          }
+                        },
+                        "high": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^.*$": {}
+                          }
+                        },
+                        "xhigh": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^.*$": {}
+                          }
+                        },
+                        "max": {
+                          "type": "object",
+                          "patternProperties": {
+                            "^.*$": {}
+                          }
+                        }
+                      },
+                      "description": "samplingParams per thinking level, merged over samplingParams."
+                    },
+                    "headers": {
+                      "type": "object",
+                      "patternProperties": {
+                        "^.*$": {
+                          "type": "string"
+                        }
+                      },
+                      "description": "Request headers. Values resolve like apiKey."
+                    },
+                    "compat": {
+                      "$ref": "#/$defs/ProviderCompat",
+                      "description": "Local chat-completions compatibility settings."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "ModelCost": {
+      "type": "object",
+      "required": [
+        "input",
+        "output",
+        "cacheRead",
+        "cacheWrite"
+      ],
+      "properties": {
+        "input": {
+          "type": "number",
+          "description": "Input cost in USD per million tokens."
+        },
+        "output": {
+          "type": "number",
+          "description": "Output cost in USD per million tokens."
+        },
+        "cacheRead": {
+          "type": "number",
+          "description": "Cache-read cost in USD per million tokens."
+        },
+        "cacheWrite": {
+          "type": "number",
+          "description": "Cache-write cost in USD per million tokens."
+        },
+        "tiers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "inputTokensAbove",
+              "input",
+              "output",
+              "cacheRead",
+              "cacheWrite"
+            ],
+            "properties": {
+              "inputTokensAbove": {
+                "type": "number",
+                "description": "Use this tier when total request input exceeds this token count."
+              },
+              "input": {
+                "type": "number",
+                "description": "Input cost in USD per million tokens."
+              },
+              "output": {
+                "type": "number",
+                "description": "Output cost in USD per million tokens."
+              },
+              "cacheRead": {
+                "type": "number",
+                "description": "Cache-read cost in USD per million tokens."
+              },
+              "cacheWrite": {
+                "type": "number",
+                "description": "Cache-write cost in USD per million tokens."
+              }
+            }
+          },
+          "description": "Request-wide pricing tiers. The highest matching input threshold applies to the full request."
+        }
+      }
+    },
+    "ModelInputLimits": {
+      "type": "object",
+      "properties": {
+        "maxRequestBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum serialized provider request size in bytes."
+        },
+        "images": {
+          "type": "object",
+          "properties": {
+            "resize": {
+              "type": "object",
+              "properties": {
+                "maxWidth": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxHeight": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "maxBytes": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Maximum base64-encoded payload size in bytes."
+                },
+                "jpegQuality": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                }
+              },
+              "description": "Cache-safe resize profile applied before a new image enters conversation history."
+            },
+            "maxPerMessage": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum images accepted in one provider message."
+            },
+            "maxPerRequest": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum images accepted across one provider request."
+            }
+          }
+        }
+      }
+    },
+    "ModelPromptCache": {
+      "type": "object",
+      "properties": {
+        "short": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "long": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "ProviderCompat": {
+      "type": "object",
+      "properties": {
+        "supportsReasoningEffort": {
+          "type": "boolean",
+          "description": "Whether the local server accepts reasoning_effort.",
+          "default": true
+        },
+        "supportsUsageInStreaming": {
+          "type": "boolean",
+          "description": "Whether the local server accepts stream_options.include_usage.",
+          "default": true
+        },
+        "supportsFinishReason": {
+          "type": "boolean",
+          "description": "Whether the local server sends finish_reason. Set false only for a server that omits it.",
+          "default": true
+        },
+        "maxTokensField": {
+          "anyOf": [
+            {
+              "type": "string",
+              "const": "max_tokens"
+            },
+            {
+              "type": "string",
+              "const": "max_completion_tokens"
+            }
+          ],
+          "description": "Local server field used to limit generated tokens.",
+          "default": "max_tokens"
+        },
+        "supportsStrictMode": {
+          "type": "boolean",
+          "description": "Whether the local server supports strict JSON-schema function tools.",
+          "default": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "ThinkingLevelMap": {
+      "type": "object",
+      "properties": {
+        "off": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "minimal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "low": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "medium": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "high": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "xhigh": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

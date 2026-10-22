@@ -1,0 +1,15 @@
+{
+	"name": "garmin-code-mini-install",
+	"version": "1.3.0",
+	"private": true,
+	"description": "Lockfile root used by the garmin-code-mini installer and updater.",
+	"dependencies": {
+		"garmin-code-mini": "1.3.0"
+	},
+	"overrides": {
+		"protobufjs": "7.6.6"
+	},
+	"engines": {
+		"node": ">=22.19.0"
+	}
+}

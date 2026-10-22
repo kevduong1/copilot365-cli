@@ -1,0 +1,68 @@
+name: Nix
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/nix.yml'
+      - 'flake.lock'
+      - 'flake.nix'
+      - 'nix/**'
+      - 'package-lock.json'
+      - 'packages/*/package.json'
+      - 'packages/coding-agent/install-lock/**'
+  # Catches packaging drift from changes pushed to main without a pull request.
+  schedule:
+    - cron: '43 5 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: nix-${{ (github.event_name == 'pull_request' || github.ref_type == 'tag') && github.ref || 'main' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            system: x86_64-linux
+          - runner: ubuntu-24.04-arm
+            system: aarch64-linux
+          - runner: macos-latest
+            system: aarch64-darwin
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          github_access_token: ${{ github.token }}
+
+      - name: Evaluate all systems
+        if: ${{ matrix.system == 'x86_64-linux' }}
+        run: nix flake check --all-systems --no-build
+
+      - name: Build
+        run: nix build -L .
+
+      - name: Smoke-test
+        run: |
+          ./result/bin/garmin-code-mini --version
+          ./result/bin/garmin-code-mini --help > /dev/null
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            test "$(./result/bin/garmin-code-mini --version)" = "${GITHUB_REF_NAME#v}"
+          fi
+
